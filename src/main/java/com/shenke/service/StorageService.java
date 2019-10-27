@@ -201,4 +201,8 @@ public interface StorageService {
     void save(List<Storage> storages);
 
     void updateState(String state, Integer key);
+
+    boolean findBySaleListId(Integer id);
+
+    List<Storage> findBySaleListProductIds(String... ids);
 }

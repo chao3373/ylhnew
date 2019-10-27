@@ -213,4 +213,5 @@ public interface SaleListProductService {
 	void updatPeasant(Integer[] ids, String peasant);
 
 	void updatColor(Integer[] ids, String color);
+
 }

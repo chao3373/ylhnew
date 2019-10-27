@@ -480,4 +480,5 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     public void updatColor(Integer[] ids, String color) {
         saleListProductRepository.updatColor(ids, color);
     }
+
 }

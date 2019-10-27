@@ -137,9 +137,10 @@ public class UserAdminController {
 	@ResponseBody
 	@RequiresPermissions(value=("用户管理"))
 	public Map<String, Object> delete(Integer id) {
-		logService.save(new Log(Log.DELETE_ACTION, "删除用户信息"+userService.findById(id)));
+//		logService.save(new Log(Log.DELETE_ACTION, "删除用户信息"+userService.findById(id)));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		userRoleService.deleteByUserId(id);
+		logService.deleteByUserId(id);
 		userService.delete(id);
 		resultMap.put("success", true);
 		return resultMap;

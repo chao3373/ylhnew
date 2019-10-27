@@ -10,8 +10,10 @@ import javax.annotation.Resource;
 
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import com.shenke.service.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +25,6 @@ import com.shenke.entity.Log;
 import com.shenke.entity.SaleList;
 import com.shenke.entity.SaleListProduct;
 import com.shenke.entity.Sell;
-import com.shenke.service.LogService;
-import com.shenke.service.SaleListProductService;
-import com.shenke.service.SaleListService;
-import com.shenke.service.UserService;
 import com.shenke.util.DateUtil;
 import com.shenke.util.StringUtil;
 
@@ -47,6 +45,9 @@ public class SaleListAdminController {
 
     @Resource
     private SaleListProductService saleListProductService;
+
+    @Autowired
+    private StorageService storageService;
 
     @Resource
     private LogService logService;
@@ -83,9 +84,6 @@ public class SaleListAdminController {
     public Map<String, Object> save(String saleDate, String saleNumber, Integer clientId, Integer sellId,
                                     Integer clerkId, String lankman, String tel, String address, String deliveryDate, String goodsJson, Double zongjine)
             throws Exception {
-        System.out.println("总金额");
-        System.out.println(zongjine);
-        System.out.println(goodsJson);
         Map<String, Object> map = new HashMap<String, Object>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -107,7 +105,7 @@ public class SaleListAdminController {
         Client client = new Client();
         client.setId(clientId);
         saleList.setClient(client);
-        saleList.setTotalPrice(zongjine);
+//        saleList.setTotalPrice(zongjine);
         saleList.setLankman(lankman);
         saleList.setTel(tel);
         saleList.setAddress(address);
@@ -139,7 +137,6 @@ public class SaleListAdminController {
 
     /**
      * 查询所有含有未审核的销售单
-     *
      * @return
      * @throws ParseException
      */
@@ -215,9 +212,14 @@ public class SaleListAdminController {
     @RequestMapping("/delete")
     public Map<String, Object> delete(Integer id) {
         Map<String, Object> map = new HashMap<String, Object>();
-        saleListProductService.deleteBySaleListId(id);
-        saleListService.deleteByid(id);
-        map.put("success", true);
+        boolean bySaleListId = storageService.findBySaleListId(id);
+        if (bySaleListId){
+            saleListProductService.deleteBySaleListId(id);
+            saleListService.deleteByid(id);
+        } else {
+            map.put("msg", "已经存在生产完成的商品，无法删除！");
+        }
+        map.put("success", bySaleListId);
         return map;
     }
 

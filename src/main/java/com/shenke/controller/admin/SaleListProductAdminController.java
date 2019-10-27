@@ -510,6 +510,12 @@ public class SaleListProductAdminController {
     public Map<String, Object> deleteByIdArr(String idArr) {
         Map<String, Object> map = new HashMap<>();
         String[] ids = idArr.split(",");
+        List<Storage> storages = storageService.findBySaleListProductIds(ids);
+        if (storages.size() != 0) {
+            map.put("success", false);
+            map.put("msg","已经存在生产完成的商品，无法删除！");
+            return map;
+        }
         for (int i = 0; i < ids.length; i++) {
             saleListProductService.deleteById(Integer.parseInt(ids[i]));
         }

@@ -1248,4 +1248,19 @@ public class StorageServiceImpl implements StorageService {
         storageRepository.updateState(state, key);
     }
 
+    @Override
+    public boolean findBySaleListId(Integer id) {
+        List<Storage> storages = storageRepository.findBySaleListId(id);
+        if (storages.size() != 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public List<Storage> findBySaleListProductIds(String... ids) {
+        return storageRepository.findBySaleListIds(ids);
+    }
+
 }

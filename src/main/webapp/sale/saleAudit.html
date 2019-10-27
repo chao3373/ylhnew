@@ -738,13 +738,21 @@
                         ids.push(rows[i].id);
                     }
                     var idArr = ids.join(",");
+                    $.messager.progress({
+                        title:"删除商品信息",
+                        msg:"数据处理中，请稍后..."
+                    });
                     $.ajax({
                         url: "/admin/saleListProduct/deleteByIdArr",
                         data: {idArr: idArr},
                         success: function (result) {
                             if (result.success) {
+                                $.messager.progress("close");
                                 $.messager.alert("系统提示", "<span style='color: red;'>删除成功！</span>")
                                 location.reload();
+                            }else {
+                                $.messager.progress("close");
+                                alert(result.msg);
                             }
                         }
                     });

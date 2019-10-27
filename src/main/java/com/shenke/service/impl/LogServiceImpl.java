@@ -19,6 +19,7 @@ import com.shenke.repository.LogRepository;
 import com.shenke.repository.UserRepository;
 import com.shenke.service.LogService;
 import com.shenke.util.StringUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * LogService的实现类
@@ -27,6 +28,7 @@ import com.shenke.util.StringUtil;
  *
  */
 @Service("logService")
+@Transactional
 public class LogServiceImpl implements LogService {
 
 	@Resource
@@ -99,5 +101,10 @@ public class LogServiceImpl implements LogService {
 		});
 		return count;
 	}
+
+    @Override
+    public void deleteByUserId(Integer id) {
+        logRepository.deleteByUserId(id);
+    }
 
 }

@@ -285,4 +285,5 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "update t_sale_list_product set color = ?2 where id in ?1", nativeQuery = true)
 	void updatColor(Integer[] ids, String color);
+
 }

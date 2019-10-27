@@ -338,4 +338,10 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     //根据saleListProductId获取完成数
     @Query(value = "select sum(dabaonum) from t_storage where sale_list_product_id = ?1", nativeQuery = true)
     Integer getCountBySaleListProductId(Integer saleListProductId);
+
+    @Query(value = "select * from t_storage where sale_list_id = ?1", nativeQuery = true)
+    List<Storage> findBySaleListId(Integer id);
+
+    @Query(value = "select * from t_storage where sale_list_id in ?1", nativeQuery = true)
+    List<Storage> findBySaleListIds(String[] ids);
 }
