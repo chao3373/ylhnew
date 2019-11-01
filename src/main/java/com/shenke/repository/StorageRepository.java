@@ -302,11 +302,11 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     void updatehoudu(String houdu, Integer id);
 
     //根据条件查询提货商品
-    @Query(value = "select * from t_storage where serial_number = ?1 and state like '%提货%'", nativeQuery = true)
+    @Query(value = "select * from t_storage where serial_number = ?1 and state = '提货'", nativeQuery = true)
     List<Storage> selectTihuo(String pandianji);
 
     //根据条件查询提货商品
-    @Query(value = "select * from t_storage where state like '%提货%'", nativeQuery = true)
+    @Query(value = "select * from t_storage where state = '提货'", nativeQuery = true)
     List<Storage> selectTihuo();
 
     //根据salelistproductid查询库存数量

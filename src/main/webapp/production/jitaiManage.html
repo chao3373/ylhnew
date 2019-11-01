@@ -132,19 +132,29 @@
                             field: 'id',
                             title: 'id',
                             width: 100,
-                            // hidden: 'true',
+                            hidden: 'true',
                             align: 'center'
                         }, {
                             field: 'informNumber',
-                            title: 'informNumber',
+                            title: '通知单号',
                             width: 100,
                             align: 'center'
                         }, {
                             field: 'storageid',
                             title: '零售编号',
-                            width: 100,
+                            width: 50,
                             // hidden: 'true',
                             align: 'center'
+                        }, {
+                            field: 'code',
+                            title: '序号',
+                            width: 50,
+                            // hidden: 'true',
+                            align: 'center',
+                            sortable: true,
+                            sorter: function(a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'clientname',
                             title: '客户',
@@ -192,6 +202,12 @@
                                 return (a > b ? 1 : -1);
                             }
                         }, {
+                            field: 'dao',
+                            title: '剖刀',
+                            width: 100,
+                            align: 'center'
+
+                        }, {
                             field: 'price',
                             title: '厚度',
                             width: 100,
@@ -200,12 +216,12 @@
                             sorter: function (a, b) {
                                 return (a > b ? 1 : -1);
                             }
-                        }, {
+                        }, /*{
                             field: 'meter',
                             title: '实际厚度',
                             width: 100,
                             align: 'center'
-                        }, {
+                        }, */{
                             field: 'oneweight',
                             title: '重量',
                             width: 100,
@@ -236,17 +252,27 @@
                                     return 0;
                                 }
                             }
-                        }, {
+                        },/* {
                             field: 'label',
                             title: '标签名',
                             width: 100,
                             align: 'center'
-                        }, {
+                        },*/ {
                             field: 'demand',
                             title: '要求',
                             width: 300,
                             align: 'center'
-                        }]],
+                        }, {
+                            field: 'brand',
+                            title: '商标',
+                            width: 300,
+                            align: 'center'
+                        }, {
+                            field: 'letter',
+                            title: '印字',
+                            width: 300,
+                            align: 'center'
+                        }, ]],
                         onSelect: function (rowIndex, rowData) {
                             console.log(rowData);
                             $("#yaoqiu").show();
@@ -265,7 +291,8 @@
                                 $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
                             }
                         },
-                        remoteSort: false
+                        remoteSort: false,
+                        fitColumns: true
                     });
         }
 
@@ -333,17 +360,11 @@
                         }
                     }
                 }, {
-                    field: 'theoryweight',
+                    field: 'oneweight',
                     title: '理论重量',
                     width: 100,
                     align: 'center',
-                    formatter: function (value, row, index) {
-                        if (row.saleListProduct) {
-                            return row.saleListProduct.theoryweight;
-                        } else {
-                            return value;
-                        }
-                    }
+
                 }, {
                     field: 'demand',
                     title: '要求',
@@ -368,19 +389,7 @@
                             return value;
                         }
                     }
-                }, {
-                    field: 'weight',
-                    title: '重量',
-                    width: 100,
-                    align: 'center',
-                    formatter: function (value, row, index) {
-                        if (row.saleListProduct) {
-                            return row.saleListProduct.weight;
-                        } else {
-                            return value;
-                        }
-                    }
-                }, {
+                },{
                     field: 'dao',
                     title: '剖刀',
                     width: 100,
@@ -1217,7 +1226,7 @@
     </script>
 </head>
 <body class="easyui-layout" style="margin: 1px;">
-<div region="north" style="height: 250px;">
+<div region="north" style="height: 350px;">
     <table id="dg" class="easyui-datagrid" title="机台生产加工单"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb" split="true"></table>
