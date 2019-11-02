@@ -30,6 +30,8 @@ public interface SaleListProductService {
 	 */
 	public void passTheAudit(int id);
 
+    List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct);
+
 	/**
 	 * 根据id修改订单状态
 	 *
@@ -214,4 +216,5 @@ public interface SaleListProductService {
 
 	void updatColor(Integer[] ids, String color);
 
+    List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId);
 }

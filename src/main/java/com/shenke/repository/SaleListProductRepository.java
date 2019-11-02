@@ -29,6 +29,9 @@ public interface SaleListProductRepository
 	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1", nativeQuery = true)
 	public List<SaleListProduct> listBySaleListId(Integer saleListId);
 
+	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1 and state <> '合并件'", nativeQuery = true)
+	public List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId);
+
 	/**
 	 * 根据销售单id删除所有商品信息0
 	 * 

@@ -19,7 +19,6 @@ import com.shenke.service.ProductService;
 import com.shenke.service.ToLeadService;
 import com.shenke.service.WightService;
 import com.shenke.util.StringUtil;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -29,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -76,9 +74,9 @@ public class ToLeadController {
         List<Map<String, Object>> data = new ArrayList();
         int i = 0;
 
-        while (i < mapList.size()) {
+        while(i < mapList.size()) {
             int j = i + 1;
-            Map<String, Object> map1 = (Map) mapList.get(i);
+            Map<String, Object> map1 = (Map)mapList.get(i);
             map1.put("name", map1.remove("产品名称").toString().trim());
             map1.put("model", map1.remove("宽度m").toString().trim());
             map1.put("price", map1.remove("厚度").toString().trim());
@@ -126,11 +124,12 @@ public class ToLeadController {
                         if (map1.get("brand") != null && this.brandService.findByName(map1.get("brand").toString()).size() != 0) {
                             if (map1.get("letter") != null && this.letterService.findByName(map1.get("letter").toString()).size() != 0) {
                                 if (map1.get("clientname") != null && this.clientService.findByName(map1.get("clientname").toString()).size() != 0) {
-                                    if (map1.get("pack")!=null && this.packService.findByName(map1.get("pack").toString()).size()!=0){
+                                    if (map1.get("pack") != null && this.packService.findByName(map1.get("pack").toString()).size() != 0) {
                                         data.add(map1);
                                         ++i;
                                         continue;
                                     }
+
                                     map.put("success", false);
                                     map.put("errorInfo", "第" + j + "行包装有误");
                                     return map;
@@ -194,13 +193,13 @@ public class ToLeadController {
             }
         }
 
-        Sheet sheet = ((Workbook) wb).getSheetAt(0);
+        Sheet sheet = ((Workbook)wb).getSheetAt(0);
         Map<String, Object> map = new HashMap();
         DecimalFormat dd = new DecimalFormat("#.00");
         List<SaleListProduct> list = new ArrayList();
         Iterator var9 = sheet.iterator();
 
-        while (true) {
+        while(true) {
             Row row;
             do {
                 do {
@@ -209,20 +208,20 @@ public class ToLeadController {
                         return map;
                     }
 
-                    row = (Row) var9.next();
+                    row = (Row)var9.next();
                     System.out.println("行号：" + row.getRowNum());
                     System.out.println("行数：" + sheet.getPhysicalNumberOfRows());
-                } while (row.getRowNum() == 0);
-            } while (row.getRowNum() == 1);
+                } while(row.getRowNum() == 0);
+            } while(row.getRowNum() == 1);
 
             SaleListProduct saleListProduct = new SaleListProduct();
             Iterator var12 = row.iterator();
 
-            while (var12.hasNext()) {
-                Cell cell = (Cell) var12.next();
+            while(var12.hasNext()) {
+                Cell cell = (Cell)var12.next();
                 if (cell.getColumnIndex() != 0 && cell.getRowIndex() != 0 && cell.getRowIndex() != 1) {
                     String name;
-                    switch (cell.getColumnIndex()) {
+                    switch(cell.getColumnIndex()) {
                         case 1:
                             name = getStringCellValue(cell);
                             saleListProduct.setName(getStringCellValue(cell));
@@ -262,7 +261,7 @@ public class ToLeadController {
                             break;
                         case 8:
                             if (!StringUtil.isEmpty(getStringCellValue(cell))) {
-                                saleListProduct.setNum((int) Double.parseDouble(getStringCellValue(cell)));
+                                saleListProduct.setNum((int)Double.parseDouble(getStringCellValue(cell)));
                             }
                             break;
                         case 9:
@@ -356,7 +355,7 @@ public class ToLeadController {
 
     private static String getStringCellValue(Cell cell) {
         String strCell;
-        switch (cell.getCellType()) {
+        switch(cell.getCellType()) {
             case 0:
                 strCell = String.valueOf(cell.getNumericCellValue());
                 break;
@@ -388,9 +387,9 @@ public class ToLeadController {
         List<Map<String, Object>> mapList = reader.readAll();
         List<Map<String, Object>> data = new ArrayList();
 
-        for (int i = 0; i < mapList.size(); ++i) {
+        for(int i = 0; i < mapList.size(); ++i) {
             int j = i + 1;
-            Map<String, Object> map1 = (Map) mapList.get(i);
+            Map<String, Object> map1 = (Map)mapList.get(i);
             map1.put("name", map1.remove("品名").toString().trim());
             if (map1.get("重") != null && StringUtil.isNotEmpty(map1.get("重").toString())) {
                 map1.put("weight", map1.remove("重").toString().trim());

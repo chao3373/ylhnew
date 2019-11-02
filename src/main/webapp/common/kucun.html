@@ -177,6 +177,11 @@
                     width: 100,
                     align: 'center'
                 }, {
+                    field: 'dao',
+                    title: '剖刀',
+                    width: 100,
+                    align: 'center'
+                }, {
                     field: 'unitPrice',
                     title: '单价',
                     width: 100,
@@ -185,6 +190,11 @@
                     field: 'totalPrice',
                     title: '金额',
                     width: 100,
+                    align: 'center'
+                }, {
+                    field: 'demand',
+                    title: '要求',
+                    width: 250,
                     align: 'center'
                 }]]
 
@@ -474,14 +484,14 @@
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;订单号： <input id="saleNumber" name="saleNumber" style="width: 130px"/>-->
                 <!--</td>-->
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;选择仓位： <input-->
-                        <!--class="easyui-combobox" id="location" name="location"-->
-                        <!--style="width: 100px"-->
-                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>-->
+                <!--class="easyui-combobox" id="location" name="location"-->
+                <!--style="width: 100px"-->
+                <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>-->
                 <!--</td>-->
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;选择机台： <input-->
-                        <!--class="easyui-combobox" id="jitai" name="jiTai"-->
-                        <!--style="width: 100px"-->
-                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>-->
+                <!--class="easyui-combobox" id="jitai" name="jiTai"-->
+                <!--style="width: 100px"-->
+                <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>-->
                 <!--</td>-->
 
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;客户名称： <input
@@ -529,14 +539,14 @@
                                                 class="easyui-linkbutton" iconCls="icon-add">合计</a>
                 </td>
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;班&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;组&nbsp;： <input-->
-                        <!--class="easyui-combobox" id="group" name="group"-->
-                        <!--style="width: 100px"-->
-                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>-->
+                <!--class="easyui-combobox" id="group" name="group"-->
+                <!--style="width: 100px"-->
+                <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/group/groupList'"/>-->
                 <!--</td>-->
                 <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;员工名称： <input-->
-                        <!--class="easyui-combobox" id="clerk" name="clerk"-->
-                        <!--style="width: 100px"-->
-                        <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>-->
+                <!--class="easyui-combobox" id="clerk" name="clerk"-->
+                <!--style="width: 100px"-->
+                <!--data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkProList'"/>-->
                 <!--</td>-->
 
             </tr>
@@ -545,10 +555,10 @@
                         type="text" id="length" name="length"
                         demandd="true" size="10"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;颜&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色&nbsp;： <input type="text" id="color" name="color"
-                                                                                    size="10"/></td>
+                                                                                                 size="10"/></td>
 
                 <td>&nbsp;&nbsp;&nbsp;订&nbsp;&nbsp;单&nbsp;&nbsp;号&nbsp;： <input type="text" id="saleNumber" name="saleNumber"
-                                                                                                 size="10"/></td>
+                                                                                size="10"/></td>
 
                 <td> &nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:clertCondition()" class="easyui-linkbutton"
                                                  iconCls="icon-reload">刷新</a>
@@ -572,8 +582,8 @@
             <tr>
                 <td>
                     &nbsp;&nbsp;&nbsp;&nbsp;结束时间：<input
-                            type="text" id="dateInProducedd" name="dateInProduceddd" class="easyui-datetimebox"
-                            demandd="true" size="15"/>
+                        type="text" id="dateInProducedd" name="dateInProduceddd" class="easyui-datetimebox"
+                        demandd="true" size="15"/>
                 </td>
             </tr>
         </table>

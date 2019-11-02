@@ -164,6 +164,10 @@ public class SaleListProduct {
     //总价格
     private Double totalPrice;//总价格
 
+    private String heBingId;//合并的id
+
+    private String code;//序号
+
     @Override
     public String toString() {
         return "SaleListProduct{" +
@@ -215,7 +219,25 @@ public class SaleListProduct {
                 ", hebingLength='" + hebingLength + '\'' +
                 ", unitPrice=" + unitPrice +
                 ", totalPrice=" + totalPrice +
+                ", heBingId='" + heBingId + '\'' +
+                ", code='" + code + '\'' +
                 '}';
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getHeBingId() {
+        return heBingId;
+    }
+
+    public void setHeBingId(String heBingId) {
+        this.heBingId = heBingId;
     }
 
     public Integer getId() {

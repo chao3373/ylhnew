@@ -1167,7 +1167,11 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
                 predicates.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 predicates.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
-                predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                if (storage.getDao() != null) {
+                    predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                } else {
+                    predicates.getExpressions().add(cb.isNull(root.get("dao")));
+                }
                 predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));
                 predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
@@ -1199,7 +1203,11 @@ public class StorageServiceImpl implements StorageService {
                 predicates.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
                 predicates.getExpressions().add(cb.equal(root.get("color"), storage.getColor()));
                 predicates.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
-                predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                if (storage.getDao() != null) {
+                    predicates.getExpressions().add(cb.equal(root.get("dao"), storage.getDao()));
+                } else {
+                    predicates.getExpressions().add(cb.isNull(root.get("dao")));
+                }
                 predicates.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
                 predicates.getExpressions().add(cb.equal(root.get("clientname"), storage.getClientname()));
                 predicates.getExpressions().add(cb.equal(root.get("dabaonum"), storage.getDabaonum()));

@@ -296,26 +296,86 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         }
     }
 
+    /***
+     * 指定件数合并
+     * @param count
+     * @param id
+     */
     @Override
     public void hebingJian(Integer count, Integer id) {
+        LogUtil.printLog("===订单合并===");
         SaleListProduct saleListProduct = saleListProductRepository.findOne(id);
+        //获取合并前的状态，重量长度和数量，并查看是否可以整除
+        String state = saleListProduct.getState();
         Integer num = saleListProduct.getNum();
+//        SaleList saleList = saleListProduct.getSaleList();
+        Integer yushu = num % count;
         Double length = saleListProduct.getLength();
-        saleListProduct.setNum(num / count);
-        saleListProduct.setLength(length * num);
-        Integer newNum = num / count;
-        saleListProduct.setHebingLength(length + "*" + num);
-        if (newNum != 0) {
-            saleListProduct.setHebingLength(length + "*" + newNum);
-            SaleListProduct newSaleListProduct = new SaleListProduct();
-            BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
-            newSaleListProduct.setNum(1);
-            newSaleListProduct.setLength(length * newNum);
-            newSaleListProduct.setHebingLength(length + "*" + newNum);
-            newSaleListProduct.setId(null);
-            saleListProductRepository.save(newSaleListProduct);
-        }
+        Double oneweight = saleListProduct.getOneweight();
+
+        //能被整除的放到一个对象
+        SaleListProduct newSaleListProduct = new SaleListProduct();
+        BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
+
+        //计算能够整数的部分合并后的重量、长度和数量
+        Integer shuliang = num / count;
+        String heBingLength = length + "*" + count;
+        Double changdu = length * count;
+        Double zhongliang = oneweight * count;
+
+        //设置能够整除的部分的信息
+        newSaleListProduct.setNum(shuliang);
+        newSaleListProduct.setId(null);
+        newSaleListProduct.setOneweight(zhongliang);
+        newSaleListProduct.setSumwight(zhongliang * shuliang);
+        newSaleListProduct.setLength(changdu);
+        newSaleListProduct.setHebingLength(heBingLength);
+        newSaleListProduct.setHebingLength(heBingLength);
+        newSaleListProduct.setHeBingId(id.toString());
+        LogUtil.printLog(newSaleListProduct.toString());
+        saleListProduct.setState("合并件");
+        saleListProduct.setHeBingId(id.toString());
+        saleListProductRepository.save(newSaleListProduct);
         saleListProductRepository.save(saleListProduct);
+        if (yushu != 0) {//无法整除
+            LogUtil.printLog("无法整除");
+            Integer shengyushuliang = num - shuliang * count;
+            System.out.println("剩余数量：" + shengyushuliang);
+            SaleListProduct shengyuSaleListProduct = new SaleListProduct();
+            BeanUtils.copyProperties(saleListProduct, shengyuSaleListProduct);
+            Double shengyuchangdu = shengyushuliang * length;
+            System.out.println("剩余长度：" + shengyuchangdu);
+            Double shengyuzhongliang = shengyushuliang * oneweight;
+            System.out.println("剩余重量：" + shengyuzhongliang);
+            String shengyuhebingchangdu = length + "*" + shengyushuliang;
+            System.out.println("剩余合并长度：" + shengyuhebingchangdu);
+            shengyuSaleListProduct.setId(null);
+            shengyuSaleListProduct.setLength(shengyuchangdu);
+            shengyuSaleListProduct.setOneweight(shengyuzhongliang);
+            shengyuSaleListProduct.setSumwight(shengyuzhongliang);
+            shengyuSaleListProduct.setNum(1);
+            shengyuSaleListProduct.setHebingLength(shengyuhebingchangdu);
+            shengyuSaleListProduct.setHeBingId(id.toString());
+            shengyuSaleListProduct.setState(state);
+            saleListProductRepository.save(shengyuSaleListProduct);
+        }
+//        Integer num = saleListProduct.getNum();
+//        Double length = saleListProduct.getLength();
+//        saleListProduct.setNum(num / count);
+//        saleListProduct.setLength(length * num);
+//        Integer newNum = num / count;
+//        saleListProduct.setHebingLength(length + "*" + num);
+//        if (newNum != 0) {
+//            saleListProduct.setHebingLength(length + "*" + newNum);
+//            SaleListProduct newSaleListProduct = new SaleListProduct();
+//            BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
+//            newSaleListProduct.setNum(1);
+//            newSaleListProduct.setLength(length * newNum);
+//            newSaleListProduct.setHebingLength(length + "*" + newNum);
+//            newSaleListProduct.setId(null);
+//            saleListProductRepository.save(newSaleListProduct);
+//        }
+//        saleListProductRepository.save(saleListProduct);
     }
 
     @Override
@@ -481,4 +541,44 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         saleListProductRepository.updatColor(ids, color);
     }
 
+    @Override
+    public List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId) {
+        return saleListProductRepository.listBySaleListIdNoHeBing(saleListId);
+    }
+
+    @Override
+    public List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct) {
+        return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
+            @Override
+            public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate = cb.conjunction();
+                if (StringUtil.isNotEmpty(saleListProduct.getName())) {
+                    predicate.getExpressions().add(cb.equal(root.get("saleList").get("saleNumber"), saleListProduct.getName()));
+                }
+                if (StringUtil.isNotEmpty(saleListProduct.getClientname())) {
+                    System.out.println("进来了进来了进来了进来了进来了进来了进来了进来了");
+                    predicate.getExpressions().add(cb.equal(root.get("clientname"), saleListProduct.getClientname()));
+                }
+                if (StringUtil.isNotEmpty(saleListProduct.getPeasant())) {
+                    predicate.getExpressions().add(cb.equal(root.get("peasant"), saleListProduct.getPeasant()));
+                }
+                if (saleListProduct.getInformNumber() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("informNumber"), saleListProduct.getInformNumber()));
+                }
+                if (saleListProduct.getModel() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("model"), saleListProduct.getModel()));
+                }
+                if (saleListProduct.getLength() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("length"), saleListProduct.getLength()));
+                }
+                if (StringUtil.isNotEmpty(saleListProduct.getPrice())) {
+                    predicate.getExpressions().add(cb.equal(root.get("price"), saleListProduct.getPrice()));
+                }
+                if (saleListProduct.getOneweight() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("oneweight"), saleListProduct.getOneweight()));
+                }
+                return predicate;
+            }
+        });
+    }
 }

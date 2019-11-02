@@ -170,14 +170,14 @@
                                         field: "saleDate",
                                         width: "100",
                                         align: "center",
-                                        formatter: function (
-                                            val, row) {
-                                            var dateType = "";
-                                            var date = new Date();
-                                            date.setTime(val);
-                                            dateType = date
-                                                .format("yyyy-MM-dd")
-                                            return dateType;
+                                        formatter: function (val, row) {
+                                            if (row.saleNumber) {
+                                                var data = row.saleNumber;
+                                                console.log(data);
+                                                // console.log(data.substring(2,6) + "-" + data.substring(6,8) + "-" + data.substring(8,10));
+                                                return data.substring(2, 6) + "-" + data.substring(6, 8) + "-" + data.substring(8, 10);
+                                            }
+                                            return "";
                                         },
                                         title: "销售日期"
                                     },
@@ -327,6 +327,12 @@
                                                         field: "length",
                                                         title: "长度（m）",
                                                         width: "50",
+                                                        align: "center"
+                                                    },
+                                                    {
+                                                        field: "hebingLength",
+                                                        title: "合并长度",
+                                                        width: "100",
                                                         align: "center"
                                                     },
                                                     {
@@ -739,8 +745,8 @@
                     }
                     var idArr = ids.join(",");
                     $.messager.progress({
-                        title:"删除商品信息",
-                        msg:"数据处理中，请稍后..."
+                        title: "删除商品信息",
+                        msg: "数据处理中，请稍后..."
                     });
                     $.ajax({
                         url: "/admin/saleListProduct/deleteByIdArr",
@@ -750,7 +756,7 @@
                                 $.messager.progress("close");
                                 $.messager.alert("系统提示", "<span style='color: red;'>删除成功！</span>")
                                 location.reload();
-                            }else {
+                            } else {
                                 $.messager.progress("close");
                                 alert(result.msg);
                             }
@@ -895,7 +901,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updateName",
-                data: {ids:ids, name: name},
+                data: {ids: ids, name: name},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -922,7 +928,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatLength",
-                data: {ids:ids, length: length},
+                data: {ids: ids, length: length},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -949,7 +955,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatModel",
-                data: {ids:ids, model: model},
+                data: {ids: ids, model: model},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -976,7 +982,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatPrice",
-                data: {ids:ids, price: price},
+                data: {ids: ids, price: price},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -1003,7 +1009,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatMeter",
-                data: {ids:ids, meter: meter},
+                data: {ids: ids, meter: meter},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -1030,7 +1036,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatOneweight",
-                data: {ids:ids, oneweight: oneweight},
+                data: {ids: ids, oneweight: oneweight},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -1057,7 +1063,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatPeasant",
-                data: {ids:ids, peasant: peasant},
+                data: {ids: ids, peasant: peasant},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -1084,7 +1090,7 @@
             $.ajax({
                 type: "POST",
                 url: "/admin/saleListProduct/updatColor",
-                data: {ids:ids, color: color},
+                data: {ids: ids, color: color},
                 success: function (result) {
                     if (result.success) {
                         alert("修改成功！");
@@ -1207,7 +1213,7 @@
 		    	auditQuery(rec.value);
 		    }"/>
         <!--<a href="javascript:editSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"-->
-           <!--plain="true">修改</a>-->
+        <!--plain="true">修改</a>-->
         <form id="updatefm">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数量：<input type="text" id="shuliang" style="width: 50px;">
             <a href="javascript:updateshuliang()"
@@ -1333,22 +1339,22 @@
 <script>
 
     //修改订金
-    function updatedingjin(){
+    function updatedingjin() {
         var row = $("#dg").datagrid("getSelected");
-        if (!row){
+        if (!row) {
             alert("请选择一行！！");
             return;
         }
-        id =  row.id;
-        if (!$("#dingjin").val()){
+        id = row.id;
+        if (!$("#dingjin").val()) {
             alert("请输出订金！！");
             return;
         }
         $.ajax({
-            type:"POST",
-            url:"/admin/saleList/updateDingjin",
-            data:{id:id, dingjin:$("#dingjin").val()},
-            success:function (result) {
+            type: "POST",
+            url: "/admin/saleList/updateDingjin",
+            data: {id: id, dingjin: $("#dingjin").val()},
+            success: function (result) {
                 if (result.success) {
                     alert("修改成功");
                     searchSale();

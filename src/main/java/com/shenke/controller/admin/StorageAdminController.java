@@ -1,6 +1,7 @@
 package com.shenke.controller.admin;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -544,7 +545,7 @@ public class StorageAdminController {
             st.setUnitPrice(danjia);
             st.setTotalPrice(danjia * st.getSum());
             st.setDanjianzhong(danjianzhong);
-            st.setZongzhong(st.getSum() * danjianzhong);
+            st.setZongzhong(Double.parseDouble(new DecimalFormat("0.0").format(st.getSum() * danjianzhong)));
         }
         map.put("success", true);
         map.put("rows", list);

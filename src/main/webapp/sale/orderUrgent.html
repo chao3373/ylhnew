@@ -94,8 +94,14 @@
                 function () {
                     $('#dg2').datagrid({
                         rowStyler:function(index,row){
-                            if (row.level || row.level != 0) {
+                            if (row.level == 1) {
+                                return 'background-color:yellow;color:blue;font-weight:bold;';
+                            }
+                            if (row.level == 2) {
                                 return 'background-color:orange;color:blue;font-weight:bold;';
+                            }
+                            if (row.level == 3) {
+                                return 'background-color:purple;color:#ffffff;font-weight:bold;';
                             }
                         }
                     });

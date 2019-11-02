@@ -12,6 +12,7 @@ import com.shenke.entity.*;
 import com.shenke.service.*;
 import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -389,36 +390,86 @@ public class SaleListProductAdminController {
 
     @RequestMapping("/hebingOne")
     public Map<String, Object> hebingOne(String ids) {
+        StringBuilder hebingLength = new StringBuilder();
+        StringBuilder hebingId = new StringBuilder();
         System.out.println(ids);
         Map<String, Object> map = new HashMap<>();
         String[] idArr = ids.split(",");
-        SaleListProduct byId = saleListProductService.findById(Integer.parseInt(idArr[0]));
-        StringBuilder hebingLength = new StringBuilder();
-        Double sumLength = 0.0;
-        Double length = byId.getLength();
-        Integer num1 = byId.getNum();
-        sumLength += (length * num1);
-        if (num1 > 1) {
-            hebingLength.append(length + "*" + byId.getNum());
-        } else {
-            hebingLength.append(length);
-        }
-        for (int i = 1; i < idArr.length; i++) {
-            SaleListProduct saleListProduct = saleListProductService.findById(Integer.parseInt(idArr[i]));
-            Integer num = saleListProduct.getNum();
-            Double sLength = saleListProduct.getLength() * saleListProduct.getNum();
-            sumLength += new BigDecimal(sLength).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-            if (num > 1) {
-                hebingLength.append(" + " + saleListProduct.getLength() + "*" + saleListProduct.getNum());
-            } else {
-                hebingLength.append(" + " + saleListProduct.getLength());
+        System.out.println(idArr.length);
+        SaleListProduct saleListProduct = saleListProductService.findById(Integer.parseInt(idArr[0]));
+        Double length = saleListProduct.getLength();
+        Integer num = saleListProduct.getNum();
+        hebingLength.append(length + "*" + num);
+        Double oneweight = saleListProduct.getOneweight();
+        if (idArr.length > 1) {
+            SaleListProduct newSaleListProduct = new SaleListProduct();
+            BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
+            hebingId.append(saleListProduct.getId());
+            Double sumLength = length * num;
+            Double sumWeight = oneweight * num;
+            for (int i = 1; i < idArr.length; i++) {
+                SaleListProduct slp = saleListProductService.findById(Integer.parseInt(idArr[i]));
+                hebingId.append("," + slp.getId());
+                if (slp.getNum() > 1) {
+                    hebingLength.append("+" + slp.getLength() + "*" + slp.getNum());
+                } else {
+                    hebingLength.append("+" + slp.getLength());
+                }
+                sumLength += slp.getLength() * slp.getNum();
+                sumWeight += slp.getOneweight() * slp.getNum();
+                slp.setState("合并件");
+                saleListProductService.save(slp);
             }
-            saleListProductService.deleteById(Integer.parseInt(idArr[i]));
+            newSaleListProduct.setId(null);
+            newSaleListProduct.setHeBingId(hebingId.toString());
+            newSaleListProduct.setHebingLength(hebingLength.toString());
+            newSaleListProduct.setLength(sumLength);
+            newSaleListProduct.setOneweight(sumWeight);
+            newSaleListProduct.setSumwight(sumWeight);
+            newSaleListProduct.setNum(1);
+            saleListProduct.setHeBingId(hebingId.toString());
+            saleListProduct.setState("合并件");
+            saleListProductService.save(saleListProduct);
+            saleListProductService.save(newSaleListProduct);
+        } else {
+            SaleListProduct newSaleListProduct = new SaleListProduct();
+            BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
+            newSaleListProduct.setId(null);
+            newSaleListProduct.setLength(length * num);
+            newSaleListProduct.setOneweight(oneweight * num);
+            newSaleListProduct.setHebingLength(length + "*" + num);
+            newSaleListProduct.setNum(1);
+            newSaleListProduct.setHeBingId(saleListProduct.getId().toString());
+            saleListProduct.setHeBingId(saleListProduct.getId().toString());
+            saleListProduct.setState("合并件");
+            saleListProductService.save(saleListProduct);
+            saleListProductService.save(newSaleListProduct);
         }
-        byId.setLength(sumLength);
-        byId.setHebingLength(hebingLength.toString());
-        byId.setNum(1);
-        save(byId);
+//        Double sumLength = 0.0;
+//        Double length = byId.getLength();
+//        Integer num1 = byId.getNum();
+//        sumLength += (length * num1);
+//        if (num1 > 1) {
+//            hebingLength.append(length + "*" + byId.getNum());
+//        } else {
+//            hebingLength.append(length);
+//        }
+//        for (int i = 1; i < idArr.length; i++) {
+//            SaleListProduct saleListProduct = saleListProductService.findById(Integer.parseInt(idArr[i]));
+//            Integer num = saleListProduct.getNum();
+//            Double sLength = saleListProduct.getLength() * saleListProduct.getNum();
+//            sumLength += new BigDecimal(sLength).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+//            if (num > 1) {
+//                hebingLength.append(" + " + saleListProduct.getLength() + "*" + saleListProduct.getNum());
+//            } else {
+//                hebingLength.append(" + " + saleListProduct.getLength());
+//            }
+//            saleListProductService.deleteById(Integer.parseInt(idArr[i]));
+//        }
+//        byId.setLength(sumLength);
+//        byId.setHebingLength(hebingLength.toString());
+//        byId.setNum(1);
+//        save(byId);
         map.put("success", true);
         System.out.println(map);
         return map;
@@ -513,7 +564,7 @@ public class SaleListProductAdminController {
         List<Storage> storages = storageService.findBySaleListProductIds(ids);
         if (storages.size() != 0) {
             map.put("success", false);
-            map.put("msg","已经存在生产完成的商品，无法删除！");
+            map.put("msg", "已经存在生产完成的商品，无法删除！");
             return map;
         }
         for (int i = 0; i < ids.length; i++) {
@@ -823,6 +874,18 @@ public class SaleListProductAdminController {
         Map<String, Object> map = new HashMap<>();
         saleListProductService.updatColor(ids, color);
         map.put("success", true);
+        return map;
+    }
+
+    /**
+     * 订单追踪界面查询
+     * @return
+     */
+    @RequestMapping("/dingDanZhuiZong")
+    public Map<String,Object> dingDanZhuiZong(SaleListProduct saleListProduct){
+        Map<String,Object> map = new HashMap<>();
+        map.put("rows",saleListProductService.dingDanZhuiZong(saleListProduct));
+        map.put("success",true);
         return map;
     }
 
