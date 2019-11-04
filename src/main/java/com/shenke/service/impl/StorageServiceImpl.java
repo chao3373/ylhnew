@@ -1523,11 +1523,11 @@ public class StorageServiceImpl implements StorageService {
                 "sale_number as salenumber, " +
                 "name, model, " +
                 "length, price, " +
-                "count(*) as num, " +
+                "count(id) as num, " +
                 "realityweight, " +
-                "ROUND(num * realityweight, 2) as numweight, " +
+                "ROUND(count(id) * realityweight, 2) as numweight, " +
                 "unit_price as unitprice, " +
-                "ROUND(num * unit_price) as totalprice, " +
+                "ROUND(count(id) * unit_price) as totalprice, " +
                 "color " +
                 "from t_storage " +
                 "where state like '%装车%'";
