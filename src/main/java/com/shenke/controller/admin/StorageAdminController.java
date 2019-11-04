@@ -15,6 +15,7 @@ import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.*;
 import com.shenke.util.StringUtil;
+import org.omg.CORBA.ObjectHelper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -323,36 +324,37 @@ public class StorageAdminController {
         map1.put("order", order);
         map1.put("chukudanhao", chukudanhao);
         System.out.println(map1.get("chukudanhao"));
-        List<Storage> storageList = storageService.detail(map1);
-        for (Storage storage : storageList) {
-            Integer integer = storageService.countByDetail(storage, (String) map1.get("date"));
-            System.out.println(integer);
-            storage.setSum(integer);
-            Double danjian = storage.getDabaonum() * storage.getRealityweight();
-            Double danjianpingfang = storage.getDabaonum() * storage.getPingfang();
-            System.out.println(storage);
-            Double unitPrice = storage.getUnitPrice();
-            Double price = storage.getUnitPrice();
-            if(price == null){
-                price = 0.0;
-            }
-            storage.setUnitPrice(storage.getDabaonum() * price);
-            Double totalPrice = storage.getUnitPrice() * storage.getNum();
-            storage.setDanjianpingfang(danjianpingfang);
-            storage.setDanjianzhong(danjian);
-            Double zongzhong = storage.getSum() * danjian;
-            Double zongpingfang = storage.getSum() * danjianpingfang;
-            System.out.println("总数量：" + integer);
-            System.out.println("打包数：" + storage.getDabaonum());
-            System.out.println("单件重量：" + danjian);
-            System.out.println("总重量：" + zongzhong);
-            storage.setZongpingfang(new BigDecimal(zongpingfang).setScale(2, BigDecimal.ROUND_UP).doubleValue());
-            storage.setZongzhong((new BigDecimal(zongzhong).setScale(2, BigDecimal.ROUND_UP).doubleValue()));
-            storage.setTotalPrice(new BigDecimal(totalPrice).setScale(2, BigDecimal.ROUND_UP).doubleValue());
-        }
-        map.put("success", true);
-        map.put("rows", storageList);
-        return map;
+//        List<Storage> storageList = storageService.detail(map1);
+        Map<String, Object> storageList = storageService.detaill(map1);
+        return storageList;
+//        for (Storage storage : storageList) {
+//            Integer integer = storageService.countByDetail(storage, (String) map1.get("date"));
+//            System.out.println(integer);
+//            storage.setSum(integer);
+//            Double danjian = storage.getDabaonum() * storage.getRealityweight();
+//            Double danjianpingfang = storage.getDabaonum() * storage.getPingfang();
+//            System.out.println(storage);
+//            Double unitPrice = storage.getUnitPrice();
+//            Double price = storage.getUnitPrice();
+//            if (price == null) {
+//                price = 0.0;
+//            }
+//            storage.setUnitPrice(storage.getDabaonum() * price);
+//            Double totalPrice = storage.getUnitPrice() * storage.getNum();
+//            storage.setDanjianpingfang(danjianpingfang);
+//            storage.setDanjianzhong(danjian);
+//            Double zongzhong = storage.getSum() * danjian;
+//            Double zongpingfang = storage.getSum() * danjianpingfang;
+//            System.out.println("总数量：" + integer);
+//            System.out.println("打包数：" + storage.getDabaonum());
+//            System.out.println("单件重量：" + danjian);
+//            System.out.println("总重量：" + zongzhong);
+//            storage.setZongpingfang(new BigDecimal(zongpingfang).setScale(2, BigDecimal.ROUND_UP).doubleValue());
+//            storage.setZongzhong((new BigDecimal(zongzhong).setScale(2, BigDecimal.ROUND_UP).doubleValue()));
+//            storage.setTotalPrice(new BigDecimal(totalPrice).setScale(2, BigDecimal.ROUND_UP).doubleValue());
+//        }
+//        map.put("success", true);
+//        map.put("rows", storageList);
     }
 
     /**
@@ -478,7 +480,6 @@ public class StorageAdminController {
         map.put("success", true);
         map.put("rows", storageService.KucunSearch(map1));
         return map;
-
     }
 
     /***
@@ -522,34 +523,15 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/findKuCun")
-    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd, String dateInProduceddd) {
-        System.out.println(dateInProducedd);
-        System.out.println(dateInProduceddd);
+    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows) {
+        System.out.println(page);
+        System.out.println(rows);
         if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        List<Storage> list = storageService.selectt(storage, dateInProducedd, dateInProduceddd);
-        for (Storage st : list) {
-            Integer integer = storageService.kucunCount(st, dateInProducedd, dateInProduceddd);
-            st.setSum(integer);
-            System.out.println(st);
-            Double jiage;
-            if (st.getUnitPrice() == null){
-                jiage = 0.0;
-            } else {
-                jiage = st.getUnitPrice();
-            }
-            Double danjia = st.getDabaonum() * jiage;
-            Double danjianzhong = st.getDabaonum() * st.getRealityweight();
-            st.setUnitPrice(danjia);
-            st.setTotalPrice(danjia * st.getSum());
-            st.setDanjianzhong(danjianzhong);
-            st.setZongzhong(Double.parseDouble(new DecimalFormat("0.0").format(st.getSum() * danjianzhong)));
-        }
-        map.put("success", true);
-        map.put("rows", list);
-        return map;
+        Map<String, Object> results = storageService.selecttt(storage, dateInProducedd, dateInProduceddd, page, rows);
+        return results;
     }
 
     /***
@@ -765,7 +747,7 @@ public class StorageAdminController {
     public List<Storage> findLingShou(Storage storage) {
         System.out.println(storage);
         List<Storage> storages = storageService.findLingShou(storage);
-        for(Storage storage1 : storages){
+        for (Storage storage1 : storages) {
             storage1.setWeight(storage1.getRealityweight());
             storage1.setNum(1);
         }

@@ -205,4 +205,10 @@ public interface StorageService {
     boolean findBySaleListId(Integer id);
 
     List<Storage> findBySaleListProductIds(String... ids);
+
+    Map<String, Object> selecttt(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows);
+
+    Long getKuCunCount(Storage storage, String dateInProducedd, String dateInProduceddd);
+
+    Map<String, Object> detaill(Map<String, Object> map1);
 }

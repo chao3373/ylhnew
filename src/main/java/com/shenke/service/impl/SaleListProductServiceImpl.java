@@ -574,6 +574,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                 if (StringUtil.isNotEmpty(saleListProduct.getPrice())) {
                     predicate.getExpressions().add(cb.equal(root.get("price"), saleListProduct.getPrice()));
                 }
+                if (saleListProduct.getJiTai() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), saleListProduct.getJiTai().getId()));
+                }
                 if (saleListProduct.getOneweight() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("oneweight"), saleListProduct.getOneweight()));
                 }

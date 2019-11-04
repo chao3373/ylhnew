@@ -17,11 +17,17 @@
     <script type="text/javascript">
         //点击确定按钮
         function loaddg() {
+            $("#count").text("总数量：");
+            $("#sumweight").text("总重量：");
             addSelect();
             $.post("/admin/storage/detail", json, function (result) {
                 console.log(result);
                 if (result.success) {
                     $("#dg").datagrid("loadData", result.rows);
+                    $("#count").text($("#count").text() + result.count);
+                    $("#sumweight").text($("#sumweight").text() + result.sumweight);
+                    $("#count").show();
+                    $("#sumweight").show();
                 }
             });
         }
@@ -197,19 +203,19 @@
                 columns: [[
                     {field: 'clientname', title: '购货单位', width: 100, align: 'center'},
                     {field: 'peasant', title: '农户名称', width: 100, align: 'center'},
-                    {field: 'outNumber', title: '出库单号', width: 150, align: 'center'},
-                    {field: 'saleNumber', title: '订单号', width: 150, align: 'center'},
+                    {field: 'outnumber', title: '出库单号', width: 150, align: 'center'},
+                    {field: 'salenumber', title: '订单号', width: 150, align: 'center'},
                     {field: 'name', title: '产品名称', width: 200, align: 'center'},
                     {field: 'model', title: '幅宽m', width: 100, align: 'center'},
                     {field: 'length', title: '长度m', width: 100, align: 'center'},
                     {field: 'price', title: '厚度mm', width: 100, align: 'center'},
-                    {field: 'sum', title: '数量', width: 100, align: 'center'},
-                    {field: 'danjianzhong', title: '重量kg', width: 100, align: 'center'},
-                    {field: 'zongzhong', title: '总重量kg', width: 100, align: 'center'},
-                    {field: 'danjianpingfang', title: '平方米', width: 100, align: 'center'},
-                    {field: 'zongpingfang', title: '总平方米', width: 100, align: 'center'},
-                    {field: 'unitPrice', title: '单价', width: 100, align: 'center'},
-                    {field: 'totalPrice', title: '金额', width: 100, align: 'center'},
+                    {field: 'num', title: '数量', width: 100, align: 'center'},
+                    {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
+                    {field: 'numweight', title: '总重量kg', width: 100, align: 'center'},
+                    // {field: 'danjianpingfang', title: '平方米', width: 100, align: 'center'},
+                    // {field: 'zongpingfang', title: '总平方米', width: 100, align: 'center'},
+                    {field: 'unitprice', title: '单价', width: 100, align: 'center'},
+                    {field: 'totalprice', title: '金额', width: 100, align: 'center'},
                     {field: 'color', title: '颜色', width: 100, align: 'center'},
                 ]]
             });
@@ -572,6 +578,14 @@
                     </td>
                     <td>
                         <a class="easyui-linkbutton" iconCls="icon-reload" href="javascript:daochu('#dg')">导出</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span id="count" style="font-size: 20px;color: red;display: none">总件数：</span>
+                    </td>
+                    <td>
+                        <span id="sumweight" style="font-size: 20px;color: red;display: none">总重量：</span>
                     </td>
                 </tr>
             </table>

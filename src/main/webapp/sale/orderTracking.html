@@ -18,6 +18,14 @@
 
         $(document).ready(function () {
 
+            $('#dg').datagrid({
+                rowStyler: function (index, row) {
+                    if((row.state.substring(0,4)) == "生产完成"){
+                        return 'background-color:green;color:white;font-weight:bold;';
+                    }
+                }
+            });
+
             $("#dg").datagrid({
                 columns: [[
                     {
@@ -32,7 +40,6 @@
                         width: 130,
                         align: 'center',
                         formatter: function (val, row) {
-                            console.log(row)
                             if (row.saleList) {
                                 return row.saleList.saleNumber;
                             } else {
@@ -53,22 +60,55 @@
                         field: 'name',
                         title: '产品名称',
                         width: 100,
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
+                    }, {
+                        field: 'code',
+                        title: '序号',
+                        width: 100,
                         align: 'center'
+                    }, {
+                        field: 'jiTai',
+                        title: '机台',
+                        width: 100,
+                        align: 'center',
+                        formatter:function (val, row) {
+                            if(row.jiTai){
+                                return row.jiTai.name;
+                            }else {
+                                return "";
+                            }
+                        }
                     }, {
                         field: 'length',
                         title: '长度',
                         width: 55,
-                        align: 'center'
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
                     }, {
                         field: 'model',
                         title: '宽度',
                         width: 55,
-                        align: 'center'
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
                     }, {
                         field: 'price',
                         title: '厚度',
                         width: 55,
-                        align: 'center'
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
                     }, {
                         field: 'accomplishNumber',
                         title: '完成数量',
@@ -137,19 +177,18 @@
                         formatter: function (val, row) {
                             if (row.saleList.saleNumber) {
                                 var data = row.saleList.saleNumber;
-                                console.log(data);
-                                // console.log(data.substring(2,6) + "-" + data.substring(6,8) + "-" + data.substring(8,10));
                                 return data.substring(2, 6) + "-" + data.substring(6, 8) + "-" + data.substring(8, 10);
                             }
                             return "";
-                        },
+                        }
                     }, {
                         field: 'informNumber',
                         title: '通知单号',
                         width: 50,
                         align: 'center'
                     }
-                ]]
+                ]],
+                remoteSort: false
             });
         });
 
@@ -267,7 +306,7 @@
 <div data-options="region:'center'" style="padding: 10px; border: 1px;">
     <table id="dg" class="easyui-datagrid"
            rownumbers="true" singleSelect="true"
-           toolbar="#tb" fit="true">
+           toolbar="#tb" fit="true" split="true">
     </table>
 
 
@@ -291,6 +330,11 @@
                     </td>
                     <td>
                         宽度：<input id="model" name="model" style="width: 130px"/>
+                    </td>
+                    <td>
+                        选择机台：<input class="easyui-combobox" id="jitai" name="jiTai"
+                            style="width: 100px"
+                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
                     </td>
                 </tr>
                 <tr>
