@@ -182,11 +182,12 @@ public class SaleListProductAdminController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
         List<SaleListProduct> saleListProducts = saleListProductService.selectNoAccomplish(jitaiId);
-        List<Long> informNumber = new ArrayList<>();
+        /*List<Long> informNumber = new ArrayList<>();
         for (SaleListProduct saleListProduct : saleListProducts) {
             informNumber.add(saleListProduct.getInformNumber());
-        }
-        map.put("rows", informNumber);
+        }*/
+
+        map.put("rows", saleListProducts);
         return map;
     }
 

@@ -174,14 +174,12 @@
                                         field: "saleDate",
                                         width: "100",
                                         align: "center",
-                                        formatter: function (
-                                            val, row) {
-                                            var dateType = "";
-                                            var date = new Date();
-                                            date.setTime(val);
-                                            dateType = date
-                                                .format("yyyy-MM-dd")
-                                            return dateType;
+                                        formatter: function (val, row) {
+                                            if (row.saleNumber) {
+                                                var data = row.saleNumber;
+                                                return data.substring(2, 6) + "-" + data.substring(6, 8) + "-" + data.substring(8, 10);
+                                            }
+                                            return "";
                                         },
                                         title: "销售日期"
                                     },

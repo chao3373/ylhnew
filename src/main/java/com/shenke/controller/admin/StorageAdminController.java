@@ -443,8 +443,8 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         System.out.println(storage.getGroupName());
         if (StringUtil.isNotEmpty(storage.getGroupName()) && storage.getGroupName().equals("夜班")) {
-            String star = dateInProducedd + " 13:25:00";
-            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 13:35:00";
+            String star = dateInProducedd + " 19:00:00";
+            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 06:59:59";
             try {
                 java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(star);
                 java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
@@ -455,7 +455,20 @@ public class StorageAdminController {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        } else {
+        } else if (StringUtil.isNotEmpty(storage.getGroupName()) && storage.getGroupName().equals("白班")) {
+            String star = dateInProducedd + " 07:00:00";
+            String end = dateInProducedd +  " 18:59:59";
+            try {
+                java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(star);
+                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
+                System.out.println("白班");
+                System.out.println(stard);
+                System.out.println(endd);
+                map.put("rows", storageService.JitaiProduct(storage, null, stard, endd));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }else{
             try {
                 java.util.Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
                 String end = dateInProducedd + " 23:59:59";

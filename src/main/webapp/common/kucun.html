@@ -129,6 +129,15 @@
                     hidden: 'true',
                     align: 'center'
                 }, {
+                    field: 'code',
+                    title: '序号',
+                    width: 50,
+                    align: 'center',
+                    sortable: true,
+                    sorter: function(a, b) {
+                        return (a > b ? 1 : -1);
+                    }
+                }, {
                     field: 'clientname',
                     title: '客户名称',
                     width: 100,
@@ -203,7 +212,8 @@
                     title: '要求',
                     width: 250,
                     align: 'center'
-                }]]
+                }]],
+                remoteSort: false
 
             });
 
@@ -482,7 +492,8 @@
 </head>
 <body style="margin: 1px">
 <!-- url="/admin/storage/findKuCun" -->
-<table id="dg" class="easyui-datagrid" url="/admin/storage/findKuCun" fitColumns="false" pagination="true" rownumbers="true" toolbar="#tb" fit="true">
+<table id="dg" class="easyui-datagrid" url="/admin/storage/findKuCun" fitColumns="false"
+       pagination="true" rownumbers="true" toolbar="#tb" fit="true" split="true">
 </table>
 
 <div id="tb" style="padding: 15px;">

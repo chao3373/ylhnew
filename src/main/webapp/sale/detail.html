@@ -21,6 +21,7 @@
             $("#sumweight").text("总重量：");
             addSelect();
             $.post("/admin/storage/detail", json, function (result) {
+
                 console.log(result);
                 if (result.success) {
                     $("#dg").datagrid("loadData", result.rows);
@@ -201,14 +202,51 @@
             //加载dg的列
             $("#dg").datagrid({
                 columns: [[
+                    {
+                        field: 'code',
+                        title: '序号',
+                        width: 50,
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
+                    },
                     {field: 'clientname', title: '购货单位', width: 100, align: 'center'},
                     {field: 'peasant', title: '农户名称', width: 100, align: 'center'},
                     {field: 'outnumber', title: '出库单号', width: 150, align: 'center'},
                     {field: 'salenumber', title: '订单号', width: 150, align: 'center'},
                     {field: 'name', title: '产品名称', width: 200, align: 'center'},
-                    {field: 'model', title: '幅宽m', width: 100, align: 'center'},
-                    {field: 'length', title: '长度m', width: 100, align: 'center'},
-                    {field: 'price', title: '厚度mm', width: 100, align: 'center'},
+                    {
+                        field: 'model',
+                        title: '幅宽m',
+                        width: 100,
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
+                    },
+                    {
+                        field: 'length',
+                        title: '长度m',
+                        width: 100,
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
+                    },
+                    {
+                        field: 'price',
+                        title: '厚度mm',
+                        width: 100,
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
+                    },
                     {field: 'num', title: '数量', width: 100, align: 'center'},
                     {field: 'realityweight', title: '重量kg', width: 100, align: 'center'},
                     {field: 'numweight', title: '总重量kg', width: 100, align: 'center'},
@@ -216,8 +254,9 @@
                     // {field: 'zongpingfang', title: '总平方米', width: 100, align: 'center'},
                     {field: 'unitprice', title: '单价', width: 100, align: 'center'},
                     {field: 'totalprice', title: '金额', width: 100, align: 'center'},
-                    {field: 'color', title: '颜色', width: 100, align: 'center'},
-                ]]
+                    {field: 'color', title: '颜色', width: 100, align: 'center'}
+                ]],
+                remoteSort: false
             });
         });
 
@@ -594,7 +633,7 @@
 </div>
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
     <table id="dg" class="easyui-datagrid" style="" rownumbers="true"
-           singleSelect="true" fit="true" toolbar="#tb">
+           singleSelect="true" fit="true" toolbar="#tb" split="true">
     </table>
 
     <div id="tb">

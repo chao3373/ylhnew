@@ -198,6 +198,15 @@
                     hidden: 'true',
                     align: 'center'
                 }, {
+                    field: 'code',
+                    title: '序号',
+                    width: 50,
+                    align: 'center',
+                    sortable: true,
+                    sorter: function(a, b) {
+                        return (a > b ? 1 : -1);
+                    }
+                }, {
                     field: 'clientname',
                     title: '代理商',
                     width: 66,
@@ -317,7 +326,7 @@
                     width: 150,
                     align: 'center'
                 }]],
-
+                remoteSort: false
             });
 
         }
@@ -884,7 +893,8 @@
         </form>
     </fieldset>
 </div>
-<table id="dg" class="easyui-datagrid"url="/admin/storage/selectEdit" pagination="true"  title="修改库存" fit="false" toolbar="#tb" fitColumns="false" rownumbers="true">
+<table id="dg" class="easyui-datagrid"url="/admin/storage/selectEdit" pagination="true"  title="修改库存"
+       fit="false" toolbar="#tb" fitColumns="false" rownumbers="true" split="true">
 </table>
 
 <div id="tb">

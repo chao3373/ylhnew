@@ -86,6 +86,8 @@ public class StorageServiceImpl implements StorageService {
         storage.setGroup(storage.getJiTai().getGroup());
         storage.setGroupName(storage.getJiTai().getGroup().getName());
         storage.setPingfang(storage.getLength() * storage.getModel());
+
+        storage.setCode(saleListProduct.getCode());
         System.out.println(storage);
         System.out.println(storage.getPrice());
         storageRepository.save(storage);
@@ -122,6 +124,8 @@ public class StorageServiceImpl implements StorageService {
         storage.setGroupName(storage.getJiTai().getGroup().getName());
         storage.setPrice(storage.getPrice());
         storage.setPingfang(storage.getLength() * storage.getModel());
+
+        storage.setCode(saleListProduct.getCode());
         System.out.println(storage);
         storageRepository.save(storage);
     }
@@ -512,15 +516,15 @@ public class StorageServiceImpl implements StorageService {
             @Override
             public Predicate toPredicate(Root<Storage> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
-                if (StringUtil.isNotEmpty(storage.getGroupName())) {
+                /*if (StringUtil.isNotEmpty(storage.getGroupName())) {
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
-                }
+                }*/
                 if (StringUtil.isNotEmpty(storage.getJiTaiName())) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTaiName"), storage.getJiTaiName()));
                 }
-                if (StringUtil.isNotEmpty(storage.getGroupName())) {
+                /*if (StringUtil.isNotEmpty(storage.getGroupName())) {
                     predicate.getExpressions().add(cb.equal(root.get("groupName"), storage.getGroupName()));
-                }
+                }*/
                 if (StringUtil.isNotEmpty(storage.getClerkName())) {
                     predicate.getExpressions().add(cb.equal(root.get("clerkName"), storage.getClerkName()));
                 }
@@ -1318,6 +1322,7 @@ public class StorageServiceImpl implements StorageService {
     public Map<String, Object> selecttt(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows) {
         Map<String, Object> map = new HashMap<>();
         String selectSqlStar = "select " +
+                "code,"+
                 "clientname, " +
                 "peasant, " +
                 "sale_number, " +
@@ -1334,6 +1339,27 @@ public class StorageServiceImpl implements StorageService {
                 "ROUND(unit_price * count(id), 2) as total_price, " +
                 "demand " +
                 "from t_storage where state like '%生产完成%'";
+
+       /* String selectSqlStar = "select " +
+                "b.code, " +
+                "a.clientname, " +
+                "a.peasant, " +
+                "a.sale_number, " +
+                "a.name, " +
+                "a.model, " +
+                "a.length, " +
+                "a.price, " +
+                "a.realityweight as weight, " +
+                "a.color, " +
+                "count(a.id) as sum, " +
+                "ROUND(a.realityweight * count(a.id), 2) as sumweight, " +
+                "a.dao, " +
+                "a.unit_price, " +
+                "ROUND(a.unit_price * count(a.id), 2) as total_price, " +
+                "a.demand " +
+                "from t_storage a, t_sale_list_product b " +
+                "where a.state like '%生产完成%' " +
+                "and a.sale_list_product_id = b.id";*/
 
         String selectSqlEnd = "group by " +
                 "sale_list_product_id," +
@@ -1518,16 +1544,18 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public Map<String, Object> detaill(Map<String, Object> map) {
         Map<String, Object> data = new HashMap<>();
+
+
         String selectDataSqlStart = "select clientname, peasant, " +
                 "out_number as outnumber, " +
                 "sale_number as salenumber, " +
-                "name, model, " +
+                "name, model,code, " +
                 "length, price, " +
-                "count(*) as num, " +
+                "count(id) as num, " +
                 "realityweight, " +
-                "ROUND(num * realityweight, 2) as numweight, " +
+                "ROUND(count(id) * realityweight, 2) as numweight, " +
                 "unit_price as unitprice, " +
-                "ROUND(num * unit_price) as totalprice, " +
+                "ROUND(count(id) * unit_price) as totalprice, " +
                 "color " +
                 "from t_storage " +
                 "where state like '%装车%'";
@@ -1562,7 +1590,7 @@ public class StorageServiceImpl implements StorageService {
             sql += " and name = '" + map.get("product") + "'";
         }
         if (StringUtil.isNotEmpty((String) map.get("chukudanhao"))) {
-            sql += " and outNumber = '" + map.get("chukudanhao") + "'";
+            sql += " and out_number = '" + map.get("chukudanhao") + "'";
         }
 
         if (StringUtil.isNotEmpty((String) map.get("date"))) {

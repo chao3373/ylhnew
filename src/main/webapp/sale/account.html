@@ -23,10 +23,7 @@
 
         //开始打印
         var tableString;
-        // strPrintName 打印任务名
-        // printDatagrid 要打印的datagrid
         function CreateFormPage(strPrintName, printDatagrid) {
-            updatecount();
             tableString = "";
             tableString += "<h3 style='font-size: 28px;text-align: center; margin:2px;padding:0px'>" + "<u>" + "出库结算单" + "</u>";
             tableString += "</h3>";
@@ -36,7 +33,7 @@
             tableString += "<span id='dh' style='color: black; margin-left: 200px;'>单号：</span></p>";
 
             tableString += '<div style="text-align: center;" margin:0 auto;>';
-            tableString += '<table cellspacing="0" class="pb" width="800" >';
+            tableString += '<table cellspacing="0" class="pb" width="800" style="margin: auto" >';
             tableString += '<tr>';
             tableString += '<td  style="vertical-align: top; padding: 0px;" >';
             tableString += '<table cellspacing="0" class="pb" style="border:0px">';
@@ -310,7 +307,7 @@
 
             tableString += '\n<tr>';
             //tableString += '\n<td>';
-            tableString += '<table cellspacing="0" class="pb" width="800">';
+            tableString += '<table cellspacing="0" class="pb" width="800" style="margin: auto">';
             tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;送&nbsp;&nbsp;货&nbsp;&nbsp;记&nbsp;&nbsp;录&nbsp;&nbsp;";
             tableString += '</td>';
             tableString += '<td style="text-align: center" width="162">' + '&nbsp;&nbsp;&nbsp;';
@@ -335,7 +332,7 @@
 
             tableString += '\n<tr>';
             //tableString += '\n<td>';
-            tableString += '<table cellspacing="0" class="pb" width="800">';
+            tableString += '<table cellspacing="0" class="pb" width="800" style="margin: auto">';
             tableString += '<td style="text-align: center">' + "&nbsp;&nbsp;负&nbsp;&nbsp;责&nbsp;&nbsp;人&nbsp;&nbsp;";
             tableString += '</td>';
             tableString += '<td style="text-align: center" width="100">' + $("#fuzeren").combobox("getText");
@@ -383,6 +380,7 @@
         }
 
 
+
         $(document).keyup(function (event) {
             if (event.keyCode == 13) {
                 updateEnd();
@@ -392,44 +390,23 @@
 
         //入口函数
         $(function () {
-            //加载单号
-            //$("#dh").load("/admin/storage/findoutnumber");
-
-
             //加载列
             $("#dg").datagrid({
                 columns: [[
                     //{field: 'cb', checkbox: "true", align: "center"},
                     {field: 'name', title: '产品名称', width: '150', align: 'center'},
-                    {field: 'guige', title: '规格', width: '150', align: 'center'},
-                    {field: 'danwei', title: '计量单位', width: '150', align: 'center', formatter:function(val, row) {
-                        return"KG";
-                        }},
                     {field: 'count', title: '发货数', width: '150', align: 'center'},
+                    {field: 'guige', title: '规格', width: '150', align: 'center'},
+                    {field: 'danwei', title: '计量单位', width: '150', align: 'center'},
                     {field: 'money', title: '单价（元）', width: '150', align: 'center'},
                     {field: 'summoney', title: '总金额（元）', width: '150', align: 'center'}
-                    //{field: 'outNumber', title: '出库单号', width: '100', align: 'center'}
                 ]]
             });
-
-            /* //合计
-            $("#dg").datagrid("insertRow", {
-                index: 0,
-                row: {
-                    name: '合计',
-                    guige: '',
-                    danwei: '',
-                    count: 0,
-                    money: '',
-                    summoney: 0
-                }
-            });
-     */
 
             //当输入框金额和重量发生变化时触发 (修改)
 
             $("#money2").change(function () {
-                var n = $("#count2").val() * $("#money2").val();
+                var n = $("#count2").val() * $("#money2").val()*$("#guige2").val();
                 $("#summoney2").val(n.toFixed(2));
             });
         });
@@ -485,12 +462,17 @@
 
             $('#dg').datagrid('appendRow', {
                 name: '合计',
-                guige: '',
+                guige: ' ',
                 danwei: '',
                 count: a,
-                money: '',
+                money: ' ',
                 summoney: b.toFixed(2)
             });
+
+            if(row[row.length-1].name = "合计"){
+                row[row.length-1].danwei = '';
+            }
+            console.log(row)
         }
 
         function add() {
@@ -543,14 +525,7 @@
                 //$("#name2").val(rows[0].name);
                 $("#guige2").val(rows[0].guige);
                 $("#danwei2").val(rows[0].danwei);
-                $.ajax({
-                    type: "POST",
-                    url:"/admin/storage/selectCountByNameAndOutNumber?name=" + rows[0].name + "&outNumber=" + $("#dh").text(),
-                    success: function(result){
-                        $("#count2").val(result);
-                    }
-                });
-                //$("#count2").val(rows[0].count);
+                $("#count2").val(rows[0].count);
                 $("#money2").val(rows[0].money);
                 $("#summoney2").val(rows[0].summoney);
                 $("#dlg").dialog("open");
@@ -576,42 +551,12 @@
             $("#dlg").dialog("close");
         }
 
-        function updatecount() {
-            var row = $("#dg").datagrid("getRows");
-            var index = row.length - 1;
-            $("#updatecount").val(row[index].count);
-        }
-
-        //点击选择出库单
-        function selectOutNumber() {
-            $("#outNumber").combobox("disable");
-            $("#dlg2").dialog("open");
-            $("#outDate").datebox({
-                onSelect: function (date) {
-                    $("#outNumber").combobox({
-                        url: "/admin/storage/selectClientNameByOutDate?outDate=" + $("#outDate").datebox("getValue"),
-                        valueField: 'outNumber',
-                        textField: 'clientname',
-                        panelHeight: 'auto'
-                    });
-                    $("#outNumber").combobox("enable");
-                }
-            });
-        }
-
         //关闭添加出库单面板
         function closeDlg2() {
             $("#dlg2").dialog("close");
         }
 
-        //添加出库单
-        function addOutNumber() {
-            $("#dg").datagrid({
-                url:"/admin/storage/selectOutByOutNumber?outNumber=" + $("#outNumber").combobox("getValue")
-            });
-            $("#dh").text($("#outNumber").combobox("getValue"));
-            closeDlg2();
-        }
+
 
 
     </script>
@@ -623,7 +568,7 @@
         <legend>
             出库单号：<span id="dh"></span>
         </legend>
-        <form id="form" method="post">
+        <form id="form1" method="post">
             <table cellspacing="8px">
                 <tr>
                     <td>日&nbsp;&nbsp;&nbsp;&nbsp;期：<input type="text"
@@ -745,8 +690,6 @@
                iconCls="icon-print" plain="true">打印</a>
             <a href="javascript:saveSelectRows()" class="easyui-linkbutton"
                iconCls="icon-edit" plain="true">设置规格和单价</a>
-            <a href="javascript:selectOutNumber()" class="easyui-linkbutton"
-               iconCls="icon-add" plain="true">选择出库单</a>
         </div>
     </div>
 </div>
@@ -763,33 +706,21 @@
      closed="true" buttons="#dlg-tb">
     <table id="dlg2tb">
         <tr>
-            <!-- 	        <td>产品名称：<input type="text" id="name2" readonly required="true"/></td> -->
-            <td>规格：<input type="text" id="guige2" required="true"/></td>
-            <!-- <td>计量单位：<input type="text" id="danwei2" required="true"/></td> -->
-            <td>发货数：<input type="number" id="count2" readonly required="true"/></td>
+            <td>规&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格：<input type="text" id="guige2" required="true" style="width: 100px"/></td>
+            <td>发货数：<input type="number" id="count2" readonly required="true" style="width: 100px"/></td>
         </tr>
+        <tr></tr>
+        <tr></tr>
         <tr>
-            <td>单价（元）：<input type="number" id="money2" required="true"/></td>
-            <td>总金额（元）：<input type="number" id="summoney2" readonly style="background-color: #ccc;"/></td>
+            <td>单价（元）：<input type="number" id="money2" required="true" style="width: 100px"/></td>
+            <td>计量单位<input type="text" id="danwei2" required="true" style="width: 100px"/></td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td>总价（元）：<input type="number" id="summoney2" readonly style="background-color: #ccc; width: 100px" /></td>
         </tr>
     </table>
-</div>
-
-<div id="dlg2" class="easyui-dialog" title="选择出库单" style="width: 666px;height: 180px; padding: 20px;"
-     closed="true" buttons="#dlg2-tb">
-    <table>
-        <tr>
-            <td>选择出库日期：<input id="outDate" class="easyui-datebox" size="15"/></td>
-        </tr>
-        <tr>
-            <td>选择出库单号：<input id="outNumber" class="easyui-combobox" size="15"/></td>
-        </tr>
-    </table>
-</div>
-<div id="dlg2-tb">
-    <a href="javascript:addOutNumber()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
-    <a href="javascript:closeDlg2()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
-
 </div>
 </body>
 </html>

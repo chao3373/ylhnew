@@ -196,6 +196,9 @@ public class Storage{
     @Column(precision = 6, scale = 2)
     private Double shengyulength;
 
+    private String code; //下单时候的序号
+
+
     @Override
     public String toString() {
         return "Storage{" +
@@ -261,7 +264,16 @@ public class Storage{
                 ", danjianpingfang=" + danjianpingfang +
                 ", zongpingfang=" + zongpingfang +
                 ", shengyulength=" + shengyulength +
+                ", code='" + code + '\'' +
                 '}';
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Integer getId() {

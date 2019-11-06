@@ -69,7 +69,11 @@
                         field: 'code',
                         title: '序号',
                         width: 100,
-                        align: 'center'
+                        align: 'center',
+                        sortable: true,
+                        sorter: function(a, b) {
+                            return (a > b ? 1 : -1);
+                        }
                     }, {
                         field: 'jiTai',
                         title: '机台',

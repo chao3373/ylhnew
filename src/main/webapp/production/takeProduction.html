@@ -200,7 +200,7 @@
                         width: 100,
                         hidden: 'true',
                         align: 'center'
-                    }, {
+                    },{
                         field: 'informNumber',
                         title: 'informNumber',
                         width: 100,
@@ -298,7 +298,7 @@
                         title: '备注',
                         width: 100,
                         align: 'center'
-                    }]],
+                    }]],remoteSort: false,
                 onSelect: function (index, data) {
                     suan()
                 },
@@ -778,7 +778,7 @@
 
 </div>
 <div data-options="region:'center'" style="padding: 10px; border: 1px">
-    <table id="a" class="easyui-datagrid" rownumbers="true" fit="true" toolbar="#top">
+    <table id="a" class="easyui-datagrid" rownumbers="true" fit="true" toolbar="#top" split="true">
         <thead>
         <th id="cb" fiela="cb" checkbox="true" align="center" hidden="true"></th>
         <th id="nameRow" field="name" width="200" align="center">产品名称</th>
