@@ -46,6 +46,7 @@
                             //     rows: []
                             // });
                             $("#a").datagrid('reload');
+                            location.reload();
                         } else {
                             $.messager.alert("系统提示", result.errorInfo);
                         }
@@ -769,6 +770,9 @@
                         style="width: 100px"
                         data-options="panelHeight:'auto',valueField:'pid',textField:'name',url:'/admin/pandianji/pandianjiList'"/>
                 </td>
+                <td>
+                    <a href="javascript:out()" class="easyui-linkbutton" iconCls="icon-add">提货</a>
+                </td>
                 <td><a href="javascript:openRoleAddDialog()"
                        class="easyui-linkbutton" iconCls="icon-add" plain="true">添加出库商品</a>
                 </td>
@@ -811,8 +815,8 @@
             <!--href="javascript:selectPrintRows()" class="easyui-linkbutton"-->
             <!--plain="true">设置打印列</a> -->
 
-        <a href="javascript:out()"
-                                      class="easyui-linkbutton" plain="true">提货</a>
+        <!--<a href="javascript:out()"-->
+                                      <!--class="easyui-linkbutton" plain="true">提货</a>-->
     </div>
 </div>
 <!-- /admin/saleListProduct/findAll -->
