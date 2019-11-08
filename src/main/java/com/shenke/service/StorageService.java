@@ -179,6 +179,8 @@ public interface StorageService {
 
     List<Storage> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows);
 
+    List<Storage> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows);
+
     /***
      * 根据订单商品id查询商品
      * @param id

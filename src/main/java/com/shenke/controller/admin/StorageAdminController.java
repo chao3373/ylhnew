@@ -523,11 +523,15 @@ public class StorageAdminController {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        List<Storage> list = storageService.selectEdit(storage, dateInProducedd, page, rows);
+        List list = storageService.selectEditt(storage, dateInProducedd, page, rows);
+        for (Object object: list){
+            System.out.println(object.toString());
+        }
         Long total = storageService.getCount(storage, dateInProducedd);
         map.put("success", true);
         map.put("rows", list);
         map.put("total", total);
+        System.out.println(map);
         return map;
     }
 

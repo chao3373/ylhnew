@@ -131,7 +131,11 @@
                     field: "model",
                     title: "幅宽（m）",
                     width: "100",
-                    align: "center"
+                    align: "center",
+                    sortable: true,
+                    sorter: function (a, b) {
+                        return (a > b ? 1 : -1);
+                    }
                 }, {
                     field: "price",
                     title: "厚度（mm）",
@@ -252,7 +256,8 @@
                     title: "备注",
                     width: "100",
                     align: "center"
-                }]]
+                }]],
+                remoteSort: false
             });
         }
 

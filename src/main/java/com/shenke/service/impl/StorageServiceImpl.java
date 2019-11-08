@@ -1004,6 +1004,131 @@ public class StorageServiceImpl implements StorageService {
         return storagePage.getContent();
     }
 
+    /***
+     * 修改库存页面查询
+     * @param storage
+     * @param dateInProducedd
+     * @return
+     */
+    @Override
+    public List<Storage> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows) {
+        String sqlStar = "select a.id, " +
+                "code, " +
+                "clientname, " +
+                "peasant, " +
+                "a.name, " +
+                "length, " +
+                "model, " +
+                "a.price, " +
+                "realityweight, " +
+                "sale_number as saleNumber, " +
+                "date_in_produced as dateInProduced, " +
+                "clerk_name as clerkName, " +
+                "group_name as groupName, " +
+                "b.name as locationName, " +
+                "ji_tai_name as jiTaiName, " +
+                "state from t_storage a, t_location b, t_jitai c " +
+                "where a.location_id = b.id and a.ji_tai_id = c.id";
+
+        String pg = "";
+        if (page != null && rows != null) {
+            pg += " LIMIT " + (page - 1) * rows + rows;
+        }
+
+        String sql = "";
+
+        if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
+            sql += " and a.sale_number = '" + storage.getSaleNumber() + "'";
+        }
+        if (StringUtil.isNotEmpty(storage.getName())) {
+            sql += " and a.name = '" + storage.getName() + "'";
+        }
+        if (storage.getLocation() != null) {
+            sql += " and b.id = " + storage.getLocation().getId();
+        }
+        if (storage.getJiTai() != null) {
+            sql += " and c.id = " + storage.getJiTai().getId();
+        }
+        if (StringUtil.isNotEmpty(storage.getPeasant())) {
+            sql += " and a.peasant = '" + storage.getPeasant() + "'";
+        }
+        if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() != null) {
+            if (StringUtil.isNotEmpty(dateInProducedd) && !storage.getGroupName().equals("夜班")) {
+                System.out.println("白班");
+                try {
+                    java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                    java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+                    System.out.println("开始时间：" + star);
+                    System.out.println("结束时间：" + end);
+                    sql += " and a.date_in_produced BETWEEN '" + star + "'" + "and '" + end + "'" ;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("夜班");
+                String starr = dateInProducedd + " 17:00:00";
+                String endd = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
+                try {
+                    Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(starr);
+                    Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endd);
+                    System.out.println("开始时间：" + star);
+                    System.out.println("结束时间：" + end);
+                    sql += " and a.date_in_produced BETWEEN '" + star + "'" + "and '" + end + "'" ;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            sql += " and a.group_id = " + storage.getGroup().getId();
+        }
+
+        if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() == null) {
+            try {
+                java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
+                java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
+                System.out.println("开始时间：" + star);
+                System.out.println("结束时间：" + end);
+                sql += " and a.date_in_produced BETWEEN '" + star + "'" + "and '" + end + "'" ;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (storage.getClerk() != null) {
+            sql += " and a.clerk_id = " + storage.getClerk().getId() ;
+        }
+        if (StringUtil.isNotEmpty(storage.getClientname())) {
+            sql += " and a.clientname = '" + clientService.findById(Integer.parseInt(storage.getClientname())).getName() + "'";
+        }
+        if (storage.getLength() != null) {
+            sql += " and a.length = " + storage.getLength();
+        }
+        if (storage.getModel() != null) {
+            sql += " and a.model = " + storage.getModel();
+        }
+        if (StringUtil.isNotEmpty(storage.getPrice())) {
+            sql += " and a.price = '" + storage.getPrice() + "'";
+        }
+        if (storage.getRealityweight() != null) {
+            sql += " and a.realityweight = " + storage.getRealityweight();
+        }
+        if (StringUtil.isNotEmpty(storage.getState())) {
+            String state = storage.getState();
+            System.out.println(storage.getState());
+            if (storage.getState().startsWith("'")) {
+                state = storage.getState().substring(1, storage.getState().length() - 1);
+                System.out.println(state);
+            }
+            sql += " and a.state like '%" + state + "%'";
+        }
+        if (StringUtil.isNotEmpty(storage.getColor())) {
+            sql += " and a.color = '" + storage.getColor() + "'";
+        }
+
+        System.out.println("查询的语句：");
+        System.out.println(sqlStar + sql + pg);
+        List result = GetResultUtils.getResult(sqlStar + sql + pg, entityManager);
+        return result;
+    }
+
     @Override
     public List<Storage> findBySaleListProductId(int id) {
         return storageRepository.findBySaleListProductId(id);
@@ -1322,7 +1447,7 @@ public class StorageServiceImpl implements StorageService {
     public Map<String, Object> selecttt(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows) {
         Map<String, Object> map = new HashMap<>();
         String selectSqlStar = "select " +
-                "code,"+
+                "code," +
                 "clientname, " +
                 "peasant, " +
                 "sale_number, " +

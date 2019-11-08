@@ -118,6 +118,9 @@
 
         var timer;
 
+        var selectRowIndex = undefined;//保存被选中的行的索引
+        var selectRowIndexColor = {};//用来保存行的背景色(因为表格中可能有多个背景色)
+
         //加载数据列
         function loadColum() {
             $("#dg")
@@ -274,7 +277,26 @@
                             align: 'center'
                         }]],
                         onSelect: function (rowIndex, rowData) {
-                            console.log(rowData);
+                            if (selectRowIndex != undefined) {
+                                var color = selectRowIndexColor[selectRowIndex];
+                                if (color) {
+                                    //如果设置了自定义背景色,才需要恢复原来的自定义背景色
+                                    $("#datagrid-row-r4-2-" + selectRowIndex).css("background-color", color).css("color", "black");//取消选中恢复颜色
+                                    $("#datagrid-row-r4-2-" + selectRowIndex).css("background-color", color).css("color", "black");//取消选择恢复颜色
+                                }
+                            }
+                            selectRowIndex = rowIndex;
+                            //获取被选中行的背景色(等下取消选择的时候需要还原为这个背景色,所以这里先记录下来)
+                            var color = $("#datagrid-row-r4-2-" + rowIndex).css("background-color");
+                            console.log("#datagrid-row-r4-2-"+rowIndex);
+                            console.log(color);
+                            if (color != 'rgb(255, 0, 0)') {
+                                // "#FFE48D"就是'rgb(255, 228,141)'颜色, 即datagrid默认选中行的背景色
+                                //如果设置了自定义背景色,才需要改变(如果没有设置自定义背景色,datagrid会使用默认的选中行的背景色)
+                                selectRowIndexColor[selectRowIndex] = color;
+                                $("#datagrid-row-r4-2-" + rowIndex).css("background-color", "#ff0000").css("color", "black");//选中改变颜色
+                                $("#datagrid-row-r4-2-" + rowIndex).css("background-color", "#ff0000").css("color", "black");//选中改变颜色
+                            }
                             $("#yaoqiu").show();
                             $("#yaoqiu").text(rowData.demand);
                             $("#dabao").val(rowData.daBaoShu);
@@ -502,29 +524,29 @@
                     function (result) {
                         if (result.success) {
                             for (var i = 0; i < result.rows.length; i++) {
-                                if( result.rows[i].level == 0){
+                                if (result.rows[i].level == 0) {
                                     $("#dl").append(
-                                            "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;color:green;border:1px solid #ff0000;'>"
-                                            + result.rows[i].informNumber
-                                            + "</span>");
+                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;color:green;border:1px solid #ff0000;'>"
+                                        + result.rows[i].informNumber
+                                        + "</span>");
                                 }
-                                if( result.rows[i].level == 1){
+                                if (result.rows[i].level == 1) {
                                     $("#dl").append(
-                                            "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:yellow;color:blue;border:1px solid #ff0000;'>"
-                                            + result.rows[i].informNumber
-                                            + "</span>");
+                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:yellow;color:blue;border:1px solid #ff0000;'>"
+                                        + result.rows[i].informNumber
+                                        + "</span>");
                                 }
-                                if( result.rows[i].level == 2){
+                                if (result.rows[i].level == 2) {
                                     $("#dl").append(
-                                            "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:orange;color:blue;border:1px solid #ff0000;'>"
-                                            + result.rows[i].informNumber
-                                            + "</span>");
+                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:orange;color:blue;border:1px solid #ff0000;'>"
+                                        + result.rows[i].informNumber
+                                        + "</span>");
                                 }
-                                if( result.rows[i].level == 3){
+                                if (result.rows[i].level == 3) {
                                     $("#dl").append(
-                                            "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:purple;color:white;border:1px solid #ff0000;'>"
-                                            + result.rows[i].informNumber
-                                            + "</span>");
+                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:purple;color:white;border:1px solid #ff0000;'>"
+                                        + result.rows[i].informNumber
+                                        + "</span>");
                                 }
                             }
                             dlClick();
@@ -1194,7 +1216,7 @@
         $(document).ready(function () {
 
 
-            setInterval("reloadInformNumber()",60*1000*5);
+            setInterval("reloadInformNumber()", 60 * 1000 * 5);
 
             $("#printnum").val(1);
             $("#dd3").dialog("close");
