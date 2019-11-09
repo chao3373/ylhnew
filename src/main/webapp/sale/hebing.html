@@ -252,10 +252,17 @@
                                                 queryParams: {
                                                     saleListId: row.id
                                                 },
+                                                remoteSort: false,
                                                 columns: [[
                                                     {
                                                         field: 'cb',
                                                         checkbox: "true",
+                                                        align: "center"
+                                                    },
+                                                    {
+                                                        field: 'informNumber',
+                                                        title: "通知单号",
+                                                        width: "100",
                                                         align: "center"
                                                     },
                                                     {
@@ -280,20 +287,32 @@
                                                         field: "model",
                                                         title: "幅宽（m）",
                                                         width: "55",
-                                                        align: "center"
+                                                        align: "center",
+                                                        sortable: true,
+                                                        sorter: function (a, b) {
+                                                            return (a > b ? 1 : -1);
+                                                        }
                                                     },
                                                     {
                                                         field: "price",
                                                         title: "厚度（mm）",
                                                         width: "55",
-                                                        align: "center"
+                                                        align: "center",
+                                                        sortable: true,
+                                                        sorter: function (a, b) {
+                                                            return (a > b ? 1 : -1);
+                                                        }
                                                     },
                                                     {
                                                         field: "length",
                                                         title: "长度（m）",
                                                         width: "55",
-                                                        align: "center"
-                                                    },{
+                                                        align: "center",
+                                                        sortable: true,
+                                                        sorter: function (a, b) {
+                                                            return (a > b ? 1 : -1);
+                                                        }
+                                                    }, {
                                                         field: "hebingLength",
                                                         title: "合并长度",
                                                         width: "100",
@@ -315,7 +334,11 @@
                                                         field: "oneweight",
                                                         title: "单件重量（kg）",
                                                         width: "55",
-                                                        align: "center"
+                                                        align: "center",
+                                                        sortable: true,
+                                                        sorter: function (a, b) {
+                                                            return (a > b ? 1 : -1);
+                                                        }
                                                     },
                                                     {
                                                         field: "num",
@@ -467,7 +490,7 @@
                                                     //         }
                                                     //     }
                                                     // }
-                                                    ]]
+                                                ]]
                                             });
                                 }
                             });
@@ -958,7 +981,7 @@
                         success: function (result) {
                             if (result.success) {
                                 alert("合并成功！");
-                                $("#dg2").datagrid('loadData',[]);
+                                $("#dg2").datagrid('loadData', []);
                                 $("#dg").datagrid("selectRow", index);
                                 // $("#dg2").datagrid('loadData',[]);
                                 // $("#dg").datagrid('reload');
@@ -1014,13 +1037,153 @@
                 success: function (result) {
                     if (result.success) {
                         alert("合并成功");
-                        $("#dg2").datagrid('loadData',[]);
+                        $("#dg2").datagrid('loadData', []);
                         $("#dg").datagrid("selectRow", index);
                         // $("#dg").datagrid('reload');
                     }
                 }
             })
 
+        }
+
+        //根据通知单号查询
+        function danHaoSelect() {
+            if (!$("#danhao").val()) {
+                alert("请输入通知单号")
+                return;
+            }
+            var danhao = $("#danhao").val();
+            $.ajax({
+                url: "/admin/saleListProduct/findByDanhao",
+                data: {danhao: danhao},
+                success: function (result) {
+                    if (result.success) {
+                        $("#dg2").datagrid(
+                            {
+                                columns: [[
+                                    {
+                                        field: 'cb',
+                                        checkbox: "true",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: 'informNumber',
+                                        title: "通知单号",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: 'name',
+                                        title: "产品名称",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "peasant",
+                                        title: "农户名称",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "clientname",
+                                        title: "客户名称",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "model",
+                                        title: "幅宽（m）",
+                                        width: "55",
+                                        align: "center",
+                                        sortable: true,
+                                        sorter: function (a, b) {
+                                            return (a > b ? 1 : -1);
+                                        }
+                                    },
+                                    {
+                                        field: "price",
+                                        title: "厚度（mm）",
+                                        width: "55",
+                                        align: "center",
+                                        sortable: true,
+                                        sorter: function (a, b) {
+                                            return (a > b ? 1 : -1);
+                                        }
+                                    },
+                                    {
+                                        field: "length",
+                                        title: "长度（m）",
+                                        width: "55",
+                                        align: "center",
+                                        sortable: true,
+                                        sorter: function (a, b) {
+                                            return (a > b ? 1 : -1);
+                                        }
+                                    }, {
+                                        field: "hebingLength",
+                                        title: "合并长度",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "color",
+                                        title: "颜色",
+                                        width: "50",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "oneweight",
+                                        title: "单件重量（kg）",
+                                        width: "55",
+                                        align: "center",
+                                        sortable: true,
+                                        sorter: function (a, b) {
+                                            return (a > b ? 1 : -1);
+                                        }
+                                    },
+                                    {
+                                        field: "num",
+                                        title: "订货数量",
+                                        width: "55",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "accomplishNumber",
+                                        title: "完成数",
+                                        width: "55",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "sumwight",
+                                        title: "总重量（kg）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "heBingId",
+                                        title: "合并id",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "state",
+                                        title: "状态",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "demand",
+                                        title: "要求",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                ]],
+                                remoteSort: false
+                            });
+                        $("#dg2").datagrid("loadData", result.rows);
+                    }
+                }
+            })
         }
 
     </script>
@@ -1087,6 +1250,9 @@
                                          class="easyui-linkbutton" iconCls="icon-ok" plain="true">指定件数合并</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:hebingOne()"
                                          class="easyui-linkbutton" iconCls="icon-ok" plain="true">合并为一件</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通知单号：<input type="text" id="danhao" style="width: 100px;">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:danHaoSelect()"
+                                         class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>
     </div>
 </div>
 

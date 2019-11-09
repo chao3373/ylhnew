@@ -289,4 +289,6 @@ public interface SaleListProductRepository
 	@Query(value = "update t_sale_list_product set color = ?2 where id in ?1", nativeQuery = true)
 	void updatColor(Integer[] ids, String color);
 
+	@Query(value = "select * from t_sale_list_product where inform_number = ?1", nativeQuery = true)
+    List<SaleListProduct> findByDanhao(Long danhao);
 }

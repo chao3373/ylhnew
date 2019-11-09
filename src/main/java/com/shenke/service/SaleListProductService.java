@@ -217,4 +217,6 @@ public interface SaleListProductService {
 	void updatColor(Integer[] ids, String color);
 
     List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId);
+
+	List<SaleListProduct> findByDanhao(Long danhao);
 }

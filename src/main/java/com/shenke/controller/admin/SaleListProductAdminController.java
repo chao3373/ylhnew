@@ -890,4 +890,12 @@ public class SaleListProductAdminController {
         return map;
     }
 
+    @RequestMapping("/findByDanhao")
+    public Map<String, Object> findByDanhao(Long danhao){
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        map.put("rows", saleListProductService.findByDanhao(danhao));
+        return map;
+    }
+
 }

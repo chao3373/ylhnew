@@ -547,6 +547,11 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     }
 
     @Override
+    public List<SaleListProduct> findByDanhao(Long danhao) {
+        return saleListProductRepository.findByDanhao(danhao);
+    }
+
+    @Override
     public List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct) {
         return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
             @Override

@@ -1722,7 +1722,7 @@ public class StorageServiceImpl implements StorageService {
             String date = (String) map.get("date");
             String st = date + " 00:00:00";
             String ed = date + " 23:59:59";
-            sql += " and delivery_date BETWEEN '" + st + "' and '" + ed + "'";
+            sql += " and delivery_time BETWEEN '" + st + "' and '" + ed + "'";
         }
 
         //获取所有结果
