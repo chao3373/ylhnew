@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -90,409 +90,416 @@
         function formatUser(val, row) {
             return val.trueName + "&nbsp;(" + val.userName + ")&nbsp;";
         }
+
         $(document).ready(
-                function () {
-                    $('#dg2').datagrid({
-                        rowStyler:function(index,row){
-                            if (row.level == 1) {
-                                return 'background-color:yellow;color:blue;font-weight:bold;';
+            function () {
+                $('#dg2').datagrid({
+                    rowStyler: function (index, row) {
+                        if (row.level == 1) {
+                            return 'background-color:yellow;color:blue;font-weight:bold;';
+                        }
+                        if (row.level == 2) {
+                            return 'background-color:orange;color:blue;font-weight:bold;';
+                        }
+                        if (row.level == 3) {
+                            return 'background-color:purple;color:#ffffff;font-weight:bold;';
+                        }
+                    }
+                });
+
+
+                $("#dg").datagrid(
+                    {
+                        onDblClickRow: function (index, row) {
+                            $("#dialog").dialog("open").dialog(
+                                "setTitle", "修改信息");
+                            $("#saleNumber").val(row.saleNumber);
+                            $("#saleDate").datebox("setValue", strDate(row.saleDate));
+                            if (row.client) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/admin/client/findByName?name=" + row.client.name,
+                                    success: function (result) {
+                                        $("#client").combobox("setValue", result.id);
+                                    }
+                                });
                             }
-                            if (row.level == 2) {
-                                return 'background-color:orange;color:blue;font-weight:bold;';
+                            if (row.clerk) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/admin/clerk/findByName?clerk=" + row.clerk.name,
+                                    success: function (result) {
+                                        $("#clerk").combobox("setValue", result.id);
+                                    }
+                                });
                             }
-                            if (row.level == 3) {
-                                return 'background-color:purple;color:#ffffff;font-weight:bold;';
-                            }
+                            ;
+                            $("#lankman").val(row.lankman);
+                            $("#address").val(row.address);
+                            $("#tel").val(row.tel);
+                            $("#deliveryDate").datebox("setValue", strDate(row.deliveryDate));//发货时间
+                            $("remark").val(row.remark);
+                            url = "/admin/saleList/saveTwo?id="
+                                + row.id;
                         }
                     });
 
+                $("#dlg").dialog("close");
+                $("#s_bSaleDate").datebox("setValue",
+                    genLastMonthDayStr()); // 设置上个月日期
+                $("#s_eSaleDate").datebox("setValue", genTodayStr()); // 设置当前日期
 
-                    $("#dg").datagrid(
+                $("#dg")
+                    .datagrid(
                         {
-                            onDblClickRow: function (index, row) {
-                                $("#dialog").dialog("open").dialog(
-                                    "setTitle", "修改信息");
-                                $("#saleNumber").val(row.saleNumber);
-                                $("#saleDate").datebox("setValue", strDate(row.saleDate));
-                                if (row.client) {
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "/admin/client/findByName?name=" + row.client.name,
-                                        success: function (result) {
-                                            $("#client").combobox("setValue", result.id);
+                            url: "/admin/saleList/list",
+                            columns: [[
+                                {
+                                    field: "id",
+                                    width: "20",
+                                    align: "center",
+                                    title: "销售单ID",
+                                    formatter: function (
+                                        val, row) {
+                                        saleListId = val;
+                                        return val;
+                                    },
+                                },
+                                {
+                                    field: "saleNumber",
+                                    width: "150",
+                                    align: "center",
+                                    title: "销售单号"
+                                },
+                                {
+                                    field: "saleDate",
+                                    width: "100",
+                                    align: "center",
+                                    formatter: function (val, row) {
+                                        if (row.saleNumber) {
+                                            var data = row.saleNumber;
+                                            return data.substring(2, 6) + "-" + data.substring(6, 8) + "-" + data.substring(8, 10);
                                         }
-                                    });
-                                }
-                                if (row.clerk) {
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "/admin/clerk/findByName?clerk=" + row.clerk.name,
-                                        success: function (result) {
-                                            $("#clerk").combobox("setValue", result.id);
+                                        return "";
+                                    },
+                                    title: "销售日期"
+                                },
+                                {
+                                    field: "client",
+                                    width: "100",
+                                    align: "center",
+                                    formatter: function (
+                                        val, row) {
+                                        if (row.client) {
+                                            return val.name;
                                         }
-                                    });
+                                        return "";
+                                    },
+                                    title: "客户"
+                                },
+                                {
+                                    field: "clerk",
+                                    width: "100",
+                                    align: "center",
+                                    formatter: function (
+                                        val, row) {
+                                        if (row.clerk) {
+                                            return val.name;
+                                        }
+                                        return "";
+                                    },
+                                    title: "业务员"
+                                },
+                                {
+                                    field: "lankman",
+                                    width: "100",
+                                    align: "center",
+                                    title: "联系人"
+                                },
+                                {
+                                    field: "tel",
+                                    width: "100",
+                                    align: "center",
+                                    title: "客户电话"
+                                },
+                                {
+                                    field: "address",
+                                    width: "200",
+                                    align: "center",
+                                    title: "客户地址"
+                                },
+                                {
+                                    field: "deliveryDate",
+                                    width: "100",
+                                    align: "center",
+                                    formatter: function (
+                                        val, row) {
+                                        if (val) {
+                                            var dateType = "";
+                                            var date = new Date();
+                                            date
+                                                .setTime(val);
+                                            dateType = date
+                                                .format("yyyy-MM-dd")
+                                            return dateType;
+                                        }
+                                        return;
+                                    },
+                                    title: "发货时间"
+                                }, {
+                                    field: "remark",
+                                    width: "100",
+                                    align: "center",
+                                    title: "备注"
                                 }
-                                ;
-                                $("#lankman").val(row.lankman);
-                                $("#address").val(row.address);
-                                $("#tel").val(row.tel);
-                                $("#deliveryDate").datebox("setValue", strDate(row.deliveryDate));//发货时间
-                                $("remark").val(row.remark);
-                                url = "/admin/saleList/saveTwo?id="
-                                    + row.id;
+
+                            ]],
+                            onClickRow: function (index, row) {
+                                $("#cc1").combobox("reset");
+                                $("#dg2")
+                                    .datagrid(
+                                        {
+                                            url: '/admin/saleList/listProduct',
+                                            queryParams: {
+                                                saleListId: row.id
+                                            },
+                                            columns: [[
+                                                {
+                                                    field: 'cb',
+                                                    checkbox: "true",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: 'state',
+                                                    title: "订单状态",
+                                                    width: "150",
+                                                    align: "center",
+                                                    formatter: function (
+                                                        value,
+                                                        row,
+                                                        index) {
+                                                        if (row.state == "下单") {
+                                                            $(
+                                                                "#state")
+                                                                .css(
+                                                                    "color",
+                                                                    "#FF0000");
+                                                            return '<span style="color:#0000FF">'
+                                                                + '未审核'
+                                                                + '</span>';
+                                                        } else if (row.state
+                                                            .indexOf("审核失败") == 0) {
+                                                            return '<span style="color:#FF0000">'
+                                                                + row.state
+                                                                + '</span>';
+                                                        } else if (row.state == "审核通过") {
+                                                            return '<span style="color:#0B610B">'
+                                                                + row.state
+                                                                + '</span>';
+                                                        } else {
+                                                            return '<span style="color:#8A0829">'
+                                                                + row.state
+                                                                + '</span>';
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    field: 'informNumber',
+                                                    title: "通知单号",
+                                                    width: "200",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: 'name',
+                                                    title: "产品名称",
+                                                    width: "200",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "model",
+                                                    title: "幅宽（m）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "price",
+                                                    title: "厚度（mm）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "length",
+                                                    title: "长度（m）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "meter",
+                                                    title: "实际厚度",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "color",
+                                                    title: "颜色",
+                                                    width: "50",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "oneweight",
+                                                    title: "单件重量（kg）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "num",
+                                                    title: "订货数量",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "sumwight",
+                                                    title: "总重量（kg）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "realitymodel",
+                                                    title: "实际幅宽（m）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "demand",
+                                                    title: "要求",
+                                                    width: "200",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "wightset",
+                                                    title: "重量设置",
+                                                    width: "200",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "dao",
+                                                    title: "剖刀",
+                                                    width: "150",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "brand",
+                                                    title: "商标",
+                                                    width: "150",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "pack",
+                                                    title: "包装",
+                                                    width: "200",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "letter",
+                                                    title: "印字",
+                                                    width: "200",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "peasant",
+                                                    title: "农户名称",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "clientname",
+                                                    title: "客户名称",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "realityweight",
+                                                    title: "实际重量（kg）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "realityprice",
+                                                    title: "实际厚度（mm）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "theoryweight",
+                                                    title: "理论重量（kg）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "square",
+                                                    title: "单件平米",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "numsquare",
+                                                    title: "总平米",
+                                                    width: "50",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "weightway",
+                                                    title: "称重方式",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "label",
+                                                    title: "标签名称",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "weight",
+                                                    title: "重量（kg）",
+                                                    width: "100",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "patu",
+                                                    title: "纸管",
+                                                    width: "50",
+                                                    align: "center"
+                                                },
+                                                {
+                                                    field: "remark",
+                                                    title: "备注",
+                                                    width: "100",
+                                                    align: "center"
+                                                }, {
+                                                    field: "saleList",
+                                                    title: "ID",
+                                                    width: "100",
+                                                    align: "center",
+                                                    formatter: function (val, row) {
+                                                        return val.id;
+                                                    }
+                                                }, {
+                                                    field: "jiTai",
+                                                    title: "机台",
+                                                    width: "100",
+                                                    align: "center",
+                                                    formatter: function (val, row) {
+                                                        if (val) {
+                                                            return val.name;
+                                                        }
+                                                    }
+                                                }]]
+                                        });
                             }
                         });
 
-                    $("#dlg").dialog("close");
-                    $("#s_bSaleDate").datebox("setValue",
-                        genLastMonthDayStr()); // 设置上个月日期
-                    $("#s_eSaleDate").datebox("setValue", genTodayStr()); // 设置当前日期
-
-                    $("#dg")
-                        .datagrid(
-                            {
-                                url: "/admin/saleList/list",
-                                columns: [[
-                                    {
-                                        field: "id",
-                                        width: "20",
-                                        align: "center",
-                                        title: "销售单ID",
-                                        formatter: function (
-                                            val, row) {
-                                            saleListId = val;
-                                            return val;
-                                        },
-                                    },
-                                    {
-                                        field: "saleNumber",
-                                        width: "150",
-                                        align: "center",
-                                        title: "销售单号"
-                                    },
-                                    {
-                                        field: "saleDate",
-                                        width: "100",
-                                        align: "center",
-                                        formatter: function (val, row) {
-                                            if (row.saleNumber) {
-                                                var data = row.saleNumber;
-                                                return data.substring(2, 6) + "-" + data.substring(6, 8) + "-" + data.substring(8, 10);
-                                            }
-                                            return "";
-                                        },
-                                        title: "销售日期"
-                                    },
-                                    {
-                                        field: "client",
-                                        width: "100",
-                                        align: "center",
-                                        formatter: function (
-                                            val, row) {
-                                            if (row.client) {
-                                                return val.name;
-                                            }
-                                            return "";
-                                        },
-                                        title: "客户"
-                                    },
-                                    {
-                                        field: "clerk",
-                                        width: "100",
-                                        align: "center",
-                                        formatter: function (
-                                            val, row) {
-                                            if (row.clerk) {
-                                                return val.name;
-                                            }
-                                            return "";
-                                        },
-                                        title: "业务员"
-                                    },
-                                    {
-                                        field: "lankman",
-                                        width: "100",
-                                        align: "center",
-                                        title: "联系人"
-                                    },
-                                    {
-                                        field: "tel",
-                                        width: "100",
-                                        align: "center",
-                                        title: "客户电话"
-                                    },
-                                    {
-                                        field: "address",
-                                        width: "200",
-                                        align: "center",
-                                        title: "客户地址"
-                                    },
-                                    {
-                                        field: "deliveryDate",
-                                        width: "100",
-                                        align: "center",
-                                        formatter: function (
-                                            val, row) {
-                                            if (val) {
-                                                var dateType = "";
-                                                var date = new Date();
-                                                date
-                                                    .setTime(val);
-                                                dateType = date
-                                                    .format("yyyy-MM-dd")
-                                                return dateType;
-                                            }
-                                            return;
-                                        },
-                                        title: "发货时间"
-                                    }, {
-                                        field: "remark",
-                                        width: "100",
-                                        align: "center",
-                                        title: "备注"
-                                    }
-
-                                ]],
-                                onClickRow: function (index, row) {
-                                    $("#cc1").combobox("reset");
-                                    $("#dg2")
-                                        .datagrid(
-                                            {
-                                                url: '/admin/saleList/listProduct',
-                                                queryParams: {
-                                                    saleListId: row.id
-                                                },
-                                                columns: [[
-                                                    {
-                                                        field: 'cb',
-                                                        checkbox: "true",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: 'state',
-                                                        title: "订单状态",
-                                                        width: "150",
-                                                        align: "center",
-                                                        formatter: function (
-                                                            value,
-                                                            row,
-                                                            index) {
-                                                            if (row.state == "下单") {
-                                                                $(
-                                                                    "#state")
-                                                                    .css(
-                                                                        "color",
-                                                                        "#FF0000");
-                                                                return '<span style="color:#0000FF">'
-                                                                    + '未审核'
-                                                                    + '</span>';
-                                                            } else if (row.state
-                                                                .indexOf("审核失败") == 0) {
-                                                                return '<span style="color:#FF0000">'
-                                                                    + row.state
-                                                                    + '</span>';
-                                                            } else if (row.state == "审核通过") {
-                                                                return '<span style="color:#0B610B">'
-                                                                    + row.state
-                                                                    + '</span>';
-                                                            } else {
-                                                                return '<span style="color:#8A0829">'
-                                                                    + row.state
-                                                                    + '</span>';
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        field: 'name',
-                                                        title: "产品名称",
-                                                        width: "200",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "model",
-                                                        title: "幅宽（m）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "price",
-                                                        title: "厚度（mm）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "length",
-                                                        title: "长度（m）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "meter",
-                                                        title: "实际厚度",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "color",
-                                                        title: "颜色",
-                                                        width: "50",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "oneweight",
-                                                        title: "单件重量（kg）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "num",
-                                                        title: "订货数量",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "sumwight",
-                                                        title: "总重量（kg）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "realitymodel",
-                                                        title: "实际幅宽（m）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "demand",
-                                                        title: "要求",
-                                                        width: "200",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "wightset",
-                                                        title: "重量设置",
-                                                        width: "200",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "dao",
-                                                        title: "剖刀",
-                                                        width: "150",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "brand",
-                                                        title: "商标",
-                                                        width: "150",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "pack",
-                                                        title: "包装",
-                                                        width: "200",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "letter",
-                                                        title: "印字",
-                                                        width: "200",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "peasant",
-                                                        title: "农户名称",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "clientname",
-                                                        title: "客户名称",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "realityweight",
-                                                        title: "实际重量（kg）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "realityprice",
-                                                        title: "实际厚度（mm）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "theoryweight",
-                                                        title: "理论重量（kg）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "square",
-                                                        title: "单件平米",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "numsquare",
-                                                        title: "总平米",
-                                                        width: "50",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "weightway",
-                                                        title: "称重方式",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "label",
-                                                        title: "标签名称",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "weight",
-                                                        title: "重量（kg）",
-                                                        width: "100",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "patu",
-                                                        title: "纸管",
-                                                        width: "50",
-                                                        align: "center"
-                                                    },
-                                                    {
-                                                        field: "remark",
-                                                        title: "备注",
-                                                        width: "100",
-                                                        align: "center"
-                                                    }, {
-                                                        field: "saleList",
-                                                        title: "ID",
-                                                        width: "100",
-                                                        align: "center",
-                                                        formatter: function (val, row) {
-                                                            return val.id;
-                                                        }
-                                                    }, {
-                                                        field: "jiTai",
-                                                        title: "机台",
-                                                        width: "100",
-                                                        align: "center",
-                                                        formatter: function (val, row) {
-                                                            if (val) {
-                                                                return val.name;
-                                                            }
-                                                        }
-                                                    }]]
-                                            });
-                                }
-                            });
-
-                });
+            });
 
         function formatPrice(val, row) {
             return "¥" + val;
@@ -580,7 +587,6 @@
         }
 
 
-
         function baocun() {
             $.post(url, {
                 saleNumber: $("#saleNumber").val(),
@@ -605,8 +611,8 @@
         }
 
 
-
         var a;
+
         //修改saleListProduct
         function editSaleListProduct() {
             var row = $("#dg2").datagrid("getSelections");
@@ -615,11 +621,11 @@
                 return;
             }
             var rows = row[0];
-           // console.log(rows);
+            // console.log(rows);
             a = rows.accomplishNumber == null ? 0 : rows.accomplishNumber;
             if (rows.state == "提货" || rows.state == "装车") {
                 $.messager.alert("系统提示", "<span style='color: red;'>产品已生产完成！不可修改！！</span>");
-            }else {
+            } else {
                 if (rows.state == "审核通过" || rows.state == "下单") {
                     rows.jiTai = null;
                     rows.informNumber = null;
@@ -670,10 +676,10 @@
             });
         }
 
-        function dingdanjiaji(){
+        function dingdanjiaji() {
             var row = $("#dg").datagrid("getSelections");
-            if($("#up").combobox("getValue")==""){
-                $.messager.alert("系统提示", "请选择加急级别！");
+            if ($("#up").combobox("getValue") == "" || $("#up").combobox("getValue") > 3 || $("#up").combobox("getValue") < 0) {
+                $.messager.alert("系统提示", "<span style='color: red'>加急级别有误请重新输入或选择！</span>");
                 return;
             }
             $.post("/admin/saleListProduct/dingdanjiaji", {
@@ -688,19 +694,18 @@
             });
         }
 
-        function chanpinjiaji(){
+        function chanpinjiaji() {
             var row = $("#dg2").datagrid("getSelections");
             console.log(row)
-            if($("#down").combobox("getValue")==""){
-                $.messager.alert("系统提示", "请选择加急级别！");
+            if ($("#down").combobox("getValue") == "" || $("#down").combobox("getValue") > 3 || $("#down").combobox("getValue") < 0) {
+                $.messager.alert("系统提示", "<span style='color: red'>加急级别有误请重新输入或选择</span>");
                 return;
             }
-            for(var i=0;i<row.length;i++){
-                if(row[i].state=="生产完成"){
+            for (var i = 0; i < row.length; i++) {
+                if (row[i].state == "生产完成") {
                     $.messager.alert("系统提示", "产品已生产完成！");
                     return;
-                }
-                else {
+                } else {
                     var ids = [];
                     for (var i = 0; i < $("#dg2").datagrid("getSelections").length; i++) {
                         ids.push($("#dg2").datagrid("getSelections")[i].id);
@@ -720,8 +725,6 @@
 
 
         }
-
-
 
 
     </script>
@@ -769,12 +772,12 @@
             &nbsp;&nbsp;&nbsp;日期：&nbsp; <input id="s_bSaleDate"
                                                class="easyui-datebox" editable=false style="width: 100px"/>
             &nbsp;&nbsp;&nbsp;&nbsp; <input id="s_eSaleDate"
-                                             class="easyui-datebox" editable=false style="width: 100px"/>
+                                            class="easyui-datebox" editable=false style="width: 100px"/>
             &nbsp;&nbsp;<a href="javascript:searchSale()"
                            class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
 
 
-            &nbsp;&nbsp;<input class="easyui-combobox" id = "up" style="width: 100px" data-options="
+            &nbsp;&nbsp;<input class="easyui-combobox" id="up" style="width: 100px" data-options="
                             panelHeight:'auto',
                             valueField: 'label',
                             textField: 'value',
@@ -790,9 +793,9 @@
                             },{
                                 label: '0',
                                 value: '--取消加急--'
-                            }]" />
+                            }]"/>
             &nbsp;&nbsp;<a href="javascript:dingdanjiaji()"
-               class="easyui-linkbutton" iconCls="icon-ok" plain="true">订单加急</a>
+                           class="easyui-linkbutton" iconCls="icon-ok" plain="true">订单加急</a>
         </fieldset>
     </div>
 </div>
@@ -805,7 +808,7 @@
 
 <div id="tb2">
     <div>
-        &nbsp;&nbsp;<input class="easyui-combobox" id = "down" style="width: 100px" data-options="
+        &nbsp;&nbsp;<input class="easyui-combobox" id="down" style="width: 100px" data-options="
                             panelHeight:'auto',
                             valueField: 'label',
                             textField: 'value',
@@ -821,11 +824,267 @@
                             },{
                                 label: '0',
                                 value: '--取消加急--'
-                            }]" />
+                            }]"/>
         &nbsp;&nbsp;<a href="javascript:chanpinjiaji()"
                        class="easyui-linkbutton" iconCls="icon-ok" plain="true">产品加急</a>
+        通知单号：<input type="text" id="danhao" style="width: 100px;">
+        &nbsp;&nbsp;<a href="javascript:findByDanhao()"
+                       class="easyui-linkbutton" iconCls="icon-ok" plain="true">通知单号查询</a>
     </div>
 </div>
-
 </body>
+<script type="text/javascript">
+    //根据通知单号查询
+    function findByDanhao() {
+        if (!$("#danhao").val()) {
+            alert("请输入通知单号！")
+            return;
+        }
+        $.ajax({
+            url: "/admin/saleListProduct/findByDanhao",
+            data: {danhao: $("#danhao").val()},
+            success: function (result) {
+                if (result.success) {
+                    $("#dg2")
+                        .datagrid(
+                            {
+                                columns: [[
+                                    {
+                                        field: 'cb',
+                                        checkbox: "true",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: 'state',
+                                        title: "订单状态",
+                                        width: "150",
+                                        align: "center",
+                                        formatter: function (
+                                            value,
+                                            row,
+                                            index) {
+                                            if (row.state == "下单") {
+                                                $(
+                                                    "#state")
+                                                    .css(
+                                                        "color",
+                                                        "#FF0000");
+                                                return '<span style="color:#0000FF">'
+                                                    + '未审核'
+                                                    + '</span>';
+                                            } else if (row.state
+                                                .indexOf("审核失败") == 0) {
+                                                return '<span style="color:#FF0000">'
+                                                    + row.state
+                                                    + '</span>';
+                                            } else if (row.state == "审核通过") {
+                                                return '<span style="color:#0B610B">'
+                                                    + row.state
+                                                    + '</span>';
+                                            } else {
+                                                return '<span style="color:#8A0829">'
+                                                    + row.state
+                                                    + '</span>';
+                                            }
+                                        }
+                                    },
+                                    {
+                                        field: 'informNumber',
+                                        title: "通知单号",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: 'name',
+                                        title: "产品名称",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "model",
+                                        title: "幅宽（m）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "price",
+                                        title: "厚度（mm）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "length",
+                                        title: "长度（m）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "meter",
+                                        title: "实际厚度",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "color",
+                                        title: "颜色",
+                                        width: "50",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "oneweight",
+                                        title: "单件重量（kg）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "num",
+                                        title: "订货数量",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "sumwight",
+                                        title: "总重量（kg）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "realitymodel",
+                                        title: "实际幅宽（m）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "demand",
+                                        title: "要求",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "wightset",
+                                        title: "重量设置",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "dao",
+                                        title: "剖刀",
+                                        width: "150",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "brand",
+                                        title: "商标",
+                                        width: "150",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "pack",
+                                        title: "包装",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "letter",
+                                        title: "印字",
+                                        width: "200",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "peasant",
+                                        title: "农户名称",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "clientname",
+                                        title: "客户名称",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "realityweight",
+                                        title: "实际重量（kg）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "realityprice",
+                                        title: "实际厚度（mm）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "theoryweight",
+                                        title: "理论重量（kg）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "square",
+                                        title: "单件平米",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "numsquare",
+                                        title: "总平米",
+                                        width: "50",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "weightway",
+                                        title: "称重方式",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "label",
+                                        title: "标签名称",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "weight",
+                                        title: "重量（kg）",
+                                        width: "100",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "patu",
+                                        title: "纸管",
+                                        width: "50",
+                                        align: "center"
+                                    },
+                                    {
+                                        field: "remark",
+                                        title: "备注",
+                                        width: "100",
+                                        align: "center"
+                                    }, {
+                                        field: "saleList",
+                                        title: "ID",
+                                        width: "100",
+                                        align: "center",
+                                        formatter: function (val, row) {
+                                            return val.id;
+                                        }
+                                    }, {
+                                        field: "jiTai",
+                                        title: "机台",
+                                        width: "100",
+                                        align: "center",
+                                        formatter: function (val, row) {
+                                            if (val) {
+                                                return val.name;
+                                            }
+                                        }
+                                    }]]
+                            });
+                    $("#dg2").datagrid("loadData", result.rows);
+                }
+            }
+        });
+    }
+</script>
 </html>

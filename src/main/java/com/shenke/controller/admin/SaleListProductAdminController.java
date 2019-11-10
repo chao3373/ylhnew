@@ -890,6 +890,11 @@ public class SaleListProductAdminController {
         return map;
     }
 
+    /***
+     * 根据通知单号查询
+     * @param danhao
+     * @return
+     */
     @RequestMapping("/findByDanhao")
     public Map<String, Object> findByDanhao(Long danhao){
         Map<String, Object> map = new HashMap<>();

@@ -183,6 +183,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Override
     public List<SaleListProduct> selectNoAccomplish(Integer jitaiId) {
+        System.out.println(jitaiId);
         return saleListProductRepository.selectNoAccomplish(jitaiId);
     }
 
