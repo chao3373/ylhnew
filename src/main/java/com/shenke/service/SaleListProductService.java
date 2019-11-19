@@ -32,6 +32,8 @@ public interface SaleListProductService {
 
     List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct);
 
+    List dingDanZhuiZongg(SaleListProduct saleListProduct);
+
 	/**
 	 * 根据id修改订单状态
 	 *

@@ -219,13 +219,13 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/searchLiftMoney")
-    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String productDatee, String pleasant) {
+    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String productDatee, String peasant) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
         System.out.println(productDate);
         System.out.println(productDatee);
         map1.put("saleNumber", saleNumber);
-        map1.put("pleasant", pleasant);
+        map1.put("peasant", peasant);
         map1.put("productDate", productDate);
         map1.put("productDatee", productDatee);
         map1.put("realityweight", realityweight);

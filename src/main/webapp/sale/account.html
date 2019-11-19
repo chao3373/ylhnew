@@ -14,6 +14,7 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
+    <script src="/js/main.js"></script>
     <script type="text/javascript">
         //打印
         function printdg() {
@@ -405,8 +406,8 @@
 
             //当输入框金额和重量发生变化时触发 (修改)
 
-            $("#money2").change(function () {
-                var n = $("#count2").val() * $("#money2").val()*$("#guige2").val();
+            $("#money2, #guige2").change(function () {
+                var n = $("#money2").val()*$("#guige2").val();
                 $("#summoney2").val(n.toFixed(2));
             });
         });
@@ -422,7 +423,6 @@
                 client: $("#clientId").combobox("getText")
             }, function (result) {
                 if (result.success) {
-                    console.log(result.data);
                     $("#dg").datagrid("loadData", result.data);
                 }
             }, "json");
@@ -439,6 +439,25 @@
                 }
             }, "json");*/
         }
+
+        //保存
+        function saveJieSuan(){
+            $("#jieSuanJson").val(JSON.stringify($("#dg").datagrid("getData").rows));
+            var from = getFrom($("#form1"));
+            var from2 = getFrom($("#form"));
+            Object.assign(from, from2);
+            console.log(from);
+            $.ajax({
+                type:"POST",
+                url:"/admin/jiesuan/saveJieSuan",
+                data:from,
+                success:function (result) {
+                    if (result.success){
+                        alert("保存成功");
+                    }
+                }
+            })
+        };
 
         //修改合计
         function updateEnd() {
@@ -565,9 +584,6 @@
 <div data-options="region:'north'"
      style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
     <fieldset style="border-color: #E7F0FF">
-        <legend>
-            出库单号：<span id="dh"></span>
-        </legend>
         <form id="form1" method="post">
             <table cellspacing="8px">
                 <tr>
@@ -576,9 +592,9 @@
                                                           demandd="true" data-options="editable:false" size="10"/>
                     </td>
                     <td>&nbsp;&nbsp;购货单位：<input class="easyui-combobox"
-                                                id="clientId" name="clientId" style="width: 100px"
+                                                id="clientId" name="clientname" style="width: 100px"
                                                 required="true" demandd="true"
-                                                data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                                                data-options="demandd:true,panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/client/clientList'"/>
                     </td>
                     <td>&nbsp;&nbsp;车&nbsp;&nbsp;号：<input type="text" id="chehao"
                                                           required="true" name="chehao" size="10"/>
@@ -590,10 +606,10 @@
                     </td>
                     <td>联系方式：<input type="text" id="tel" required="true"
                                     name="tel" size="15"/>
+                        <input type="hidden" id="updatecount" name="updatecount"/>
+                        <input type="hidden" id="jieSuanJson" name="jieSuanJson"/>
                     </td>
-                    <td><input type="hidden" id="updatecount" name="updatecount"/>
-                    </td>
-                    <td rowspan="2"><a href="javascript:ok()"
+                    <td><a href="javascript:ok()"
                                        class="easyui-linkbutton" iconCls="icon-ok">确定</a></td>
 
 
@@ -606,7 +622,7 @@
                     <td width="180px">&nbsp;&nbsp;填&nbsp;&nbsp;制&nbsp;人：<input
                             class="easyui-combobox" id="tianzhiren" name="tianzhiren"
                             style="width: 100px"
-                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/clerk/clerkList'"/>
+                            data-options="panelHeight:'auto',valueField:'name',textField:'name',url:'/admin/clerk/clerkList'"/>
                     </td>
                     <td width="180px">&nbsp;&nbsp;保管员：<input
                             class="easyui-combobox" id="baoguanyuan" name="baoguanyuan"
@@ -621,6 +637,8 @@
                     <td>收&nbsp;&nbsp;货&nbsp;&nbsp;人：<input type="text"
                                                            id="lankman" required="true" name="lankman" size="15"/>
                     </td>
+                    <td><a href="javascript:saveJieSuan()"
+                           class="easyui-linkbutton" iconCls="icon-save">保存</a></td>
                 </tr>
             </table>
         </form>

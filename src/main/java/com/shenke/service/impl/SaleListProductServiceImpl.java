@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -13,6 +15,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import com.shenke.service.StorageService;
+import com.shenke.util.GetResultUtils;
 import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +34,9 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Resource
     private SaleListProductRepository saleListProductRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Resource
     private StorageService storageService;
@@ -553,6 +559,68 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     }
 
     @Override
+    public List dingDanZhuiZongg(SaleListProduct saleListProduct) {
+        String sqlStar = "select sale_number," +
+                " clientname, " +
+                "peasant, " +
+                "a.name, " +
+                "code, " +
+                "c.name as jitainame, " +
+                "length, model, " +
+                "a.price, " +
+                "IFNULL(accomplish_number,0) as wanchengshu, " +
+                "num, IFNULL(num - accomplish_number,0) as shengyushu, " +
+                "oneweight, " +
+                "sumwight, " +
+                "IFNULL(accomplish_number * oneweight,0) as wanchengzhongliang, " +
+                "DATE_FORMAT(sale_date,'%Y-%m-%d %H:%i:%s') as sale_date, " +
+                "inform_number, " +
+                "IFNULL(sumwight-accomplish_number * oneweight,sumwight) as shengyuzhongliang, " +
+                "a.state " +
+                "from t_sale_list_product a LEFT JOIN t_sale_list b ON a.sale_list_id = b.id " +
+                "LEFT JOIN t_jitai c ON a.jitai_id = c.id where true";
+
+        String sql = "";
+
+        if (StringUtil.isNotEmpty(saleListProduct.getName())) {
+            sql += " and b.sale_number = '" + saleListProduct.getName() + "'";
+        }
+        if (StringUtil.isNotEmpty(saleListProduct.getClientname())) {
+            sql += " and a.clientname = '" + saleListProduct.getClientname() + "'";
+        }
+        if (StringUtil.isNotEmpty(saleListProduct.getPeasant())) {
+            sql += " and a.peasant = '" + saleListProduct.getPeasant() + "'";
+        }
+        if (saleListProduct.getInformNumber() != null) {
+            sql += " and a.informNumber = '" + saleListProduct.getInformNumber() + "'";
+        }
+        if (saleListProduct.getModel() != null) {
+            sql += " and a.model = " + saleListProduct.getModel();
+        }
+        if (saleListProduct.getLength() != null) {
+            sql += " and a.length = " + saleListProduct.getLength();
+        }
+        if (StringUtil.isNotEmpty(saleListProduct.getPrice())) {
+            sql += " and a.price = " + saleListProduct.getPrice();
+        }
+        if (saleListProduct.getJiTai() != null) {
+            sql += " and c.id = " + saleListProduct.getJiTai().getId();
+        }
+        if (saleListProduct.getOneweight() != null) {
+            sql += " and a.oneweight = " + saleListProduct.getOneweight();
+        }
+
+        LogUtil.printLog("=====销售订单追踪=====");
+        LogUtil.printLog("执行的sql：" + sqlStar + sql);
+
+        List result = GetResultUtils.getResult(sqlStar + sql, entityManager);
+
+        System.out.println(result.size());
+
+        return result;
+    }
+
+    @Override
     public List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct) {
         return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
             @Override
@@ -562,7 +630,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                     predicate.getExpressions().add(cb.equal(root.get("saleList").get("saleNumber"), saleListProduct.getName()));
                 }
                 if (StringUtil.isNotEmpty(saleListProduct.getClientname())) {
-                    System.out.println("进来了进来了进来了进来了进来了进来了进来了进来了");
                     predicate.getExpressions().add(cb.equal(root.get("clientname"), saleListProduct.getClientname()));
                 }
                 if (StringUtil.isNotEmpty(saleListProduct.getPeasant())) {

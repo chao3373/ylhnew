@@ -109,7 +109,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param client
      * @return
      */
-    @Query( value = "select name,count(*) from t_storage where clientname =?1  group by name" , nativeQuery = true)
+    @Query( value = "select name,count(*) from t_storage where clientname =?1  group by name and state = '装车'" , nativeQuery = true)
     public List<Object[]> FindByGroup(String client);
 
     /**
