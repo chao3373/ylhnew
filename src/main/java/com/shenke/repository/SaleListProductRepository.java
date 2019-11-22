@@ -1,6 +1,6 @@
 package com.shenke.repository;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -291,4 +291,12 @@ public interface SaleListProductRepository
 
 	@Query(value = "select * from t_sale_list_product where inform_number = ?1", nativeQuery = true)
     List<SaleListProduct> findByDanhao(Long danhao);
+
+	/***
+	 * 查询未生产的重量
+	 * @param saleListIds
+	 * @return
+	 */
+	@Query(value = "select ROUND(SUM(IFNULL(num - accomplish_number,0) * oneweight), 2) as weishengchan from t_sale_list_product where sale_list_id in ?1", nativeQuery = true)
+	Double findWSC(Integer[] saleListIds);
 }

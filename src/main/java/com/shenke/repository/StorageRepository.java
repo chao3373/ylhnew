@@ -344,4 +344,12 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
 
     @Query(value = "select * from t_storage where sale_list_id in ?1", nativeQuery = true)
     List<Storage> findBySaleListIds(String[] ids);
+
+    /**
+     * 查询订单号中已经生产的重量
+     * @param saleNumbers
+     * @return
+     */
+    @Query(value = "select ROUND(IFNULL(SUM(realityweight),0),2) as yishengchan from t_storage where sale_number in ?1", nativeQuery = true)
+    Double findYSCZL(String[] saleNumbers);
 }

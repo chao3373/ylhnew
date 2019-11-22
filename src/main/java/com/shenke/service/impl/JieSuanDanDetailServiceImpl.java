@@ -18,4 +18,9 @@ public class JieSuanDanDetailServiceImpl implements JieSuanDanDetailService {
     public void adds(List<JieSuanDanDetail> jieSuanDanDetails) {
         jieSuanDanDetailRepository.save(jieSuanDanDetails);
     }
+
+    @Override
+    public List<JieSuanDanDetail> selectByJieSuanDanId(Integer id) {
+        return jieSuanDanDetailRepository.selectByJieSuanDanId(id);
+    }
 }

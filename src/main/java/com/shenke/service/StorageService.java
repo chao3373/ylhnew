@@ -1,5 +1,6 @@
 package com.shenke.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +180,7 @@ public interface StorageService {
 
     List<Storage> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows);
 
-    List<Storage> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows);
+    Map<String, Object> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows);
 
     /***
      * 根据订单商品id查询商品
@@ -213,4 +214,8 @@ public interface StorageService {
     Long getKuCunCount(Storage storage, String dateInProducedd, String dateInProduceddd);
 
     Map<String, Object> detaill(Map<String, Object> map1);
+
+    List<Map<String, Object>> tongji(String stardate, String enddate, String clientname) throws ParseException;
+
+    List<Map<String, Object>> tongji(String stardate, String enddate) throws ParseException;
 }

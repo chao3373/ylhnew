@@ -522,17 +522,14 @@ public class StorageAdminController {
         if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
-        Map<String, Object> map = new HashMap<>();
-        List list = storageService.selectEdit(storage, dateInProducedd, page, rows);
-        for (Object object: list){
-            System.out.println(object.toString());
-        }
-        Long total = storageService.getCount(storage, dateInProducedd);
-        map.put("success", true);
-        map.put("rows", list);
-        map.put("total", total);
-        System.out.println(map);
-        return map;
+//        Map<String, Object> map = new HashMap<>();
+//        List list = storageService.selectEdit(storage, dateInProducedd, page, rows);
+//        Long total = storageService.getCount(storage, dateInProducedd);
+//        map.put("success", true);
+//        map.put("rows", list);
+//        map.put("total", total);
+//        System.out.println(map);
+        return storageService.selectEditt(storage, dateInProducedd, page, rows);
     }
 
     /***
@@ -769,5 +766,22 @@ public class StorageAdminController {
             storage1.setNum(1);
         }
         return storages;
+    }
+
+    /**
+     * 统计查询
+     */
+    @RequestMapping("/tongji")
+    public Map<String, Object> tongji(String stardate, String enddate, String clientname) throws ParseException {
+        List<Map<String, Object>> list = null;
+        if (StringUtil.isNotEmpty(clientname)){
+            list = storageService.tongji(stardate + " 00:00:00", enddate + " 23:59:59", clientname);
+        } else {
+            list = storageService.tongji(stardate + " 00:00:00", enddate + " 23:59:59");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
+        map.put("rows", list);
+        return map;
     }
 }

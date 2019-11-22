@@ -11,10 +11,7 @@ import javax.persistence.criteria.*;
 import com.shenke.entity.*;
 import com.shenke.repository.*;
 import com.shenke.service.ClientService;
-import com.shenke.util.DateUtil;
-import com.shenke.util.EntityUtils;
-import com.shenke.util.GetResultUtils;
-import com.shenke.util.StringUtil;
+import com.shenke.util.*;
 import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -37,6 +34,9 @@ public class StorageServiceImpl implements StorageService {
 
     @Resource
     private StorageRepository storageRepository;
+
+    @Resource
+    private SaleListRepository saleListRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -563,6 +563,8 @@ public class StorageServiceImpl implements StorageService {
                 }
                 if (storage.getJiTai() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), storage.getJiTai().getId()));
+                }if (storage.getId() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("id"), storage.getId()));
                 }
                 if (StringUtil.isNotEmpty(storage.getPeasant())) {
                     predicate.getExpressions().add(cb.equal(root.get("peasant"), storage.getPeasant()));
@@ -913,11 +915,26 @@ public class StorageServiceImpl implements StorageService {
                 if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
                     predicate.getExpressions().add(cb.like(root.get("saleNumber"), "%" + storage.getSaleNumber() + "%"));
                 }
+                if (storage.getLength() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("length"), storage.getLength()));
+                }
+                if (storage.getModel() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("model"), storage.getModel()));
+                }
+                if (storage.getPrice() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("price"), storage.getPrice()));
+                }
+                if (storage.getRealityweight() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("realityweight"), storage.getRealityweight()));
+                }
                 if (StringUtil.isNotEmpty(storage.getName())) {
                     predicate.getExpressions().add(cb.equal(root.get("name"), storage.getName()));
                 }
                 if (storage.getLocation() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("location").get("id"), storage.getLocation().getId()));
+                }
+                if (storage.getId() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("id"), storage.getId()));
                 }
                 if (storage.getJiTai() != null) {
                     predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), storage.getJiTai().getId()));
@@ -1011,43 +1028,40 @@ public class StorageServiceImpl implements StorageService {
      * @return
      */
     @Override
-    public List<Storage> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows) {
-        String sqlStar = "select a.id, " +
-                "code, " +
+    public Map<String, Object> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows) {
+        Map<String, Object> map = new HashMap<>();
+        String selectSqlStart = "select a.id, " +
                 "clientname, " +
-                "peasant, " +
                 "a.name, " +
                 "length, " +
                 "model, " +
-                "a.price, " +
+                "price, " +
                 "realityweight, " +
                 "sale_number as saleNumber, " +
-                "date_in_produced as dateInProduced, " +
-                "clerk_name as clerkName, " +
+                "DATE_FORMAT(date_in_produced,'%Y-%m-%d %H:%i:%s') as dateInProduced, " +
+                "clerk_name as clerk, " +
                 "group_name as groupName, " +
-                "b.name as locationName, " +
-                "ji_tai_name as jiTaiName, " +
-                "state from t_storage a, t_location b, t_jitai c " +
-                "where a.location_id = b.id and a.ji_tai_id = c.id";
-
-        String pg = "";
-        if (page != null && rows != null) {
-            pg += " LIMIT " + (page - 1) * rows + rows;
-        }
+                "b.name as location, " +
+                "ji_tai_name as jitai, " +
+                "state from t_storage a left join t_location b on a.location_id = b.id where true ";
 
         String sql = "";
-
+        String pg = "";
+        if (page != null && rows != null) {
+            pg += " LIMIT " + (page - 1) * rows + ", " + rows;
+        }
+        Pageable pageable = new PageRequest(page - 1, rows);
         if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
-            sql += " and a.sale_number = '" + storage.getSaleNumber() + "'";
+            sql += " and sale_number = like '%" + storage.getSaleNumber() + "%'";
         }
         if (StringUtil.isNotEmpty(storage.getName())) {
             sql += " and a.name = '" + storage.getName() + "'";
         }
         if (storage.getLocation() != null) {
-            sql += " and b.id = " + storage.getLocation().getId();
+            sql += " and a.location_id = " + storage.getLocation().getId();
         }
         if (storage.getJiTai() != null) {
-            sql += " and c.id = " + storage.getJiTai().getId();
+            sql += " and a.ji_tai_id = " + storage.getJiTai().getId();
         }
         if (StringUtil.isNotEmpty(storage.getPeasant())) {
             sql += " and a.peasant = '" + storage.getPeasant() + "'";
@@ -1055,45 +1069,27 @@ public class StorageServiceImpl implements StorageService {
         if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() != null) {
             if (StringUtil.isNotEmpty(dateInProducedd) && !storage.getGroupName().equals("夜班")) {
                 System.out.println("白班");
-                try {
-                    java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                    java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
-                    System.out.println("开始时间：" + star);
-                    System.out.println("结束时间：" + end);
-                    sql += " and a.date_in_produced BETWEEN '" + star + "'" + "and '" + end + "'" ;
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                String star = dateInProducedd + " 00:00:00";
+                String end = dateInProducedd + " 23:59:59";
+                sql += " and a.date_in_produced BETWEEN '" + star + "' and '" + end + "'";
             } else {
                 System.out.println("夜班");
                 String starr = dateInProducedd + " 17:00:00";
                 String endd = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
-                try {
-                    Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(starr);
-                    Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endd);
-                    System.out.println("开始时间：" + star);
-                    System.out.println("结束时间：" + end);
-                    sql += " and a.date_in_produced BETWEEN '" + star + "'" + "and '" + end + "'" ;
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                sql += " and a.date_in_produced BETWEEN '" + starr + "' and '" + endd + "'";
             }
-            sql += " and a.group_id = " + storage.getGroup().getId();
         }
 
         if (StringUtil.isNotEmpty(dateInProducedd) && storage.getGroup() == null) {
-            try {
-                java.util.Date star = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
-                java.util.Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 23:59:59");
-                System.out.println("开始时间：" + star);
-                System.out.println("结束时间：" + end);
-                sql += " and a.date_in_produced BETWEEN '" + star + "'" + "and '" + end + "'" ;
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            String star = dateInProducedd + " 00:00:00";
+            String end = dateInProducedd + " 23:59:59";
+            sql += " and a.date_in_produced BETWEEN '" + star + "' and '" + end + "'";
+        }
+        if (storage.getGroup() != null) {
+            sql += " and a.group_name = '" + storage.getGroup().getName() + "'";
         }
         if (storage.getClerk() != null) {
-            sql += " and a.clerk_id = " + storage.getClerk().getId() ;
+            sql += " and a.clerk_id = " + storage.getId();
         }
         if (StringUtil.isNotEmpty(storage.getClientname())) {
             sql += " and a.clientname = '" + clientService.findById(Integer.parseInt(storage.getClientname())).getName() + "'";
@@ -1110,6 +1106,9 @@ public class StorageServiceImpl implements StorageService {
         if (storage.getRealityweight() != null) {
             sql += " and a.realityweight = " + storage.getRealityweight();
         }
+        if (storage.getId() != null) {
+            sql += " and a.id = " + storage.getId();
+        }
         if (StringUtil.isNotEmpty(storage.getState())) {
             String state = storage.getState();
             System.out.println(storage.getState());
@@ -1117,16 +1116,23 @@ public class StorageServiceImpl implements StorageService {
                 state = storage.getState().substring(1, storage.getState().length() - 1);
                 System.out.println(state);
             }
-            sql += " and a.state like '%" + state + "%'";
+            sql += " and a.state like '%" + storage.getState() + "%'";
         }
         if (StringUtil.isNotEmpty(storage.getColor())) {
             sql += " and a.color = '" + storage.getColor() + "'";
         }
 
-        System.out.println("查询的语句：");
-        System.out.println(sqlStar + sql + pg);
-        List result = GetResultUtils.getResult(sqlStar + sql + pg, entityManager);
-        return result;
+        LogUtil.printLog("===修改库存查询===");
+        LogUtil.printLog("查询所有信息语句：" + selectSqlStart + sql + pg);
+        List result = GetResultUtils.getResult(selectSqlStart + sql + pg, entityManager);
+
+        LogUtil.printLog("查询总条数语句：" + selectSqlStart + sql + pg);
+        Integer count = GetResultUtils.getInteger("select count(id) from t_storage a where true" + sql, entityManager);
+
+        map.put("rows", result);
+        map.put("total", count);
+        map.put("success", true);
+        return map;
     }
 
     @Override
@@ -1745,6 +1751,104 @@ public class StorageServiceImpl implements StorageService {
         data.put("count", count);
         data.put("sumweight", sumweight);
         return data;
+    }
+
+    /***
+     * 根据开始时间结束时间和客户名统计
+     * @param stardate
+     * @param enddate
+     * @param clientname
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> tongji(String stardate, String enddate, String clientname) throws ParseException {
+        LogUtil.printLog("<---统计查询开始");
+
+        //查询所有的订单号
+        String[] saleNumbers = saleListRepository.findSaleNumbers(DateUtil.getDate(stardate), DateUtil.getDate(enddate), clientService.findName(clientname).getId());
+        //查询所有的订单id
+        Integer[] saleListIds = saleListRepository.findsaleListIds(DateUtil.getDate(stardate), DateUtil.getDate(enddate), clientService.findName(clientname).getId());
+
+        LogUtil.printLog("订单开始日期：" + stardate);
+        LogUtil.printLog("订单结束日期：" + enddate);
+        LogUtil.printLog("客户名：" + clientname);
+        LogUtil.printLog("查询到的订单数量：" + saleNumbers.length);
+        StringBuilder sb = new StringBuilder();
+        for (String saleNumber : saleNumbers) {
+            sb.append(saleNumber + ",");
+        }
+        LogUtil.printLog("查询到的订单号：" + sb.toString());
+
+        //查询下单理论重量
+        String sql = "select IFNULL(sum(sumwight), 0) from t_sale_list_product a left join t_sale_list b " +
+                "on a.sale_list_id = b.id and a.clientname = '" + clientname + "' where b.sale_date BETWEEN '" + stardate + "' AND '" + enddate + "'";
+        Double lilunzhong = GetResultUtils.getDouble(sql, entityManager);
+        LogUtil.printLog("查询下单理论重量:" + sql);
+        LogUtil.printLog("下单理论重量:" + lilunzhong);
+
+        //实际生产重量
+        Double ysc = storageRepository.findYSCZL(saleNumbers);
+        LogUtil.printLog("已经生产的重量：" + ysc);
+
+        //未生产的重量
+        Double wsc = saleListProductRepository.findWSC(saleListIds);
+        if (wsc < 0) {
+            wsc = 0.0;
+        }
+        LogUtil.printLog("未生产的重量：" + wsc);
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("xiadanzhongliang", lilunzhong);
+        map.put("weishengchan", wsc);
+        map.put("yiwancheng", ysc);
+        list.add(map);
+        LogUtil.printLog("统计查询结束--->");
+        return list;
+    }
+
+    @Override
+    public List<Map<String, Object>> tongji(String stardate, String enddate) throws ParseException {
+        LogUtil.printLog("<---统计查询开始");
+
+        //查询所有的订单号
+        String[] saleNumbers = saleListRepository.findSaleNumbers(DateUtil.getDate(stardate), DateUtil.getDate(enddate));
+        //查询所有的订单id
+        Integer[] saleListIds = saleListRepository.findsaleListIds(DateUtil.getDate(stardate), DateUtil.getDate(enddate));
+
+        LogUtil.printLog("订单开始日期：" + stardate);
+        LogUtil.printLog("订单结束日期：" + enddate);
+        LogUtil.printLog("查询到的订单数量：" + saleNumbers.length);
+        StringBuilder sb = new StringBuilder();
+        for (String saleNumber : saleNumbers) {
+            sb.append(saleNumber + ",");
+        }
+        LogUtil.printLog("查询到的订单号：" + sb.toString());
+
+        //查询下单理论重量
+        String sql = "select IFNULL(sum(sumwight), 0) from t_sale_list_product a left join t_sale_list b " +
+                "on a.sale_list_id = b.id where b.sale_date BETWEEN '" + stardate + "' AND '" + enddate + "'";
+        Double lilunzhong = GetResultUtils.getDouble(sql, entityManager);
+        LogUtil.printLog("查询下单理论重量:" + sql);
+        LogUtil.printLog("下单理论重量:" + lilunzhong);
+
+        //实际生产重量
+        Double ysc = storageRepository.findYSCZL(saleNumbers);
+        LogUtil.printLog("已经生产的重量：" + ysc);
+
+        //未生产的重量
+        Double wsc = saleListProductRepository.findWSC(saleListIds);
+        if (wsc < 0) {
+            wsc = 0.0;
+        }
+        LogUtil.printLog("未生产的重量：" + wsc);
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("xiadanzhongliang", lilunzhong);
+        map.put("weishengchan", wsc);
+        map.put("yiwancheng", ysc);
+        list.add(map);
+        LogUtil.printLog("统计查询结束--->");
+        return list;
     }
 
 }
