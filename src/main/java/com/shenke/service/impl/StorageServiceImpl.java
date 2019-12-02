@@ -1494,7 +1494,7 @@ public class StorageServiceImpl implements StorageService {
 
         String selectSqlEnd = "group by " +
                 "sale_list_product_id," +
-                " name, " +
+                "name, " +
                 "model, " +
                 "price, " +
                 "length , " +
@@ -1527,7 +1527,7 @@ public class StorageServiceImpl implements StorageService {
         String sql = "";
 
         if (StringUtil.isNotEmpty(storage.getSaleNumber())) {
-            sql += " and sale_number like '%" + storage.getSaleNumber() + "'%";
+            sql += " and sale_number like '%" + storage.getSaleNumber() + "%'";
         }
         if (StringUtil.isNotEmpty(storage.getName())) {
             sql += " and name = '" + storage.getName() + "'";

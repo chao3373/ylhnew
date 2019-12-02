@@ -26,7 +26,8 @@
             $("#dg").datagrid({
                 columns: [[
                     {field: 'cb', title: 'cb', checkbox: true, width: 100, align: 'center'},
-                    {field: 'id', title: '编号', width: 100, align: 'center'},
+                    {field: 'id', title: '编号', width: 80, align: 'center'},
+                    {field: 'code', title: '序号', width: 80, align: 'center'},
                     {field: 'name', title: '产品名称', width: 100, align: 'center'},
                     {field: 'clientname', title: '客户名称', width: 100, align: 'center'},
                     {field: 'peasant', title: '农户名称', width: 50, align: 'center'},
@@ -51,7 +52,9 @@
                 data: data,
                 success: function (result) {
                     if (result) {
-                        $("#dg").datagrid("loadData", result);
+                        $("#dg").datagrid("loadData", result.rows);
+                        $("#sumNum").text("总数量："+result.sumNum);
+                        $("#sumWeight").text("总重量"+result.sumWeight.toFixed(2));
                     }
                 }
             })
@@ -128,7 +131,15 @@
                     <td><a href="javascript:screenSale()" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>
                     </td>
                     <td><a href="javascript:shuaxin()" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
-                    <td><a href="javascript:$('#dg').datagrid('toExcel', '提货商品.xls');" class="easyui-linkbutton" iconCls="icon-add" plain="true">导出</a>
+                    <td><a href="javascript:$('#dg').datagrid('toExcel', '提货商品.xls');" class="easyui-linkbutton" iconCls="icon-add" plain="true">导出</a></td>
+                    <td>
+
+                    <span id="sumNum" style="font-size: 20px;color: red;">总件数：</span>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span id="sumWeight" style="font-size: 20px;color: red;">总重量：</span>
+                    </td>
                 </tr>
             </table>
         </form>

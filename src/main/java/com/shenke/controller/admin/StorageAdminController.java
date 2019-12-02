@@ -1,5 +1,6 @@
 package com.shenke.controller.admin;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -538,7 +539,7 @@ public class StorageAdminController {
      */
     @RequestMapping("/findKuCun")
     public Map<String, Object> findKuCun(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows) {
-        System.out.println(page);
+        System.out.println(storage);
         System.out.println(rows);
         if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
@@ -747,9 +748,21 @@ public class StorageAdminController {
 
     //根据条件查询提货商品
     @RequestMapping("/selectTihuo")
-    public List<Storage> selectTihuo(String pandianji) {
+    public Map<String,Object> selectTihuo(String pandianji) {
         System.out.println(pandianji);
-        return storageService.selectTihuo(pandianji);
+        List<Storage> list = storageService.selectTihuo(pandianji);
+
+        Integer sumNum = 0;
+        Double sumWeight = 0.00;
+        for(Storage storage : list){
+            sumNum = sumNum + storage.getNum();
+            sumWeight = sumWeight + storage.getRealityweight();
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("sumNum",sumNum);
+        map.put("sumWeight",sumWeight);
+        map.put("rows",list);
+        return map;
     }
 
     /***

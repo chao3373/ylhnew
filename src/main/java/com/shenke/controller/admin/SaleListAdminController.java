@@ -224,6 +224,8 @@ public class SaleListAdminController {
 
     @RequestMapping({"/add"})
     public Map<String, Object> add(SaleListProduct saleListProduct) {
+        System.out.println(saleListProduct.getDao());
+        System.out.println(saleListProduct.getLetter());
         Map<String, Object> map = new HashMap();
         Integer id = saleListProduct.getId();
         SaleList saleList = this.saleListService.findById(id);
@@ -232,15 +234,16 @@ public class SaleListAdminController {
         newSaleListProduct.setNum(saleListProduct.getNum());
         newSaleListProduct.setName(saleListProduct.getName());
         if (saleListProduct.getOneweight() == null) {
-            Double oneweight = 0.93D * saleListProduct.getLength() * saleListProduct.getModel() * saleListProduct.getMeter();
+            Double oneweight = 0.93 * saleListProduct.getLength() * saleListProduct.getModel() * saleListProduct.getMeter();
             newSaleListProduct.setOneweight(oneweight);
             newSaleListProduct.setSumwight(oneweight * (double)saleListProduct.getNum());
         } else {
             newSaleListProduct.setOneweight(saleListProduct.getOneweight());
             newSaleListProduct.setSumwight((double)saleListProduct.getNum() * saleListProduct.getOneweight());
         }
-
         newSaleListProduct.setLength(saleListProduct.getLength());
+        newSaleListProduct.setDao(saleListProduct.getDao());
+        newSaleListProduct.setLetter(saleListProduct.getLetter());
         newSaleListProduct.setStorageid(0);
         newSaleListProduct.setModel(saleListProduct.getModel());
         newSaleListProduct.setDaBaoShu(1);

@@ -592,7 +592,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             sql += " and a.peasant = '" + saleListProduct.getPeasant() + "'";
         }
         if (saleListProduct.getInformNumber() != null) {
-            sql += " and a.informNumber = '" + saleListProduct.getInformNumber() + "'";
+            sql += " and a.inform_number = '" + saleListProduct.getInformNumber() + "'";
         }
         if (saleListProduct.getModel() != null) {
             sql += " and a.model = " + saleListProduct.getModel();

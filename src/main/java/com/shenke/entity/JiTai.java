@@ -34,7 +34,20 @@ public class JiTai {
 
     private Boolean clientName;//客户
 
+    private Boolean nonghu;//农户
+
     private Boolean price;//厚度
+
+    private Boolean xuhao;//序号
+
+    private Boolean changshang;//厂商
+
+    private String chang;//厂商名称
+
+    private Integer printnum;//打印标签数
+
+    @Column(length = 500)
+    private String remark;//备注
 
     @Override
     public String toString() {
@@ -47,21 +60,15 @@ public class JiTai {
                 ", color=" + color +
                 ", dao=" + dao +
                 ", clientName=" + clientName +
+                ", nonghu=" + nonghu +
                 ", price=" + price +
+                ", xuhao='" + xuhao + '\'' +
+                ", changshang=" + changshang +
+                ", chang='" + chang + '\'' +
+                ", printnum=" + printnum +
                 ", remark='" + remark + '\'' +
                 '}';
     }
-
-    public Boolean getPrice() {
-        return price;
-    }
-
-    public void setPrice(Boolean price) {
-        this.price = price;
-    }
-
-    @Column(length = 500)
-    private String remark;//备注
 
     public Integer getId() {
         return id;
@@ -127,6 +134,54 @@ public class JiTai {
         this.clientName = clientName;
     }
 
+    public Boolean getNonghu() {
+        return nonghu;
+    }
+
+    public void setNonghu(Boolean nonghu) {
+        this.nonghu = nonghu;
+    }
+
+    public Boolean getPrice() {
+        return price;
+    }
+
+    public void setPrice(Boolean price) {
+        this.price = price;
+    }
+
+    public Boolean getXuhao() {
+        return xuhao;
+    }
+
+    public void setXuhao(Boolean xuhao) {
+        this.xuhao = xuhao;
+    }
+
+    public Boolean getChangshang() {
+        return changshang;
+    }
+
+    public void setChangshang(Boolean changshang) {
+        this.changshang = changshang;
+    }
+
+    public String getChang() {
+        return chang;
+    }
+
+    public void setChang(String chang) {
+        this.chang = chang;
+    }
+
+    public Integer getPrintnum() {
+        return printnum;
+    }
+
+    public void setPrintnum(Integer printnum) {
+        this.printnum = printnum;
+    }
+
     public String getRemark() {
         return remark;
     }
@@ -134,5 +189,4 @@ public class JiTai {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
 }

@@ -88,6 +88,21 @@
                     if (result.jitai.clerk) {
                         $("#staff").val(result.jitai.clerk.name);
                     }
+                    if (result.jitai.nonghu) {
+                        $("#printnonghu").prop("checked", true);
+                    }
+                    if (result.jitai.xuhao) {
+                        $("#xuhao").prop("checked", true);
+                    }
+                    if (result.jitai.changshang) {
+                        $("#changshang").prop("checked", true);
+                    }
+                    if (result.jitai.chang) {
+                        $("#chang").val(result.jitai.chang);
+                    }
+                    if (result.jitai.printnum) {
+                        $("#printnum").val(result.jitai.printnum);
+                    }
                 }
             });
         }
@@ -142,6 +157,17 @@
                             title: '通知单号',
                             width: 100,
                             align: 'center'
+                        }, {
+                            field: 'saleList',
+                            title: '订单号',
+                            width: 100,
+                            align: 'center',
+                            formatter: function (value, row) {
+                                if (value != null && value.saleNumber != null) {
+                                    return value.saleNumber;
+                                }
+                                return "";
+                            }
                         }, {
                             field: 'storageid',
                             title: '零售编号',
@@ -288,7 +314,7 @@
                             selectRowIndex = rowIndex;
                             //获取被选中行的背景色(等下取消选择的时候需要还原为这个背景色,所以这里先记录下来)
                             var color = $("#datagrid-row-r4-2-" + rowIndex).css("background-color");
-                            console.log("#datagrid-row-r4-2-"+rowIndex);
+                            console.log("#datagrid-row-r4-2-" + rowIndex);
                             console.log(color);
                             if (color != 'rgb(255, 0, 0)') {
                                 // "#FFE48D"就是'rgb(255, 228,141)'颜色, 即datagrid默认选中行的背景色
@@ -600,15 +626,6 @@
             $("#dd2").dialog("close");
         }
 
-        var biaoqian;
-        var changdu;
-        var houdu;
-        var zhongliang;
-        var biaoqianshu;
-        var baozhuangshu;
-        var banzu;
-        var staff;
-
         //点击设置按钮
         function printSetClick() {
             $("#informNumber").val(informNumber);
@@ -621,75 +638,86 @@
             $("#dd").dialog("open");
         }
 
-        function set() {
-            $.post("/admin/print/getPrintSet",
-                function (result) {
-                    if (result.success) {
-                        if (result.biaoqian) {
-                            $("#printLabel").prop("checked", true);
-                        }
-                        if (result.changdu) {
-                            $("#printLength").prop("checked", true);
-                        }
-                        if (result.houdu) {
-                            $("#printThickness").prop("checked", true);
-                        }
-                        if (result.zhongliang) {
-                            $("#printWeight").prop("checked", true);
-                        }
-                        if (result.biaoqianshu) {
-                            biaoqianshu = $("#labelNumber").val(
-                                result.biaoqianshu);
-                        }
-                        if (result.baozhuangshu) {
-                            baozhuangshu = $("#packageNumber").val(
-                                result.baozhuangshu);
-                        }
-                        if (result.banzu) {
-                            $("#banzu").combobox("select", result.banzu);
-                        }
-                        if (result.staff) {
-                            $("#staff").combobox("select", result.staff);
-                        }
-                        // disabledInput();
-                    }
-                });
-        }
+        // function set() {
+        //     $.post("/admin/print/getPrintSet",
+        //         function (result) {
+        //             if (result.success) {
+        //                 if (result.biaoqian) {
+        //                     $("#printLabel").prop("checked", true);
+        //                 }
+        //                 if (result.changdu) {
+        //                     $("#printLength").prop("checked", true);
+        //                 }
+        //                 if (result.houdu) {
+        //                     $("#printThickness").prop("checked", true);
+        //                 }
+        //                 if (result.zhongliang) {
+        //                     $("#printWeight").prop("checked", true);
+        //                 }
+        //                 if (result.biaoqianshu) {
+        //                     biaoqianshu = $("#labelNumber").val(
+        //                         result.biaoqianshu);
+        //                 }
+        //                 if (result.baozhuangshu) {
+        //                     baozhuangshu = $("#packageNumber").val(
+        //                         result.baozhuangshu);
+        //                 }
+        //                 if (result.banzu) {
+        //                     $("#banzu").combobox("select", result.banzu);
+        //                 }
+        //                 if (result.staff) {
+        //                     $("#staff").combobox("select", result.staff);
+        //                 }
+        //                 // disabledInput();
+        //             }
+        //         });
+        // }
+
+        var yanse;
+        var paodao;
+        var kehu;
+        var nonghu;
+        var zhongliang;
+        var houdu;
+        var xuhao;
+        var changshang;
+        var chang;
+        var printnum;
 
         //为选中的变量赋值
         function printSet() {
-            biaoqian = $("#printLabel").is(':checked');
-            changdu = $("#printLength").is(':checked');
-            houdu = $("#printThickness").is(':checked');
+            yanse = $("#printLabel").is(':checked');
+            paodao = $("#printLength").is(':checked');
+            kehu = $("#printThickness").is(':checked');
+            nonghu = $("#printnonghu").is(':checked');
             zhongliang = $("#printWeight").is(':checked');
-            biaoqianshu = $("#labelNumber").val();
-            baozhuangshu = $("#packageNumber").val();
-            banzu = $("#banzu").combobox("getValue");
-            staff = $("#staff").combobox("getValue");
+            houdu = $("#price").is(':checked');
+            xuhao = $("#xuhao").is(':checked');
+            changshang = $("#changshang").is(':checked');
+            printnum = $("#printnum").val();
+            chang = $("#chang").val();
         }
 
         //确定打印内容
         function printOk() {
             printSet();
             $.post("/admin/print/printSet", {
-                biaoqian: biaoqian,
-                changdu: changdu,
-                houdu: houdu,
-                biaoqianshu: biaoqianshu,
-                baozhuangshu: baozhuangshu,
-                banzu: banzu,
-                staff: staff,
-                zhongliang: zhongliang
+                color: yanse,
+                dao: paodao,
+                clientName: kehu,
+                nonghu: nonghu,
+                weight: zhongliang,
+                price: houdu,
+                xuhao: xuhao,
+                changshang: changshang,
+                chang: chang,
+                printnum: printnum,
+                id: $("#selectJitai").combobox("getValue")
             }, function (result) {
-
-            });
-            // disabledInput();
-        }
-
-        //禁用打印设置中的input
-        function disabledInput() {
-            $("#dd").find("input").each(function () {
-                $(this).prop('disabled', true);
+                if (result.success) {
+                    alert("设置成功！");
+                    ddClose();
+                }
             });
         }
 
@@ -1214,10 +1242,7 @@
         }
 
         $(document).ready(function () {
-
-
             setInterval("reloadInformNumber()", 60 * 1000 * 5);
-
             $("#printnum").val(1);
             $("#dd3").dialog("close");
             $('#dg').datagrid({
@@ -1237,8 +1262,7 @@
             loadColum();
             loadDg2Colum();
             ddClose();
-            // disabledInput();
-            set();
+            // set();
             $("#yaoqiu").hide();
             $("#dabao").numberbox("disable");
             // dabaoNum = $("#dabao").numberbox("getValue");
@@ -1403,8 +1427,10 @@
     </fieldset>
 </div>
 <div id="bb">
-    <a class="easyui-linkbutton" iconCls="icon-print" id="printButton"
-       href="javascript:print()">打印</a>
+    <!--<a class="easyui-linkbutton" iconCls="icon-print" id="printButton"-->
+    <!--href="javascript:print()">打印</a>-->
+    <a class="easyui-linkbutton"
+       iconCls="icon-ok" href="javascript:printOk()">确定</a>
     <a class="easyui-linkbutton"
        iconCls="icon-cancel" href="javascript:ddClose()">关闭</a>
 </div>
