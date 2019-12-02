@@ -85,9 +85,10 @@ public class ToLeadController {
                 map.put("errorInfo", "第" + j + "行产品名称有误");
             }
             if (row.get("经销商名称") != null && StringUtil.isNotEmpty(row.get("经销商名称").toString().trim()) && this.clientService.findByName(row.get("经销商名称").toString()).size() != 0) {
-                row.put("name", row.get("经销商名称"));
+                row.put("clientname", row.get("经销商名称"));
             } else {
                 map.put("errorInfo", "第" + j + "行经销商名称有误");
+                return map;
             }
             if (row.get("颜色") != null && StringUtil.isNotEmpty(row.get("颜色").toString().trim())) {
                 row.put("color", row.get("颜色"));
@@ -110,17 +111,17 @@ public class ToLeadController {
                 row.put("peasant", "");
             }
             if (row.get("厚度") != null && StringUtil.isNotEmpty(row.get("厚度").toString().trim())) {
-                if (isNum(row.get("厚度").toString().trim())) {
-                    row.put("price", row.get("厚度"));
-                } else {
-                    map.put("errorInfo", "第" + j + "行厚度格式有误");
-                }
+                row.put("price", row.get("厚度"));
+            } else {
+                row.put("price", "");
+
             }
             if (row.get("宽度m") != null && StringUtil.isNotEmpty(row.get("宽度m").toString().trim())) {
                 if (isNum(row.get("宽度m").toString().trim())) {
                     row.put("model", row.get("宽度m"));
                 } else {
                     map.put("errorInfo", "第" + j + "行宽度格式有误");
+                    return map;
                 }
             }
             if (row.get("长度m") != null && StringUtil.isNotEmpty(row.get("长度m").toString().trim())) {
@@ -128,6 +129,7 @@ public class ToLeadController {
                     row.put("length", row.get("长度m"));
                 } else {
                     map.put("errorInfo", "第" + j + "行长度格式有误");
+                    return map;
                 }
             }
             if (row.get("件数") != null && StringUtil.isNotEmpty(row.get("件数").toString().trim())) {
@@ -135,6 +137,7 @@ public class ToLeadController {
                     row.put("num", row.get("件数"));
                 } else {
                     map.put("errorInfo", "第" + j + "行件数格式有误");
+                    return map;
                 }
             }
             if (row.get("理论重量") != null && StringUtil.isNotEmpty(row.get("理论重量").toString().trim())) {
@@ -142,6 +145,7 @@ public class ToLeadController {
                     row.put("oneweight", row.get("理论重量"));
                 } else {
                     map.put("errorInfo", "第" + j + "行件数格式有误");
+                    return map;
                 }
             }
             if (row.get("总重量") != null && StringUtil.isNotEmpty(row.get("总重量").toString().trim())) {
@@ -149,6 +153,7 @@ public class ToLeadController {
                     row.put("sumwight", row.get("总重量"));
                 } else {
                     map.put("errorInfo", "第" + j + "行件数格式有误");
+                    return map;
                 }
             }
             if (row.get("要求") != null && StringUtil.isNotEmpty(row.get("要求").toString().trim())) {
