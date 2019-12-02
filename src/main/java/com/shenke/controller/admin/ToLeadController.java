@@ -119,9 +119,15 @@ public class ToLeadController {
                 return map;
             }
 
-            map1.put("dao", map1.remove("剖刀设置").toString().trim());
-            map1.put("brand", map1.remove("商标设置").toString().trim());
-            map1.put("letter", map1.remove("印字设置").toString().trim());
+            if (map1.get("剖刀设置") != null) {
+                map1.put("dao", map1.remove("剖刀设置").toString().trim());
+            }
+            if (map1.get("商标设置") != null) {
+                map1.put("brand", map1.remove("商标设置").toString().trim());
+            }
+            if (map1.get("印字设置") != null) {
+                map1.put("印字设置", map1.remove("印字设置").toString().trim());
+            }
             map1.put("clientname", map1.remove("经销商名称").toString().trim());
             map1.put("code", map1.remove("序号").toString().trim());
             if (map1.get("农户名称") != null) {
