@@ -78,118 +78,105 @@ public class ToLeadController {
 
         while (i < mapList.size()) {
             int j = i + 1;
-            Map<String, Object> map1 = (Map) mapList.get(i);
-            map1.put("name", map1.remove("产品名称").toString().trim());
-            if (isNum(map1.get("宽度m").toString().trim())) {
-                map1.put("model", map1.remove("宽度m").toString().trim());
+            Map<String, Object> row = mapList.get(i);
+            if (row.get("产品名称") != null && StringUtil.isNotEmpty(row.get("产品名称").toString().trim()) && this.productService.findByName(row.get("产品名称").toString()).size() != 0) {
+                row.put("name", row.get("产品名称"));
             } else {
-                map.put("errorInfo", "第" + i + "行宽度格式有误");
-                return map;
-            }
-
-            map1.put("price", map1.remove("厚度").toString().trim());
-
-            if (isNum(map1.get("长度m").toString().trim())) {
-                map1.put("length", map1.remove("长度m").toString().trim());
-            } else {
-                map.put("errorInfo", "第" + i + "行长度格式有误");
-                return map;
-            }
-
-            map1.put("color", map1.remove("颜色").toString().trim());
-
-            if (isNum(map1.get("理论重量").toString().trim())) {
-                map1.put("oneweight", map1.remove("理论重量").toString().trim());
-            } else {
-                map.put("errorInfo", "第" + i + "行理论重量格式有误");
-                return map;
-            }
-
-            if (isNum(map1.get("件数").toString().trim())) {
-                map1.put("num", map1.remove("件数").toString().trim());
-            } else {
-                map.put("errorInfo", "第" + i + "行件数格式有误");
-                return map;
-            }
-
-            if (isNum(map1.get("总重量").toString().trim())) {
-                map1.put("sumwight", map1.remove("总重量").toString().trim());
-            } else {
-                map.put("errorInfo", "第" + i + "行总重量格式有误");
-                return map;
-            }
-
-            if (map1.get("剖刀设置") != null) {
-                map1.put("dao", map1.remove("剖刀设置").toString().trim());
-            }
-            if (map1.get("商标设置") != null) {
-                map1.put("brand", map1.remove("商标设置").toString().trim());
-            }
-            if (map1.get("印字设置") != null) {
-                map1.put("印字设置", map1.remove("印字设置").toString().trim());
-            }
-            map1.put("clientname", map1.remove("经销商名称").toString().trim());
-            map1.put("code", map1.remove("序号").toString().trim());
-            if (map1.get("农户名称") != null) {
-                map1.put("peasant", map1.remove("农户名称").toString().trim());
-            } else {
-                map1.put("peasant", "");
-            }
-
-            if (map1.get("实际重量") != null) {
-                map1.put("realityweight", map1.remove("实际重量").toString().trim());
-            }
-
-            if (map1.get("要求") != null) {
-                map1.put("demand", map1.remove("要求").toString().trim());
-            }
-
-            if (map1.get("实际厚度mm") != null) {
-                map1.put("meter", map1.remove("实际厚度mm").toString().trim());
-            }
-
-            if (map1.get("实际幅宽m") != null) {
-                map1.put("realitymodel", map1.remove("实际幅宽m").toString().trim());
-            }
-
-            if (map1.get("包装") != null) {
-                map1.put("pack", map1.remove("包装").toString().trim());
-            }
-
-            if (map1.get("name") != null && map1.get("dao") != null && map1.get("brand") != null && map1.get("letter") != null && map1.get("clientname") != null) {
-                System.out.println(this.productService.findByName(map1.get("name").toString()));
-                System.out.println(this.productService.findByName(map1.get("name").toString()).size());
-                if (map1.get("name") != null && this.productService.findByName(map1.get("name").toString()).size() != 0) {
-                    if (map1.get("dao") != null && this.daoService.findByName(map1.get("dao").toString()).size() != 0) {
-                        if (map1.get("brand") != null && this.brandService.findByName(map1.get("brand").toString()).size() != 0) {
-                            if (map1.get("clientname") != null && this.clientService.findByName(map1.get("clientname").toString()).size() != 0) {
-                                data.add(map1);
-                                ++i;
-                                continue;
-                            }
-                            map.put("success", false);
-                            map.put("errorInfo", "第" + j + "行客户姓名有误");
-                            return map;
-                        }
-                        map.put("success", false);
-                        map.put("errorInfo", "第" + j + "行商标设置有误");
-                        return map;
-                    }
-                    map.put("success", false);
-                    map.put("errorInfo", "第" + j + "行剖刀设置有误");
-                    return map;
-                }
-                map.put("success", false);
                 map.put("errorInfo", "第" + j + "行产品名称有误");
-                return map;
             }
-
-            map.put("success", false);
-            map.put("errorInfo", "第" + j + "行存在空白单元格");
-            return map;
+            if (row.get("经销商名称") != null && StringUtil.isNotEmpty(row.get("经销商名称").toString().trim()) && this.clientService.findByName(row.get("经销商名称").toString()).size() != 0) {
+                row.put("name", row.get("经销商名称"));
+            } else {
+                map.put("errorInfo", "第" + j + "行经销商名称有误");
+            }
+            if (row.get("颜色") != null && StringUtil.isNotEmpty(row.get("颜色").toString().trim())) {
+                row.put("color", row.get("颜色"));
+            } else {
+                row.put("color", "");
+            }
+            if (row.get("商标设置") != null && StringUtil.isNotEmpty(row.get("商标设置").toString().trim())) {
+                row.put("brand", row.get("商标设置"));
+            } else {
+                row.put("brand", "");
+            }
+            if (row.get("序号") != null && StringUtil.isNotEmpty(row.get("序号").toString().trim())) {
+                row.put("code", row.get("序号"));
+            } else {
+                row.put("code", "");
+            }
+            if (row.get("农户名称") != null && StringUtil.isNotEmpty(row.get("农户名称").toString().trim())) {
+                row.put("peasant", row.get("农户名称"));
+            } else {
+                row.put("peasant", "");
+            }
+            if (row.get("厚度") != null && StringUtil.isNotEmpty(row.get("厚度").toString().trim())) {
+                if (isNum(row.get("厚度").toString().trim())) {
+                    row.put("price", row.get("厚度"));
+                } else {
+                    map.put("errorInfo", "第" + j + "行厚度格式有误");
+                }
+            }
+            if (row.get("宽度m") != null && StringUtil.isNotEmpty(row.get("宽度m").toString().trim())) {
+                if (isNum(row.get("宽度m").toString().trim())) {
+                    row.put("model", row.get("宽度m"));
+                } else {
+                    map.put("errorInfo", "第" + j + "行宽度格式有误");
+                }
+            }
+            if (row.get("长度m") != null && StringUtil.isNotEmpty(row.get("长度m").toString().trim())) {
+                if (isNum(row.get("长度m").toString().trim())) {
+                    row.put("length", row.get("长度m"));
+                } else {
+                    map.put("errorInfo", "第" + j + "行长度格式有误");
+                }
+            }
+            if (row.get("件数") != null && StringUtil.isNotEmpty(row.get("件数").toString().trim())) {
+                if (isNum(row.get("件数").toString().trim())) {
+                    row.put("num", row.get("件数"));
+                } else {
+                    map.put("errorInfo", "第" + j + "行件数格式有误");
+                }
+            }
+            if (row.get("理论重量") != null && StringUtil.isNotEmpty(row.get("理论重量").toString().trim())) {
+                if (isNum(row.get("理论重量").toString().trim())) {
+                    row.put("oneweight", row.get("理论重量"));
+                } else {
+                    map.put("errorInfo", "第" + j + "行件数格式有误");
+                }
+            }
+            if (row.get("总重量") != null && StringUtil.isNotEmpty(row.get("总重量").toString().trim())) {
+                if (isNum(row.get("总重量").toString().trim())) {
+                    row.put("sumwight", row.get("总重量"));
+                } else {
+                    map.put("errorInfo", "第" + j + "行件数格式有误");
+                }
+            }
+            if (row.get("要求") != null && StringUtil.isNotEmpty(row.get("要求").toString().trim())) {
+                row.put("demand", row.get("要求"));
+            } else {
+                row.put("demand", "");
+            }
+            if (row.get("剖刀设置") != null && StringUtil.isNotEmpty(row.get("剖刀设置").toString().trim())) {
+                row.put("dao", row.get("剖刀设置"));
+            } else {
+                row.put("dao", "");
+            }
+            if (row.get("印字设置") != null && StringUtil.isNotEmpty(row.get("印字设置").toString().trim())) {
+                row.put("letter", row.get("印字设置"));
+            } else {
+                row.put("letter", "");
+            }
+            if (row.get("包装") != null && StringUtil.isNotEmpty(row.get("包装").toString().trim())) {
+                row.put("pack", row.get("包装"));
+            } else {
+                row.put("pack", "");
+            }
+            System.out.println();
+            data.add(row);
+            i++;
         }
 
-        System.out.println(data);
+//        System.out.println(data);
         map.put("success", true);
         map.put("rows", data);
         return map;
@@ -459,10 +446,10 @@ public class ToLeadController {
         return map;
     }
 
-    public Boolean isNum(String num){
+    public Boolean isNum(String num) {
         try {
             Double.valueOf(num);
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
