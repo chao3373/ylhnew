@@ -299,4 +299,13 @@ public interface SaleListProductRepository
 	 */
 	@Query(value = "select ROUND(SUM(IFNULL(num - accomplish_number,0) * oneweight), 2) as weishengchan from t_sale_list_product where sale_list_id in ?1", nativeQuery = true)
 	Double findWSC(Integer[] saleListIds);
+
+	/***
+	 * 修改通知单号
+	 * @param ids
+	 * @param info
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set inform_number = ?2 where id in ?1", nativeQuery = true)
+    void updatInfo(Integer[] ids, Integer info);
 }

@@ -300,6 +300,12 @@
                                                         align: "center"
                                                     },
                                                     {
+                                                        field: 'informNumber',
+                                                        title: "通知单号",
+                                                        width: "50",
+                                                        align: "center"
+                                                    },
+                                                    {
                                                         field: 'name',
                                                         title: "产品名称",
                                                         width: "200",
@@ -1127,6 +1133,33 @@
 
         }
 
+        //修改通知单号
+        function updateInfo(){
+            var ids = getDgId("#dg2");
+            console.log(ids);
+            if (!ids) {
+                return;
+            }
+            if (!$("#info").val()) {
+                alert("请输入单号！");
+                return;
+            }
+
+            var info = $("#info").val();
+            $.ajax({
+                type: "POST",
+                url: "/admin/saleListProduct/updatInfo",
+                data: {ids: ids, info: info},
+                success: function (result) {
+                    if (result.success) {
+                        alert("修改成功！");
+                        $("#yanse").val("");
+                        $("#dg").datagrid("selectRow", $("#dg").datagrid("getRowIndex", $("#dg").datagrid("getSelected")));
+                    }
+                }
+            })
+        }
+
     </script>
 </head>
 <body class="easyui-layout" style="margin: 1px">
@@ -1237,6 +1270,9 @@
 		    onSelect: function(rec){
 		    	auditQuery(rec.value);
 		    }"/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改通知单号：&nbsp;
+        <input type="text" id="info" style="width: 50px;"/>
+        <a href="javascript:updateInfo()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
         <!--<a href="javascript:editSaleListProduct()" class="easyui-linkbutton" iconCls="icon-edit"-->
         <!--plain="true">修改</a>-->
         <form id="updatefm">

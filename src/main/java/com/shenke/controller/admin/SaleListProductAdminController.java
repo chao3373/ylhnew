@@ -904,4 +904,16 @@ public class SaleListProductAdminController {
         return map;
     }
 
+    /**
+     *修改通知单号
+     * @param
+     */
+    @RequestMapping("/updatInfo")
+    public Map<String, Object> updatInfo(Integer[] ids, Integer info){
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.updatInfo(ids, info);
+        map.put("success",true);
+        return map;
+    }
+
 }

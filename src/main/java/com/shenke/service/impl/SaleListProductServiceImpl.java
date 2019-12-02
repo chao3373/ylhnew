@@ -559,6 +559,11 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     }
 
     @Override
+    public void updatInfo(Integer[] ids, Integer info) {
+        saleListProductRepository.updatInfo(ids, info);
+    }
+
+    @Override
     public List dingDanZhuiZongg(SaleListProduct saleListProduct) {
         String sqlStar = "select sale_number," +
                 " clientname, " +

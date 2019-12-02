@@ -221,4 +221,6 @@ public interface SaleListProductService {
     List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId);
 
 	List<SaleListProduct> findByDanhao(Long danhao);
+
+	void updatInfo(Integer[] ids, Integer info);
 }
