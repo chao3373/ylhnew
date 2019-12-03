@@ -42,15 +42,9 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/passTheAudit")
-    public Map<String, Object> passTheAudit(String ids) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        String[] idArr = ids.split(",");
-        for (int i = 0; i < idArr.length; i++) {
-            int id = Integer.parseInt(idArr[i]);
-
-            logService.save(new Log(Log.AUDIT_ACTION, "审核通过"));
-            saleListProductService.passTheAudit(id);
-        }
+    public Map<String, Object> passTheAudit(Integer[] ids) {
+        Map<String, Object> map = new HashMap<>();
+        saleListProductService.passTheAudits(ids, "审核通过");
         map.put("success", true);
         return map;
     }
@@ -232,14 +226,9 @@ public class SaleListProductAdminController {
      * @return
      */
     @RequestMapping("/issue")
-    public Map<String, Object> issue(String idStr) {
+    public Map<String, Object> issue(Integer[] ids) {
         Map<String, Object> map = new HashMap<>();
-        String[] ids = idStr.split(",");
-        for (int i = 0; i < ids.length; i++) {
-            SaleListProduct saleListProduct = saleListProductService.findById(Integer.parseInt(ids[i]));
-            saleListProductService.updateState("下发机台：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-            saleListProductService.updateIussueState("下发机台：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-        }
+        saleListProductService.xiaFaJiTai(ids);
         map.put("success", true);
         return map;
     }

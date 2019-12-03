@@ -201,4 +201,10 @@ public interface SaleListProductService {
 	void addpeifang(Long informNumber, Double peifangnum, Integer id);
 
 	void deleteByIds(Integer[] ids);
+
+	void passTheAudits(Integer[] idArr, String state);
+
+	void fenPeiJiTai(Integer[] ids, String state, Integer jiTaiId, Long informNumber, String xiaFaZhuangTai);
+
+	void xiaFaJiTai(Integer[] ids);
 }

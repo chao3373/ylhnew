@@ -430,4 +430,41 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             saleListProductRepository.delete(ids[i]);
         }
     }
+
+    /***
+     * 根据id数组 修改状态
+     * @param idArr
+     * @param state
+     */
+    @Override
+    public void passTheAudits(Integer[] idArr, String state) {
+        saleListProductRepository.passTheAudits(idArr, state);
+    }
+
+    /***
+     * 分配机台
+     * @param ids
+     * @param state
+     * @param jiTaiId
+     * @param informNumber
+     * @param xiaFaZhuangTai
+     */
+    @Override
+    public void fenPeiJiTai(Integer[] ids, String state, Integer jiTaiId, Long informNumber, String xiaFaZhuangTai) {
+        saleListProductRepository.updateStateByIds(state, ids);
+        saleListProductRepository.updateIussueStateByIds(xiaFaZhuangTai, ids);
+        saleListProductRepository.updateJiTaiIdByIds(jiTaiId, ids);
+        saleListProductRepository.updateInformNumberByIds(informNumber, ids);
+    }
+
+    /***
+     * 下发机台
+     * @param ids
+     */
+    @Override
+    public void xiaFaJiTai(Integer[] ids) {
+        System.out.println(ids.length);
+        saleListProductRepository.xiaFaStateByIds(ids);
+        saleListProductRepository.xiaFaIussueStateByIds(ids);
+    }
 }

@@ -45,55 +45,18 @@ public class ProductionAdminController {
 	 * @return
 	 */
 	@RequestMapping("/jitaiAllocation")
-	public Map<String, Object> jitaiAllocation(String ids, Integer jitai) {
+	public Map<String, Object> jitaiAllocation(Integer[] ids, Integer jitai) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		JiTai jitai1 = jiTaiService.findById(jitai);
-		String[] idarr = ids.split(",");
-		List<Integer> idList = new ArrayList<Integer>();
 		logService.save(new Log(Log.UPDATE_ACTION, "分配机台"));
 		Long informNumber = this.getInformNumber();
 
-		for (int i = 0; i < idarr.length; i++) {
-			int id = Integer.parseInt(idarr[i]);
-			idList.add(id);
-			saleListProductService.auditFailure(id, "分配机台：" + jitai1.getName());
-			saleListProductService.updateJitaiId(id, jitai1.getId());
-			saleListProductService.updateInformNumber(informNumber, id);
-			saleListProductService.updateIussueState("未下发", id);
-
-		}
-
-//		List<SaleListProduct> list = saleListProductService.fandAll(idList);
-//
-//		for (SaleListProduct saleListProduct : list) {
-//			logService.save(new Log(Log.ADD_ACTION, "添加生产通知单"));
-//			for (int i = 0; i < saleListProduct.getNum(); i++) {
-//				JitaiProductionAllot jitaiProductionAllot = new JitaiProductionAllot();
-//				jitaiProductionAllot.setJiTai(jiTaiService.findById(jitai));
-//				jitaiProductionAllot.setInformNumber(informNumber);
-//				jitaiProductionAllot.setSaleNumber(saleListProduct.getSaleList().getSaleNumber());
-//				jitaiProductionAllot.setProductionMessage("幅宽： " + saleListProduct.getModel() + "，厚度："
-//						+ saleListProduct.getPrice() + "，长度：" + saleListProduct.getLength() + "，颜色："
-//						+ saleListProduct.getColor() + "，要求：" + saleListProduct.getDemand());
-//				jitaiProductionAllot.setTaskQuantity(saleListProduct.getSumwight());
-//				jitaiProductionAllot.setAllorTime(new Date(System.currentTimeMillis()));
-//				jitaiProductionAllot.setAllotState(saleListProduct.getState());
-//				jitaiProductionAllot.setIssueState("未下发");
-//				jitaiProductionAllot.setSaleListProduct(saleListProduct);
-//				Integer countSaleListProduct = jitaiProductionAllotService
-//						.countBySaleListProductId(saleListProduct.getId());
-//				jitaiProductionAllot.setNum(countSaleListProduct == null ? 0 : countSaleListProduct);
-//				jitaiProductionAllotService.save(jitaiProductionAllot);
-//				List<JitaiProductionAllot> jitaiProductionAllots = jitaiProductionAllotService
-//						.findBySaleListProductId(saleListProduct.getId());
-//				for (JitaiProductionAllot jitaiProductionAllo : jitaiProductionAllots) {
-//					jitaiProductionAllotService.updateNum(countSaleListProduct,
-//							jitaiProductionAllo.getSaleListProduct().getId());
-//				}
-//			}
-//		}
-
+//		saleListProductService.auditFailure(id, "分配机台：" + jitai1.getName());
+//		saleListProductService.updateJitaiId(id, jitai1.getId());
+//		saleListProductService.updateInformNumber(informNumber, id);
+//		saleListProductService.updateIussueState("未下发", id);
+		saleListProductService.fenPeiJiTai(ids, "分配机台：" + jitai1.getName(), jitai1.getId(), informNumber, "未下发");
 		map.put("success", true);
 		return map;
 	}

@@ -258,4 +258,60 @@ public interface SaleListProductRepository
 	@Modifying
 	@Query(value = "update t_sale_list_product set peifangid = ?3, peifangnum = ?2 where inform_number = ?1", nativeQuery = true)
     void addpeifang(Long informNumber, Double peifangnum, Integer id);
+
+	/***
+	 * 修改状态
+	 * @param idArr
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set state = ?2 where id in ?1", nativeQuery = true)
+    void passTheAudits(Integer[] idArr, String state);
+
+	/***
+	 * 根据id数组修改状态
+	 * @param
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set state = ?1 where id in ?2", nativeQuery = true)
+	void updateStateByIds(String state, Integer[] ids);
+
+	/***
+	 * 根据id数组修改下发状态
+	 * @param
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set issue_state = ?1 where id in ?2", nativeQuery = true)
+	void updateIussueStateByIds(String state, Integer[] ids);
+
+	/***
+	 * 根据id数组修改机台id
+	 * @param
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set jitai_id = ?1 where id in ?2", nativeQuery = true)
+	void updateJiTaiIdByIds(Integer jiTaiId, Integer[] ids);
+
+	/***
+	 * 根据id数组修改通知单号
+	 * @param
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product set inform_number = ?1 where id in ?2", nativeQuery = true)
+	void updateInformNumberByIds(Long informNumber, Integer[] ids);
+
+	/***
+	 * 根据id数组修改状态为下发
+	 * @param
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product a, t_jitai b set a.state = CONCAT('下发机台：', b.name) where a.jitai_id = b.id and a.id in ?1", nativeQuery = true)
+	void xiaFaStateByIds(Integer[] ids);
+
+	/***
+	 * 根据id数组修改下发状态为下发
+	 * @param
+	 */
+	@Modifying
+	@Query(value = "update t_sale_list_product a, t_jitai b set a.issue_state = CONCAT('下发机台：', b.`name`) where a.jitai_id = b.id and a.id in ?1", nativeQuery = true)
+	void xiaFaIussueStateByIds(Integer[] ids);
 }
