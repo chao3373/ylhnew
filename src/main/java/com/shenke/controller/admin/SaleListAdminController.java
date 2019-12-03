@@ -119,24 +119,24 @@ public class SaleListAdminController {
 
         //日志内容
         StringBuffer sb = new StringBuffer();
-        sb.append("下单明细==订单号："+saleNumber+"==客户名："+client.getName());
+        sb.append("下单明细==订单号：" + saleNumber + "==客户名：" + client.getName());
 
         for (SaleListProduct saleListProduct : plgList) {
             saleListProduct.setSaleList(saleList);
             saleListProduct.setState("下单");
             saleListProduct.setLevel(0);
-            sb.append("{[产品名称："+saleListProduct.getName()+"],[数量："+saleListProduct.getNum()+"]}, ");
+            sb.append("{[产品名称：" + saleListProduct.getName() + "],[数量：" + saleListProduct.getNum() + "]}, ");
         }
         saleListService.saveOne(saleList);
         saleListProductService.saveList(plgList);
-        logService.save(new Log(Log.ADD_ACTION,sb.toString()));
+        logService.save(new Log(Log.ADD_ACTION, sb.toString()));
         map.put("success", true);
         return map;
     }
 
     @RequestMapping("/saveSecond")
     public Map<String, Object> saveSecond(String saleDate, String saleNumber, Integer clientId, Integer sellId, String dao, String brand, String weightset, String pack,
-                                         String letter, String name, String color, Integer clerkId, String lankman, String tel, String address, String deliveryDate, String goodsJson)
+                                          String letter, String name, String color, Integer clerkId, String lankman, String tel, String address, String deliveryDate, String goodsJson)
             throws Exception {
         System.out.println(name);
         System.out.println(color);
@@ -183,8 +183,6 @@ public class SaleListAdminController {
         List<SaleListProduct> plgList = gson.fromJson(goodsJson, new TypeToken<List<SaleListProduct>>() {
         }.getType());
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("下单明细==订单号："+saleNumber+"==客户名："+client.getName());
         for (SaleListProduct saleListProduct : plgList) {
             saleListProduct.setSaleList(saleList);
             saleListProduct.setState("下单");
@@ -197,12 +195,13 @@ public class SaleListAdminController {
             saleListProduct.setWightset(weightset);
             saleListProduct.setLetter(letter);
             saleListProduct.setLevel(0);
-            sb.append("{[产品名称："+saleListProduct.getName()+"],[数量："+saleListProduct.getNum()+"]}, ");
+            logService.save(new Log(Log.ADD_ACTION, "{[产品名称：" + saleListProduct.getName() + "],[数量：" + saleListProduct.getNum() + "]}, "));
         }
         saleListService.saveOne(saleList);
         saleListProductService.saveList(plgList);
-        logService.save(new Log(Log.ADD_ACTION,sb.toString()));
-        //logService.save(new Log(Log.ADD_ACTION, "添加销售单"));
+
+//        logService.save(new Log(Log.ADD_ACTION,sb.toString()));
+        logService.save(new Log(Log.ADD_ACTION, "添加销售单"));
         map.put("success", true);
         return map;
     }
