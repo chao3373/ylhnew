@@ -177,17 +177,7 @@
         function saveSaleGoods() {
             $("#saleNumber").val($("#dh").text());
             var rows = $("#dg").datagrid("getData").rows;
-            var zongjine;
-            for (var i = 0; i < rows.length; i++) {
-                if (rows[i].name == '合计') {
-                    console.log(rows[i]);
-                    zongjine = rows[i].totalPrice.split("：")[1];
-                    rows.splice(i, 1);
-                    console.log(zongjine);
-                    $("#jine").val(zongjine)
-                    rows.splice(i, 1);
-                }
-            }
+            rows.pop();
             $("#goodsJson").val(JSON.stringify(rows));
             $("#fm").form("submit", {
                 url: "/admin/saleList/save",
@@ -212,7 +202,7 @@
                         alert("保存成功！");
                         window.location.reload();
                     } else {
-                        alert(result.msg);
+                        $.messager.alert("系统提示", "保存失败！");
                     }
                 }
             });
@@ -512,19 +502,16 @@
                             });
                             var countnum = 0;
                             var sumweight = 0;
-                            var zongjiage = 0;
                             var rows = $("#dg").datagrid('getRows');
                             for (var i = 0; i < rows.length; i++) {
                                 console.log(rows[i].num);
-                                countnum += parseFloat(rows[i].num);
-                                sumweight += parseFloat(rows[i].sumwight);
-                                zongjiage += parseFloat(rows[i].totalPrice);
+                                countnum += Number(rows[i].num);
+                                sumweight += Number(Number(rows[i].sumwight).toFixed(2));
                             }
                             $("#dg").datagrid('appendRow', {
                                 name: '合计',
                                 num: '总数量：' + countnum,
-                                sumwight: '总重量：' + sumweight,
-                                totalPrice: "总金额：" + zongjiage.toFixed(2)
+                                sumwight: '总重量：' + sumweight
                             });
                         } else {
                             $.messager.alert("系统提示", "<span style='color:red'>"
@@ -720,11 +707,11 @@
                     <td>日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期：<input
                             type="text" id="saleDate" name="saleDate" class="easyui-datebox"
                             demandd="true" data-options="editable:false" size="15"/>
-                        <input type="hidden" name="zongjine" id="jine" >
                     </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;购货单位：<input class="easyui-combobox" id="clientId" name="clientId"
-                                                            style="width: 150px" required="true" demandd="true"
-                                                            data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;购货单位：<input
+                            class="easyui-combobox" id="clientId" name="clientId"
+                            style="width: 150px" required="true" demandd="true"
+                            data-options="demandd:true,panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/client/clientList'"/>
                     </td>
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;销售方式：<input
                             class="easyui-combobox" id="sellId" name="sellId"
@@ -768,44 +755,39 @@
            singleSelect="true" fit="true" toolbar="#tb">
         <thead>
         <th id="nameRow" field="name" width="200" align="center">产品名称</th>
-        <th id="colorRow" field="color" width="100" align="center">颜色</th>
-        <th id="brandRow" field="brand" width="100" align="center">商标</th>
-        <th id="clientnameRow" field="clientname" width="100" align="center">经销商名称</th>
-        <th id="codeRow" field="code" width="100" align="center">序号</th>
         <th id="peasantRow" field="peasant" width="100" align="center">农户名称</th>
-        <th id="priceRow" field="price" width="100" align="center">厚度</th>
         <th id="modelRow" field="model" width="100" align="center">幅宽（m）</th>
+        <th id="priceRow" field="price" width="100" align="center">厚度（mm）</th>
         <th id="lengthRow" field="length" width="100" align="center">长度（m）</th>
-        <th id="numRow" field="num" width="100" align="center">订货数量</th>
-        <!--<th id="meterRow" field="meter" width="100" align="center">实际厚度</th>
-        <th id="realitymodRow" field="realitymodel" width="100"
-            align="center">实际幅宽（m）
-        </th>-->
-        <th id="oneweightRow" field="oneweight" width="100" align="center">理论重量（kg）</th>
-        <th id="sumwightRow" field="sumwight" width="100" align="center">总重量</th>
-        <th id="demandRow" field="demand" width="200" align="center">要求</th>
-        <!--<th id="wightsetRow" field="wightset" width="100" align="center">重量设置</th>
-        <th id="packRow" field="pack" width="100" align="center">包装</th>-->
+        <th id="productLengthRow" field="productLength" width="100" align="center">生产长度</th>
         <th id="daoRow" field="dao" width="100" align="center">剖刀</th>
+        <th id="demandRow" field="demand" width="200" align="center">要求</th>
+        <th id="colorRow" field="color" width="100" align="center">颜色</th>
+        <th id="oneweightRow" field="oneweight" width="100" align="center">单件重量（kg）</th>
+        <th id="numRow" field="num" width="100" align="center">订货数量</th>
+        <th id="sumwightRow" field="sumwight" width="100" align="center">总重量</th>
+        <th id="weightsetRow" field="weightset" width="100" align="center">纸管重量设置</th>
+        <th id="brandRow" field="brand" width="100" align="center">商标</th>
+        <th id="packRow" field="pack" width="100" align="center">包装</th>
         <th id="letterRow" field="letter" width="100" align="center">印字</th>
-        <!--<th id="unitPrice" field="unitPrice" width="100" align="center">单价</th>
-        <th id="totalPrice" field="totalPrice" width="100" align="center">金额</th>-->
-        <!--<th id="realityweiRow" field="realityweight" width="100"-->
-        <!--align="center">实际重量（kg）-->
-        <!--</th>-->
-        <!--<th id="realitypriRow" field="realityprice" width="100"-->
-        <!--align="center">实际厚度（mm）-->
-        <!--</th>-->
-        <!--<th id="theoryweigRow" field="theoryweight" width="100"-->
-        <!--align="center">理论重量（kg）-->
-        <!--</th>-->
-        <!--<th id="squareRow" field="square" width="100" align="center">单件平米</th>-->
-        <!--<th id="numsquareRow" field="numsquare" width="100" align="center">总平米</th>-->
-        <!--<th id="weightwayRow" field="weightway" width="100" align="center">称重方式</th>-->
-        <!--<th id="labelRow" field="label" width="100" align="center">标签名称</th>-->
-        <!--<th id="weightRow" field="weight" width="100" align="center">重量（kg）</th>-->
-        <!--<th id="patuRow" field="patu" width="100" align="center">纸管</th>-->
-        <!--<th id="remarkRow" field="remark" width="100" align="center">备注</th>-->
+        <th id="clientnameRow" field="clientname" width="100" align="center">客户名称</th>
+        <th id="labelNumberRow" field="labelNumber" width="100" align="center">标签数量</th>
+        <th id="realityweiRow" field="realityweight" width="100"
+            align="center">实际重量（kg）
+        </th>
+        <th id="realitypriRow" field="realityprice" width="100"
+            align="center">实际厚度（mm）
+        </th>
+        <th id="theoryweigRow" field="theoryweight" width="100"
+            align="center">理论重量（kg）
+        </th>
+        <th id="squareRow" field="square" width="100" align="center">单件平米</th>
+        <th id="numsquareRow" field="numsquare" width="100" align="center">总平米</th>
+        <th id="weightwayRow" field="weightway" width="100" align="center">称重方式</th>
+        <th id="labelRow" field="label" width="100" align="center">标签名称</th>
+        <th id="weightRow" field="weight" width="100" align="center">重量（kg）</th>
+        <th id="patuRow" field="patu" width="100" align="center">纸管</th>
+        <th id="remarkRow" field="remark" width="100" align="center">备注</th>
         </thead>
     </table>
 

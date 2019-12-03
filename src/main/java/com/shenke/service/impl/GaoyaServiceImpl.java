@@ -30,9 +30,9 @@ public class GaoyaServiceImpl implements GaoyaService {
     @Override
     public List<GaoYa> list(GaoYa GaoYa, Integer page, Integer rows) {
         Pageable pageable = new PageRequest(page - 1, rows);
-        Page<com.shenke.entity.GaoYa> muLiaos = gaoyaRepository.findAll(new Specification<com.shenke.entity.GaoYa>() {
+        Page<GaoYa> muLiaos = gaoyaRepository.findAll(new Specification<GaoYa>() {
             @Override
-            public Predicate toPredicate(Root<com.shenke.entity.GaoYa> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+            public Predicate toPredicate(Root<GaoYa> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Predicate predicate = cb.conjunction();
                 if (GaoYa != null) {
                     if (StringUtil.isNotEmpty(GaoYa.getName())) {

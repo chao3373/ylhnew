@@ -3,7 +3,6 @@ package com.shenke.repository;
 import java.util.Date;
 import java.util.List;
 
-import com.shenke.entity.LingShou;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -41,7 +40,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      */
     @Modifying
     @Query(value = "update t_storage set state = '提货', date_of_delivery = ?2 where id in ?1", nativeQuery = true)
-    public void outStorage(String[] id, Date date);
+    public void outStorage(Integer[] id, Date date);
 
 
     /**
@@ -72,6 +71,10 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Modifying
     @Query(value = "update t_storage set  state = ?1, delivery_time = ?3, out_number = ?4 where id in ?2", nativeQuery = true)
     public void updateStateById(String state, String[] id, Date date, String ck);
+
+//    @Modifying
+//    @Query(value = "update t_storage set  state = ?1, delivery_time = ?3, out_number = ?4 where id = ?2", nativeQuery = true)
+//    public void updateStateById(String state, Integer id, Date date, String ck);
 
     /**
      * 根据客户名称查询并按照商品名排序
@@ -109,7 +112,7 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param client
      * @return
      */
-    @Query( value = "select name,count(*) from t_storage where clientname =?1  group by name and state = '装车'" , nativeQuery = true)
+    @Query( value = "select name,count(*) from t_storage where clientname =?1  group by name" , nativeQuery = true)
     public List<Object[]> FindByGroup(String client);
 
     /**
@@ -203,8 +206,8 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
      * @param state
      */
     @Modifying
-    @Query(value = "UPDATE t_storage SET state=?2 WHERE id in ?1", nativeQuery = true)
-    public void updateByIdAndState(String[] parseInt, String state);
+    @Query(value = "UPDATE t_storage SET state=?2 WHERE id = ?1", nativeQuery = true)
+    public void updateByIdAndState(int parseInt, String state);
 
     /***
      * 根据状态查询
@@ -302,11 +305,11 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     void updatehoudu(String houdu, Integer id);
 
     //根据条件查询提货商品
-    @Query(value = "select * from t_storage where serial_number = ?1 and state = '提货'", nativeQuery = true)
+    @Query(value = "select * from t_storage where serial_number = ?1 and state like '%提货%'", nativeQuery = true)
     List<Storage> selectTihuo(String pandianji);
 
     //根据条件查询提货商品
-    @Query(value = "select * from t_storage where state = '提货'", nativeQuery = true)
+    @Query(value = "select * from t_storage where state like '%提货%'", nativeQuery = true)
     List<Storage> selectTihuo();
 
     //根据salelistproductid查询库存数量
@@ -322,34 +325,10 @@ public interface StorageRepository extends JpaRepository<Storage, Integer>, JpaS
     @Query(value = "update t_storage set date_in_produced = ?2 where id = ?1", nativeQuery = true)
     void updateshijian(Integer id, Date parse);
 
-    /**
-     * 查询所有可以零售的商品
-     * @param s
-     * @return
-     */
-    @Query(value = "select * from t_storage where clientname = '库存' and name like ?1 group by name", nativeQuery = true)
-    List<Storage> lingshouList(String s);
-
-    //根据id修改状态
     @Modifying
-    @Query(value = "update t_storage set state = ?1 where id = ?2", nativeQuery = true)
-    void updateState(String state, Integer key);
+    @Query(value = "update t_storage set state = ?2 where id in ?1", nativeQuery = true)
+    void updateStateByIds(Integer[] idArr, String state);
 
-    //根据saleListProductId获取完成数
-    @Query(value = "select sum(dabaonum) from t_storage where sale_list_product_id = ?1", nativeQuery = true)
-    Integer getCountBySaleListProductId(Integer saleListProductId);
 
-    @Query(value = "select * from t_storage where sale_list_id = ?1", nativeQuery = true)
-    List<Storage> findBySaleListId(Integer id);
-
-    @Query(value = "select * from t_storage where sale_list_id in ?1", nativeQuery = true)
-    List<Storage> findBySaleListIds(String[] ids);
-
-    /**
-     * 查询订单号中已经生产的重量
-     * @param saleNumbers
-     * @return
-     */
-    @Query(value = "select ROUND(IFNULL(SUM(realityweight),0),2) as yishengchan from t_storage where sale_number in ?1", nativeQuery = true)
-    Double findYSCZL(String[] saleNumbers);
+//    Integer findSumDaBaoShu(Integer id);
 }

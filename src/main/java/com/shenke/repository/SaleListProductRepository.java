@@ -1,6 +1,6 @@
 package com.shenke.repository;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -28,9 +28,6 @@ public interface SaleListProductRepository
 	 */
 	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1", nativeQuery = true)
 	public List<SaleListProduct> listBySaleListId(Integer saleListId);
-
-	@Query(value = "SELECT * FROM t_sale_list_product WHERE sale_list_id = ?1 and state <> '合并件'", nativeQuery = true)
-	public List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId);
 
 	/**
 	 * 根据销售单id删除所有商品信息0
@@ -164,7 +161,7 @@ public interface SaleListProductRepository
 	/**
 	 * 查询该机台上所有未完成的通知单号
 	* @Description:
-	* @Param:
+	* @Param:selectNoAccomplish
 	* @return:
 	* @Author: Andy
 	* @Date:
@@ -252,60 +249,13 @@ public interface SaleListProductRepository
 	@Query(value = "update t_sale_list_product set accomplish_number = (select count(*) from t_storage where sale_list_product_id = ?1) where id = ?1", nativeQuery = true)
 	void updateAccomplishNumber(Integer id);
 
-	/***
-	 * 根据id数组修改产品名称
-	 * @param ids
-	 * @param name
+	/**
+	 * 添加配方
+	 * @param informNumber
+	 * @param peifangnum
+	 * @param id
 	 */
 	@Modifying
-	@Query(value = "update t_sale_list_product set name = ?2 where id in ?1", nativeQuery = true)
-	void updateName(Integer[] ids, String name);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set length = ?2 where id in ?1", nativeQuery = true)
-	void updatLength(Integer[] ids, Double length);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set model = ?2 where id in ?1", nativeQuery = true)
-	void updatemodel(Integer[] ids, Double model);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set price = ?2 where id in ?1", nativeQuery = true)
-	void updatPrice(Integer[] ids, Double price);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set meter = ?2 where id in ?1", nativeQuery = true)
-	void updatMeter(Integer[] ids, Double meter);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set oneweight = ?2,sumwight=?3  where id = ?1", nativeQuery = true)
-	void updatOneweight(Integer ids, Double oneWeight, Double sunWeight);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set peasant = ?2 where id in ?1", nativeQuery = true)
-	void updatPeasant(Integer[] ids, String peasant);
-
-	@Modifying
-	@Query(value = "update t_sale_list_product set color = ?2 where id in ?1", nativeQuery = true)
-	void updatColor(Integer[] ids, String color);
-
-	@Query(value = "select * from t_sale_list_product where inform_number = ?1", nativeQuery = true)
-    List<SaleListProduct> findByDanhao(Long danhao);
-
-	/***
-	 * 查询未生产的重量
-	 * @param saleListIds
-	 * @return
-	 */
-	@Query(value = "select ROUND(SUM(IFNULL(num - accomplish_number,0) * oneweight), 2) as weishengchan from t_sale_list_product where sale_list_id in ?1", nativeQuery = true)
-	Double findWSC(Integer[] saleListIds);
-
-	/***
-	 * 修改通知单号
-	 * @param ids
-	 * @param info
-	 */
-	@Modifying
-	@Query(value = "update t_sale_list_product set inform_number = ?2 where id in ?1", nativeQuery = true)
-    void updatInfo(Integer[] ids, Integer info);
+	@Query(value = "update t_sale_list_product set peifangid = ?3, peifangnum = ?2 where inform_number = ?1", nativeQuery = true)
+    void addpeifang(Long informNumber, Double peifangnum, Integer id);
 }

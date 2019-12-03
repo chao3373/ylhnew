@@ -19,7 +19,6 @@ import com.shenke.repository.LogRepository;
 import com.shenke.repository.UserRepository;
 import com.shenke.service.LogService;
 import com.shenke.util.StringUtil;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * LogService的实现类
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Service("logService")
-@Transactional
 public class LogServiceImpl implements LogService {
 
 	@Resource
@@ -39,6 +37,9 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	public void save(Log log) {
+		System.out.println("*************************");
+		System.out.println(log);
+		System.out.println("*************************");
 		log.setTime(new Date());// 设置操作日期
 		log.setUser(userRepository.findByUserName((String) SecurityUtils.getSubject().getPrincipal()));// 设置当前操作用户
 		logRepository.save(log);
@@ -101,10 +102,5 @@ public class LogServiceImpl implements LogService {
 		});
 		return count;
 	}
-
-    @Override
-    public void deleteByUserId(Integer id) {
-        logRepository.deleteByUserId(id);
-    }
 
 }

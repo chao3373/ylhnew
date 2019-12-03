@@ -45,7 +45,6 @@ public interface JiTaiService {
 	/**
 	 * 添加或者修改机台信息
 	 * 
-	 * @param entrepot
 	 */
 	public void save(JiTai jitai);
 

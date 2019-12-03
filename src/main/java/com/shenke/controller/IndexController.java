@@ -80,7 +80,7 @@ public class IndexController {
         }
         System.out.println(wholeStr);
         String[] split = wholeStr.split(",");
-        storageService.findByState("");
+//        storageService.findByState("");
         storageService.updateStateById("装车", split, new Date(), ck);
 //        for (int i = 0; i < split.length; i++) {
 //            if (StringUtil.isNotEmpty(split[i])) {
@@ -228,4 +228,10 @@ public class IndexController {
         return null;
     }
 
+    @RequestMapping("/static/tt")
+    public void tt(String FirstName, String LastName, String chk_消化系统){
+        System.out.println(FirstName);
+        System.out.println(LastName);
+        System.out.println(chk_消化系统);
+    }
 }

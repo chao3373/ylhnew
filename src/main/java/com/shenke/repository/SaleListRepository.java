@@ -1,17 +1,12 @@
 package com.shenke.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import com.shenke.entity.SaleList;
 
-import javax.transaction.Transactional;
-
-@Transactional
 public interface SaleListRepository extends JpaRepository<SaleList, Integer>, JpaSpecificationExecutor<SaleList> {
 
 	/**
@@ -32,36 +27,5 @@ public interface SaleListRepository extends JpaRepository<SaleList, Integer>, Jp
 
 	@Query( value = "select * from t_sale_list where sale_number =?1" , nativeQuery = true)
 	public List<SaleList> findSaleListId(String saleNumber);
-
-	@Query( value = "select * from t_sale_list where sale_number =?1" , nativeQuery = true)
-    SaleList findBySaleNumber(String danhao);
-
-	/***
-	 * 根据id修改订金
-	 * @param dingjin
-	 * @param id
-	 */
-	@Modifying
-	@Query( value = "update t_sale_list set dingjin = ?1 where id = ?2" , nativeQuery = true)
-    void updateDingjin(Double dingjin, Integer id);
-
-	@Query(value = "select sale_number from t_sale_list where sale_date BETWEEN ?1 AND ?2 and client_id = ?3", nativeQuery = true)
-    String[] findSaleNumbers(Date date, Date date1, Integer clientname);
-
-	@Query(value = "select sale_number from t_sale_list where sale_date BETWEEN ?1 AND ?2", nativeQuery = true)
-	String[] findSaleNumbers(Date date, Date date1);
-
-	/***
-	 * 查询salelistid
-	 * @param date
-	 * @param date1
-	 * @param id
-	 * @return
-	 */
-	@Query(value = "select id from t_sale_list where sale_date BETWEEN ?1 AND ?2 and client_id = ?3", nativeQuery = true)
-	Integer[] findsaleListIds(Date date, Date date1, Integer id);
-
-	@Query(value = "select id from t_sale_list where sale_date BETWEEN ?1 AND ?2", nativeQuery = true)
-	Integer[] findsaleListIds(Date date, Date date1);
 
 }

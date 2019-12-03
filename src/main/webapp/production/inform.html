@@ -28,8 +28,11 @@
         //添加筛选条件
         function addScreen() {
             json = {};
-            if ($("#mode").val()) {
-                json.modeSort = $("#mode").val();
+            if ($("#mode1").val()) {
+                json.modeSort1 = $("#mode1").val();
+            }
+            if ($("#mode2").val()) {
+                json.modeSort2 = $("#mode2").val();
             }
             if ($("#price").val()) {
                 json.priceSort = $("#price").val();
@@ -37,17 +40,8 @@
             if ($("#length").val()) {
                 json.lengthSort = $("#length").val();
             }
-            if ($("#realityprice").val()) {
-                json.realityprice = $("#realityprice").val();
-            }
             if ($("#oneweight").val()) {
                 json.oneweight = $("#oneweight").val();
-            }
-            if ($("#sumwight").val()) {
-                json.sumwight = $("#sumwight").val();
-            }
-            if ($("#realitymodel").val()) {
-                json.realitymodel = $("#realitymodel").val();
             }
             if (client) {
                 json.client = client;
@@ -83,7 +77,8 @@
             client = null;
             $("#clientId").combobox("reset");
             $("#jitai").combobox("reset");
-            $("#mode").val("");
+            $("#mode1").val("");
+            $("#mode2").val("");
             $("#price").val("");
             $("#length").val("");
             $("#dg").val("");
@@ -131,11 +126,7 @@
                     field: "model",
                     title: "幅宽（m）",
                     width: "100",
-                    align: "center",
-                    sortable: true,
-                    sorter: function (a, b) {
-                        return (a > b ? 1 : -1);
-                    }
+                    align: "center"
                 }, {
                     field: "price",
                     title: "厚度（mm）",
@@ -144,11 +135,6 @@
                 }, {
                     field: "length",
                     title: "长度（m）",
-                    width: "100",
-                    align: "center"
-                }, {
-                    field: "meter",
-                    title: "实际厚度",
                     width: "100",
                     align: "center"
                 }, {
@@ -172,18 +158,8 @@
                     width: "100",
                     align: "center"
                 }, {
-                    field: "realitymodel",
-                    title: "实际幅宽（m）",
-                    width: "100",
-                    align: "center"
-                }, {
                     field: "demand",
                     title: "要求",
-                    width: "200",
-                    align: "center"
-                }, {
-                    field: "wightset",
-                    title: "重量设置",
                     width: "200",
                     align: "center"
                 }, {
@@ -206,37 +182,12 @@
                     title: "印字",
                     width: "200",
                     align: "center"
-                }, {
-                    field: "realityweight",
-                    title: "实际重量（kg）",
-                    width: "100",
-                    align: "center"
-                }, {
+                },{
                     field: "realityprice",
                     title: "实际厚度（mm）",
                     width: "100",
                     align: "center"
-                }, {
-                    field: "theoryweight",
-                    title: "理论重量（kg）",
-                    width: "100",
-                    align: "center"
-                }, {
-                    field: "square",
-                    title: "单件平米",
-                    width: "100",
-                    align: "center"
-                }, {
-                    field: "numsquare",
-                    title: "总平米",
-                    width: "50",
-                    align: "center"
-                }, {
-                    field: "weightway",
-                    title: "称重方式",
-                    width: "100",
-                    align: "center"
-                }, {
+                },{
                     field: "label",
                     title: "标签名称",
                     width: "100",
@@ -251,17 +202,12 @@
                     title: "纸管",
                     width: "50",
                     align: "center"
-                }, {
-                    field: "remark",
-                    title: "备注",
-                    width: "100",
-                    align: "center"
-                }]],
-                remoteSort: false
+                }]]
             });
         }
 
         $(document).ready(function () {
+            $("#informnum").load("/admin/saleListProduct/loadInfornum");
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
                     if (row.level || row.level != 0) {
@@ -314,6 +260,7 @@
                 ids: ids
             }, function (result) {
                 if (result.success) {
+                    $("#informnum").load("/admin/saleListProduct/loadInfornum");
                     $.messager.progress('close');
                     $.messager.confirm('系统提示', '订单分配成功', function (r) {
                         if (r) {
@@ -591,6 +538,29 @@
                 $("#dg").datagrid("showColumn", allRow[i]);
             }
         }
+
+        //删除
+        function shanchu() {
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length == 0){
+                $.messager.alert("系统提示","请选择要删除的行！");
+                return;
+            }
+            var arr = [];
+            for(var i=0;i<rows.length;i++){
+                arr.push(rows[i].id);
+            }
+            var Ids = arr.join(",");
+            $.post("/admin/saleListProduct/deleteByIds",{
+                Ids:Ids
+            },function (result) {
+                if(result.success){
+                    $.messager.alert("系统提示","删除成功！");
+                    $("#dg").datagrid("reload");
+                }
+            },"json")
+        }
+
     </script>
 </head>
 
@@ -599,43 +569,32 @@
 <div data-options="region:'north'"
      style="height: 135px; padding: 10px; border: 0px; padding-top: 20px">
     <fieldset style="border-color: #E7F0FF">
-
+        <legend>
+            通知单号：<span id="informnum"></span>
+        </legend>
         <form id="form" method="post">
             <table cellspacing="8px">
                 <tr>
                     <td>&nbsp;&nbsp;购货单位： <input
                             class="easyui-combobox" id="clientId" name="clientId"
                             style="width: 100px"/></td>
-                    <td>&nbsp;&nbsp;幅宽（m）： <input id="mode" name="mode"
-                                                  style="width: 98px"/>
+                    <td>&nbsp;&nbsp;幅&nbsp;&nbsp;&nbsp;宽（m）： <input id="mode1" name="mode1"
+                                                  style="width: 98px"/> 到
+                        <input id="mode2" name="mode2" style="width: 98px"/>
                     </td>
-                    <td>&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;度（mm）&nbsp;： <input
-                            id="price" name="price" style="width: 95px"/></td>
-                    <td>&nbsp;&nbsp;长度（m）： <input id="length"
-                                                  name="length" style="width: 95px"/></td>
-                    <td>&nbsp;&nbsp;实际厚度： <input id="realityprice"
-                                                 name="realityprice" style="width: 66px"/></td>
-                    <td rowspan="2"><a href="javascript:screenSale()"
+
+                    <td><a href="javascript:screenSale()"
                                        class="easyui-linkbutton" iconCls="icon-search">查询</a></td>
-
-
                 </tr>
                 <tr>
                     <td>&nbsp;&nbsp;单件重量： <input id="oneweight"
                                                  name="oneweight" style="width: 95px"/></td>
-                    <td>&nbsp;总&nbsp;&nbsp;重&nbsp;&nbsp;量&nbsp;&nbsp;&nbsp;：
-                        <input id="sumwight" name="sumwight" style="width: 98px"/>
-                    </td>
-                    <td>&nbsp;&nbsp;实际幅宽（m）： <input id="realitymodel"
-                                                    name="realitymodel" style="width: 98px"/></td>
-                    <td>&nbsp;&nbsp;选&nbsp;择&nbsp;机&nbsp;台： <input
-                            class="easyui-combobox" id="jitai" name="jitai"
-                            style="width: 100px"
-                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
-                    </td>
+                    <td>&nbsp;&nbsp;厚&nbsp;&nbsp;&nbsp;度（mm）&nbsp;： <input
+                            id="price" name="price" style="width: 95px"/>
+                    &nbsp;长度（m）： <input id="length"
+                                                  name="length" style="width: 95px"/></td>
                     <td>
-                        <a
-                                href="javascript:clertCondition()" class="easyui-linkbutton"
+                        <a href="javascript:clertCondition()" class="easyui-linkbutton"
                                 iconCls="icon-reload">刷新</a>
                     </td>
                 </tr>
@@ -652,8 +611,12 @@
 
     <div id="tb" style="padding: 15px;">
 
-        <a href="javascript:jitaiAllot()" class="easyui-linkbutton" iconCls="icon-ok">分配</a>
+        &nbsp;&nbsp;选择机台：<input class="easyui-combobox" id="jitai" name="jitai"
+                style="width: 100px"
+                data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/jitai/jitaiList'"/>
+        &nbsp;&nbsp;<a href="javascript:jitaiAllot()" class="easyui-linkbutton" iconCls="icon-ok">分配</a>
         &nbsp;&nbsp; <a href="javascript:printdg()" class="easyui-linkbutton" iconCls="icon-print">打印</a>
+        &nbsp;&nbsp; <a href="javascript:shanchu()" class="easyui-linkbutton">删除</a>
         &nbsp;&nbsp; <a href="javascript:selectPrintRows()" class="easyui-linkbutton" plain="true">设置打印列</a>
         &nbsp;&nbsp;<a href="javascript:showPrintRows()" class="easyui-linkbutton" plain="true">显示打印列</a>
         <a href="javascript:showAllRows()" class="easyui-linkbutton" plain="true">显示所有列</a>

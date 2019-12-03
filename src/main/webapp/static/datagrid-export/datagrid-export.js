@@ -8,70 +8,33 @@
         }
     }
 
-    function toHtmll(target, rows) {
+    function toHtml(target, rows) {
         rows = rows || getRows(target);
         var dg = $(target);
-        var data = ['<table border="1" rull="all" style="margin: 0 auto; width: 100%; text-align: center; border-collapse:collapse">'];
+        var data = ['<table border="1" rull="all" style="margin: 25px auto;text-align: center; border-collapse:collapse">'];
         var fields = dg.datagrid('getColumnFields', true).concat(dg.datagrid('getColumnFields', false));
-        var trStyle = 'height:32px';
-        var tdStyle0 = 'vertical-align:middle;padding:0 4px';
+        // var trStyle = 'height:32px';
+        var trStyle = '';
+        // var tdStyle0 = 'vertical-align:middle;padding:0 4px';
+        var tdStyle0 = 'vertical-align:middle;padding:0';
         data.push('<tr style="' + trStyle + '">');
         for (var i = 0; i < fields.length; i++) {
             var col = dg.datagrid('getColumnOption', fields[i]);
-            // console.log(col);
-            if (col.field == 'cb') {
-                continue;
+            if (!col.hidden) {
+                var tdStyle = tdStyle0 + ';width:' + col.boxWidth + 'px;';
+                data.push('<th style="' + tdStyle + '">' + col.title + '</th>');
             }
-            var tdStyle = tdStyle0 + ';width:' + col.boxWidth + 'px;';
-            data.push('<th style="' + tdStyle + '">' + col.title + '</th>');
         }
         data.push('</tr>');
         $.map(rows, function (row) {
-            console.log(row);
             data.push('<tr style="' + trStyle + '">');
             for (var i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                console.log(field);
-                if (field == 'cb') {
-                    continue;
-                } else if (field == 'saleNumber') {
-                    console.log(row.saleList.saleNumber);
-                    data.push('<td style="' + tdStyle0 + '">' + row.saleList.saleNumber + '</td>');
-                } else if (field == 'jiTai') {
-                    console.log(row.jiTai.name);
-                    data.push('<td style="' + tdStyle0 + '">' + row.jiTai.name + '</td>');
-                } else if (field == 'accomplishNumber' && row.accomplishNumber == null) {
-                    console.log(0);
-                    data.push('<td style="' + tdStyle0 + '">' + 0 + '</td>');
-                } else if (field == 'weiwanchengshu' && row.accomplishNumber == null) {// && [accomplishNumber] == null
-                    console.log(row.num);
-                    data.push('<td style="' + tdStyle0 + '">' + row.num + '</td>');
-                } else if (field == 'weiwanchengshu' && row.accomplishNumber != null) {
-                    var weiwancheng = row.num - row.accomplishNumber;
-                    console.log(weiwancheng);
-                    data.push('<td style="' + tdStyle0 + '">' + weiwancheng + '</td>');
-                } else if (field == 'yishengchanzhongliang' && row.accomplishNumber == null) {
-                    console.log(0)
-                    data.push('<td style="' + tdStyle0 + '">' + 0 + '</td>');
-                } else if (field == 'yishengchanzhongliang' && row.accomplishNumber != null) {
-                    console.log(row.accomplishNumber * row.oneweight)
-                    data.push('<td style="' + tdStyle0 + '">' + row.accomplishNumber * row.oneweight + '</td>');
-                } else if (field == 'weishengchanzhongliang' && row.accomplishNumber == null) {
-                    console.log(row.sumwight);
-                    data.push('<td style="' + tdStyle0 + '">' + row.sumwight + '</td>');
-                } else if (field == 'weishengchanzhongliang' && row.accomplishNumber != null) {
-                    console.log(row.sumwight - row.accomplishNumber * row.oneweight);
-                    data.push('<td style="' + tdStyle0 + '">' + row.sumwight - row.accomplishNumber * row.oneweight + '</td>');
-                } else if (field == 'saleDate') {
-                    var str = row.saleList.saleNumber;
-                    var da = str.substring(2, 6) + "-" + str.substring(6, 8) + "-" + str.substring(8, 10)
-                    console.log(da)
-                    data.push('<td style="' + tdStyle0 + '">' + da + '</td>');
-                } else {
-                    console.log(row[field]);
-                    data.push('<td style="' + tdStyle0 + '">' + row[field] + '</td>');
+                if (!dg.datagrid('getColumnOption', fields[i]).hidden) {
+                    var field = fields[i];
+                    data.push(
+                        '<td style="' + tdStyle0 + '">' + row[field] + '</td>'
+                    );
                 }
-
             }
             data.push('</tr>');
         });
@@ -180,42 +143,6 @@
             alink[0].click();
             alink.remove();
         }
-    }
-
-    function toHtml(target, rows) {
-        rows = rows || getRows(target);
-        var dg = $(target);
-        var data = ['<table border="1" rull="all" style="margin: 0 auto; width: 100%; text-align: center; border-collapse:collapse">'];
-        var fields = dg.datagrid('getColumnFields', true).concat(dg.datagrid('getColumnFields', false));
-        var trStyle = 'height:32px';
-        var tdStyle0 = 'vertical-align:middle;padding:0 4px';
-        data.push('<tr style="' + trStyle + '">');
-        for (var i = 0; i < fields.length; i++) {
-            var col = dg.datagrid('getColumnOption', fields[i]);
-            console.log(col);
-            if (col.field == 'cb') {
-                continue;
-            }
-            var tdStyle = tdStyle0 + ';width:' + col.boxWidth + 'px;';
-            data.push('<th style="' + tdStyle + '">' + col.title + '</th>');
-        }
-        data.push('</tr>');
-        $.map(rows, function (row) {
-            data.push('<tr style="' + trStyle + '">');
-            for (var i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                console.log(field);
-                if (field == 'cb') {
-                    continue;
-                }
-                data.push(
-                    '<td style="' + tdStyle0 + '">' + row[field] + '</td>'
-                );
-            }
-            data.push('</tr>');
-        });
-        data.push('</table>');
-        return data.join('');
     }
 
     $.extend($.fn.datagrid.methods, {

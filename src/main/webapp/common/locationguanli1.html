@@ -13,7 +13,6 @@
     <script type="text/javascript"
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
-    <script type="text/javascript" src="/js/fenye.js"></script>
     <script type="text/javascript">
         //修改库存
         function Editku() {
@@ -136,23 +135,35 @@
             if ($("#state").combobox("getValue")) {
                 obj.state = $("#state").combobox("getValue");
             }
-            if ($("#shengchanchangdu").val()) {
-                obj.length = $("#shengchanchangdu").val();
+            if ($("#chang").val()){
+                obj.length = $("#chang").val();
             }
-            if ($("#fukuan").val()) {
-                obj.model = $("#fukuan").val();
+            if ($("#kuan").val()){
+                obj.model = $("#kuan").val();
             }
-            if ($("#houdu").val()) {
-                obj.price = $("#houdu").val();
-            }
-            if ($("#shijizhongliang").val()) {
-                obj.realityweight = $("#shijizhongliang").val();
-            }
-            if ($("#bianhao").val()) {
-                obj.id = $("#bianhao").val();
+            if ($("#hou").val()){
+                obj.price = $("#hou").val();
             }
             console.log(obj);
             $("#dg").datagrid("load", obj);
+            // console.log($("#fm"));
+            // $.messager.progress({
+            //     title: '提示',
+            //     text: '数据正在处理中，请稍后....'
+            // });
+            // $("#fm").form('submit', {
+            //     url: "/admin/storage/selectEdit",
+            //     success: function (resulgt) {
+            //         if (resulgt != null) {
+            //             console.log(resulgt);
+            //             var ruselt = eval('(' + resulgt + ')');
+            //             if (ruselt.success) {
+            //                 $("#dg").datagrid("loadData", ruselt.rows);
+            //                 $.messager.progress('close');
+            //             }
+            //         }
+            //     }
+            // });
         }
 
         //添加条件筛选时刷新数据
@@ -190,93 +201,134 @@
                     align: "center"
                 }, {
                     field: 'id',
-                    title: '编号',
-                    width: 50,
-                    // hidden: 'true',
+                    title: 'id',
+                    width: 100,
+                    hidden: 'true',
                     align: 'center'
-                },
-                    //     {
-                    //     field: 'code',
-                    //     title: '序号',
-                    //     width: 50,
-                    //     align: 'center',
-                    //     sortable: true,
-                    //     sorter: function(a, b) {
-                    //         return (a > b ? 1 : -1);
-                    //     }
-                    // },
-                    {
-                        field: 'clientname',
-                        title: '代理商',
-                        width: 66,
-                        align: 'center'
-                    }, {
-                        field: 'peasant',
-                        title: '农户名称',
-                        width: 66,
-                        align: 'center'
-                    }, {
-                        field: 'name',
-                        title: '名称',
-                        width: 200,
-                        align: 'center'
-                    }, {
-                        field: 'length',
-                        title: '长度',
-                        width: 50,
-                        align: 'center'
-                    }, {
-                        field: 'model',
-                        title: '幅宽',
-                        width: 50,
-                        align: 'center'
-                    }, {
-                        field: 'price',
-                        title: '厚度',
-                        width: 50,
-                        align: 'center'
-                    }, {
-                        field: 'realityweight',
-                        title: '重量',
-                        width: 50,
-                        align: 'center'
-                    }, {
-                        field: 'saleNumber',
-                        title: '订单号',
-                        width: 150,
-                        align: 'center'
-                    },{
-                        field: 'dateInProduced',
-                        title: '生产时间',
-                        width: 150,
-                        align: 'center'
-                    },{
-                        field: 'clerk',
-                        title: '生产员工',
-                        width: 100,
-                        align: 'center'
-                    }, {
-                        field: 'groupName',
-                        title: '班组',
-                        width: 100,
-                        align: 'center'
-                    }, {
-                        field: 'location',
-                        title: '仓位',
-                        width: 100,
-                        align: 'center'
-                    }, {
-                        field: 'jitai',
-                        title: '机台名称',
-                        width: 100,
-                        align: 'center'
-                    }, {
-                        field: 'state',
-                        title: '状态',
-                        width: 150,
-                        align: 'center'
-                    }]],
-                remoteSort: false
+                }, {
+                    field: 'state',
+                    title: '状态',
+                    width: 150,
+                    align: 'center'
+                }, {
+                    field: 'clientname',
+                    title: '代理商',
+                    width: 66,
+                    align: 'center'
+                }, {
+                    field: 'peasant',
+                    title: '农户名称',
+                    width: 66,
+                    align: 'center'
+                },{
+                    field: 'informNumber',
+                    title: '通知单号',
+                    width: 66,
+                    align: 'center'
+                }, {
+                    field: 'name',
+                    title: '名称',
+                    width: 200,
+                    align: 'center'
+                }, {
+                    field: 'length',
+                    title: '长度',
+                    width: 50,
+                    align: 'center'
+                }, {
+                    field: 'model',
+                    title: '幅宽',
+                    width: 50,
+                    align: 'center'
+                }, {
+                    field: 'price',
+                    title: '厚度',
+                    width: 50,
+                    align: 'center'
+                }, {
+                    field: 'realityweight',
+                    title: '重量',
+                    width: 50,
+                    align: 'center'
+                }, {
+                    field: 'saleNumber',
+                    title: '订单号',
+                    width: 150,
+                    align: 'center'
+                }, {
+                    field: 'dateInProduced',
+                    title: '生产日期',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value) {
+                            var date = new Date(value);
+                            var o = {
+                                "M+": date.getMonth() + 1,                 //月份
+                                "d+": date.getDate(),                    //日
+                                "h+": date.getHours(),                   //小时
+                                "m+": date.getMinutes(),                 //分
+                                "s+": date.getSeconds(),                 //秒
+                                "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                                "S": date.getMilliseconds()             //毫秒
+                            };
+                            if (/(y+)/.test("yyyy-MM-dd hh:mm:ss"))
+                                var fmt = "yyyy-MM-dd hh:mm:ss".replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+                            for (var k in o)
+                                if (new RegExp("(" + k + ")").test(fmt))
+                                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                            return fmt;
+                        } else {
+                            return "";
+                        }
+                    }
+                }, {
+                    field: 'clerk',
+                    title: '生产员工',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (val, row) {
+                        if (row.clerk) {
+                            return row.clerk.name;
+                        }
+                        return;
+                    }
+                }, {
+                    field: 'group',
+                    title: '班组',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (val, row) {
+                        if (row.group) {
+                            return row.group.name;
+                        }
+                        return;
+                    }
+                }, {
+                    field: 'location',
+                    title: '仓位',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (val, row) {
+                        if (row.location) {
+                            val = row.location.name;
+                            return row.location.name;
+                        }
+                        return;
+                    }
+                }, {
+                    field: 'jiTai',
+                    title: '机台名称',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (val, row) {
+                        if (row.jiTai) {
+                            return row.jiTai.name;
+                        }
+                        return;
+                    }
+                }]],
+
             });
 
         }
@@ -466,11 +518,14 @@
             if ($("#length").numberbox("getValue")) {
                 json.length = $("#length").numberbox("getValue");
             }
+            if ($("#num").numberbox("getValue")) {
+                json.num = $("#num").numberbox("getValue");
+            }
             if ($("#color").val()) {
                 json.color = $("#color").val();
             }
             if ($("#weight").numberbox("getValue")) {
-                json.realityweight = $("#weight").numberbox("getValue");
+                json.weight = $("#weight").numberbox("getValue");
             }
             if ($("#dao").combobox("getText")) {
                 json.dao = $("#dao").combobox("getText");
@@ -480,6 +535,15 @@
             }
             if ($("#pack").combobox("getText")) {
                 json.pack = $("#pack").combobox("getText");
+            }
+            if ($("#letter").combobox("getText")) {
+                json.letter = $("#letter").combobox("getText");
+            }
+            if ($("#patu").combobox("getText")) {
+                json.patu = $("#patu").combobox("getText");
+            }
+            if ($("#meter").numberbox("getValue")) {
+                json.meter = $("#meter").numberbox("getValue");
             }
             if ($("#clientname").combobox("getText")) {
                 json.clientname = $("#clientname").combobox("getText");
@@ -524,6 +588,10 @@
 
         //手动出库
         function outku() {
+            $.messager.progress({
+                title: '提示',
+                text: '数据正在处理中，请稍后....'
+            });
             if ($("#dg").datagrid("getSelections").length > 0) {
                 $.messager.confirm("系统提示", "<span style='color: red;'>确定将这些商品出库吗？</span>", function (r) {
                     if (r) {
@@ -536,6 +604,8 @@
                         console.log(idsStr);
                         $.post("/admin/storage/outKu", {ids: idsStr}, function (result) {
                             if (result.success) {
+                                $.messager.progress('close');
+                                $.messager.alert("系统提示", "出库成功");
                                 $("#dg").datagrid("reload");
                             }
                         });
@@ -553,17 +623,16 @@
                 panelHeight: 'auto',
                 valueField: 'label',
                 textField: 'value',
-                data: [
-                    {
-                        label: '生产完成',
-                        value: '生产完成'
-                    }, {
-                        label: '提货',
-                        value: '提货'
-                    }, {
-                        label: '装车',
-                        value: '装车'
-                    }]
+                data: [{
+                    label: '生产完成',
+                    value: '生产完成'
+                }, {
+                    label: '提货',
+                    value: '提货'
+                }, {
+                    label: '装车',
+                    value: '装车'
+                }]
             });
             loadData();
             $("#clientId").combobox({
@@ -775,6 +844,10 @@
             });
         }
 
+        function outall() {
+            console.log($("#dg").datagrid("getData"));
+        }
+
     </script>
 </head>
 <body style="margin: 1px">
@@ -841,23 +914,17 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产长度：&nbsp;<input type="text" id="shengchanchangdu" name="changdu" size="15"/></td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;幅&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宽&nbsp;： <input id="fukuan" name="fukuan" style="width: 100px" />
-                    </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;生产厚度： <input id="houdu" name="houdu" style="width: 100px"/>
-                    </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;实际重量：
-                        <input id="shijizhongliang" name="shijizhongliang" style="width: 100px"/>
-                    </td>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;商品编号： <input id="bianhao" name="bianhao" style="width: 100px"/>
-                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;长度：<input type="number" name="length" id="chang" style="width: 100px;"></td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;幅宽：<input type="number" name="model" id="kuan" style="width: 100px;"></td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;厚度：<input type="number" name="price" id="hou" style="width: 100px;"></td>
                 </tr>
             </table>
         </form>
     </fieldset>
 </div>
-<table id="dg" class="easyui-datagrid" url="/admin/storage/selectEdit" pagination="true" title="修改库存"
-       fit="false" toolbar="#tb" fitColumns="false" rownumbers="true" split="true">
+<table id="dg" url="/admin/storage/selectEdit" pagination="true" class="easyui-datagrid" fit="false" toolbar="#tb"
+       fitColumns="false"
+       rownumbers="true">
 </table>
 
 <div id="tb">
@@ -880,6 +947,7 @@
     <a href="javascript:updatehoudu()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
     修改生产时间:<input id="updatashijian" name="shijian" class="easyui-datetimebox" style="width: 150px"/>
     <a href="javascript:updatashijian()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a>
+    <!--<a href="javascript:outall()" class="easyui-linkbutton" iconCls="icon-ok" plain="true">一键出库</a>-->
 </div>
 
 <div id="dlg" class="easyui-dialog" title="添加库存"
@@ -916,6 +984,12 @@
                 </td>
                 <td><input type="text" id="color" name="color" style="width: 120px"/></td>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量
+                    ：
+                </td>
+                <td><input type="text" id="num" name="num"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <tr>
                 <td>重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量（kg）&nbsp;：</td>
                 <td><input type="text" id="weight" name="weight"
@@ -944,17 +1018,39 @@
                 </td>
             </tr>
             <tr>
+                <td>印&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;字&nbsp;：</td>
+                <td><input type="text" id="letter" name="letter"
+                           class="easyui-combobox" style="width: 120px" id="letterId"
+                           name="letter.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/letter/letterList'"/>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>纸&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;管&nbsp;：</td>
+                <td><input type="text" id="patu" name="patu"
+                           class="easyui-combobox" style="width: 120px" id="patuId"
+                           name="patu.id" style="width: 100px"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/patu/patuList'"/>
+                </td>
+            </tr>
+            <tr>
+                <td>生&nbsp;&nbsp;&nbsp;
+                    产&nbsp;&nbsp;&nbsp;&nbsp;米&nbsp;&nbsp;&nbsp;&nbsp;数&nbsp;&nbsp;：
+                </td>
+                <td><input type="text" id="meter" name="meter"
+                           class="easyui-numberbox" precision="2" style="width: 120px"/></td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
+                <td><input type="text" id="clientname" name="clientname"
+                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"
+                           data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
+            </tr>
+            <tr>
                 <td>仓&nbsp;&nbsp;&nbsp;位&nbsp;&nbsp;&nbsp;&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置&nbsp;&nbsp;：
                 </td>
                 <td><input type="text" id="cang" name="cang"
                            class="easyui-combobox" style="width: 120px"
                            data-options="panelHeight:'auto',valueField:'id',textField:'name',url:'/admin/location/locationList'"/>
                 </td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>客&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;&nbsp;称：</td>
-                <td><input type="text" id="clientname" name="clientname"
-                           class="easyui-combobox" style="width: 120px" url="/admin/client/clientList"
-                           data-options="panelHeight:'auto',valueField:'id',textField:'name'"/></td>
             </tr>
         </table>
     </form>

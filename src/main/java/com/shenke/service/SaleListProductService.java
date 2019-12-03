@@ -30,10 +30,6 @@ public interface SaleListProductService {
 	 */
 	public void passTheAudit(int id);
 
-    List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct);
-
-    List dingDanZhuiZongg(SaleListProduct saleListProduct);
-
 	/**
 	 * 根据id修改订单状态
 	 *
@@ -72,10 +68,10 @@ public interface SaleListProductService {
 	/**
 	 * 根据条件查询所有订单商品信息
 	 *
-	 * @param condition
+	 * @param
 	 * @return
 	 */
-	public List<SaleListProduct> screen(Map<String, Object> condition);
+	public List<SaleListProduct> screen(SaleListProduct saleListProduct);
 
 	/**
 	 * 根据订单商品信息id修改订单商品信息状态
@@ -202,25 +198,7 @@ public interface SaleListProductService {
 
     List<SaleListProduct> find(SaleListProduct saleListProduct);
 
-	void updateName(Integer[] ids, String name);
+	void addpeifang(Long informNumber, Double peifangnum, Integer id);
 
-	void updatLength(Integer[] ids, Double length);
-
-	void updatemodel(Integer[] ids, Double model);
-
-	void updatPrice(Integer[] ids, Double price);
-
-	void updatMeter(Integer[] ids, Double meter);
-
-	void updatOneweight(Integer[] ids, Double oneWeight);
-
-	void updatPeasant(Integer[] ids, String peasant);
-
-	void updatColor(Integer[] ids, String color);
-
-    List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId);
-
-	List<SaleListProduct> findByDanhao(Long danhao);
-
-	void updatInfo(Integer[] ids, Integer info);
+	void deleteByIds(Integer[] ids);
 }

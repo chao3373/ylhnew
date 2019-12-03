@@ -1,6 +1,5 @@
 package com.shenke.util;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,10 +102,5 @@ public class DateUtil {
 		for(String date:dates){
 			System.out.println(date);
 		}
-	}
-
-	public static Date getDate(String date) throws ParseException {
-		SimpleDateFormat sf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-		return sf.parse(date);
 	}
 }

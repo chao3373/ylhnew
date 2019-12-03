@@ -404,6 +404,28 @@
             });
             loadData();
         });
+
+        //删除
+        function shanchu() {
+            var rows = $("#dg").datagrid("getSelections");
+            if(rows.length == 0){
+                $.messager.alert("系统提示","请选择要删除的行！");
+                return;
+            }
+            var arr = [];
+            for(var i=0;i<rows.length;i++){
+                arr.push(rows[i].id);
+            }
+            var Ids = arr.join(",");
+            $.post("/admin/saleListProduct/deleteByIds",{
+                Ids:Ids
+            },function (result) {
+                if(result.success){
+                    $.messager.alert("系统提示","删除成功！");
+                    $("#dg").datagrid("reload");
+                }
+            },"json")
+        }
     </script>
 </head>
 <body style="margin: 1px">
@@ -433,6 +455,7 @@
             <td>&nbsp;&nbsp;&nbsp;&nbsp;<a class="easyui-linkbutton" href="javascript:alertJitai()">修改</a>
             </td>
             <td><a href="javascript:printdgg()" class="easyui-linkbutton">打印</a></td>
+            <td><a href="javascript:shanchu()" class="easyui-linkbutton" >删除</a></td>
         </tr>
     </table>
 </div>

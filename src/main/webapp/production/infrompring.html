@@ -15,8 +15,8 @@
             src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="/static/js/date.js"></script>
     <script type="text/javascript" src="../static/datagrid-export/datagrid-export.js"></script>
-    <script type="text/javascript" src="../static/jquery-easyui-edatagrid/jquery.edatagrid.js"></script>
     <script type="text/javascript" src="../js/main.js"></script>
+    <script type="text/javascript" src="../static/jquery-easyui-edatagrid/jquery.edatagrid.js"></script>
     <script type="text/javascript">
         var json = {};
         var client;
@@ -110,7 +110,7 @@
                 }, {
                     field: "peasant",
                     title: "农户名称",
-                    width: "100",
+                    width: "200",
                     align: "center"
                 }, {
                     field: "clientname",
@@ -124,27 +124,32 @@
                     align: "center"
                 }, {
                     field: "model",
-                    title: "幅宽（m）",
+                    title: "幅宽",
                     width: "100",
                     align: "center"
                 }, {
                     field: "price",
-                    title: "厚度（mm）",
+                    title: "厚度",
                     width: "100",
                     align: "center"
                 }, {
                     field: "length",
-                    title: "长度（m）",
+                    title: "长度",
+                    width: "100",
+                    align: "center"
+                },{
+                    field: "productLength",
+                    title: "生产长度",
                     width: "100",
                     align: "center"
                 }, {
                     field: "color",
                     title: "颜色",
-                    width: "50",
+                    width: "100",
                     align: "center"
                 }, {
                     field: "oneweight",
-                    title: "单件重量（kg）",
+                    title: "单件重量",
                     width: "100",
                     align: "center"
                 }, {
@@ -154,7 +159,7 @@
                     align: "center"
                 }, {
                     field: "sumwight",
-                    title: "总重量（kg）",
+                    title: "总重量",
                     width: "100",
                     align: "center"
                 }, {
@@ -162,27 +167,29 @@
                     title: "要求",
                     width: "200",
                     align: "center"
-                }, {
-                    field: "dao",
-                    title: "剖刀",
-                    width: "150",
-                    align: "center"
-                }, {
-                    field: "brand",
-                    title: "商标",
-                    width: "150",
-                    align: "center"
-                }, {
-                    field: "pack",
-                    title: "包装",
-                    width: "200",
-                    align: "center"
-                }, {
-                    field: "letter",
-                    title: "印字",
-                    width: "200",
-                    align: "center"
-                }]]
+                }
+                // , {
+                //     field: "dao",
+                //     title: "剖刀",
+                //     width: "150",
+                //     align: "center"
+                // }, {
+                //     field: "brand",
+                //     title: "商标",
+                //     width: "150",
+                //     align: "center"
+                // }, {
+                //     field: "pack",
+                //     title: "包装",
+                //     width: "200",
+                //     align: "center"
+                // }, {
+                //     field: "letter",
+                //     title: "印字",
+                //     width: "200",
+                //     align: "center"
+                // }
+                ]]
             });
         }
 
@@ -539,10 +546,24 @@
 
         //打印配方
         function peifangprint() {
+            var row = $("#dg").datagrid("getRows")[0];
+            console.log(row.name)
+            console.log(row.clientname)
+            console.log(row.demand)
+            console.log(row.informNumber)
+            $("#dg").datagrid("hideColumn", "name");
+            $("#dg").datagrid("hideColumn", "clientname");
+            $("#dg").datagrid("hideColumn", "demand");
+            $("#dg").datagrid("hideColumn", "informNumber");
+            var name = "产品名称：" + row.name;
+            var clientname = "客户名称：" + row.clientname;
+            var demand = "要求：" + row.demand;
+            var inform = "通知单号：" + row.informNumber;
+            var div  = "<div style='text-align: center;font-size: 18px;font-weight: 900;'>" + name + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + clientname + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + demand + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + inform + "</div>";
             var tb = $("#dg").datagrid("toHtml");
             var tb2 = $("#tt").datagrid("toHtml");
             var tab = tb + tb2;
-
+            var title = "<h3 style='text-align: center;margin: 10px auto;'>生产通知单</h3>"
             var newWindow = window.open('', '', 'width=800, height=500');
             var document = newWindow.document.open();
             var content =
@@ -550,9 +571,9 @@
                 '<html>' +
                 '<head>' +
                 '<meta charset="utf-8">' +
-                '<title>生产通知单</title>' +
+                // '<title>生产通知单</title>' +
                 '</head>' +
-                '<body>' + tab + '</body>' +
+                '<body>' + title + div + tab + '</body>' +
                 '</html>';
             document.write(content);
             document.close();
@@ -649,6 +670,7 @@
     function append() {
         $("#dg2").edatagrid("addRow");
     }
+
     // var editIndex = undefined;
     //
     // // function endEditing() {

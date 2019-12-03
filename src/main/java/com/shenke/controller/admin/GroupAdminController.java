@@ -33,7 +33,7 @@ public class GroupAdminController {
 	/**
 	 * 分页查询班组信息
 	 * 
-	 * @param
+	 * @param role
 	 * @param page
 	 * @param rows
 	 * @return

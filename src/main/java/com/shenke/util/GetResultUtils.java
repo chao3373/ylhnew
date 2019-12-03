@@ -8,7 +8,6 @@ import javax.persistence.Query;
 import java.util.List;
 
 public class GetResultUtils {
-
     //根据sql语句返回list结果集
     public static List getResult(String sql, EntityManager entityManager) {
         Query query = entityManager.createNativeQuery(sql);
@@ -49,5 +48,4 @@ public class GetResultUtils {
 
         return db;
     }
-
 }

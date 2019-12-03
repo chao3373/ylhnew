@@ -6,17 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import com.shenke.entity.Storage;
 import com.shenke.service.StorageService;
-import com.shenke.util.GetResultUtils;
-import com.shenke.util.LogUtil;
 import com.shenke.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Sort;
@@ -34,9 +31,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Resource
     private SaleListProductRepository saleListProductRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Resource
     private StorageService storageService;
@@ -81,54 +75,33 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     }
 
     @Override
-    public List<SaleListProduct> screen(Map<String, Object> condition) {
-
-
-        List<Order> orders = new ArrayList<Order>();
+    public List<SaleListProduct> screen(SaleListProduct saleListProduct) {
 
         Specification<SaleListProduct> specification = new Specification<SaleListProduct>() {
-            Predicate predicate = null;
 
             @Override
             public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                predicate = cb.conjunction();
+                Predicate predicate = cb.conjunction();
                 predicate.getExpressions().add(cb.like(root.get("state"), "%审核通过%"));
-                if (condition.get("client") != null) {
-
-                    Subquery<Integer> subquery2 = query.subquery(Integer.class);
-                    Root<Client> fromC = subquery2.from(Client.class);
-                    subquery2.select(fromC.get("id")).where(cb.equal(fromC.get("name"), condition.get("client")));
-
-                    Subquery<Integer> subquery = query.subquery(Integer.class);
-                    Root<SaleList> fromSL = subquery.from(SaleList.class);
-                    subquery.select(fromSL.get("id")).where(fromSL.get("client").get("id").in(subquery2));
-
-                    predicate.getExpressions().add(cb.and(root.get("saleList").get("id").in(subquery)));
+                if (saleListProduct.getClientname() != null) {
+                    predicate.getExpressions().add(cb.and(cb.equal(root.get("clientname"), saleListProduct.getClientname())));
                 }
 
-                if (condition.get("modeSort") != null) {
-                    predicate.getExpressions().add(cb.and(cb.equal(root.get("model"), condition.get("modeSort"))));
+                if (saleListProduct.getModel() != null) {
+                    predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("model"), saleListProduct.getModel()));
                 }
-                if (condition.get("priceSort") != null) {
-                    predicate.getExpressions().add(cb.and(cb.equal(root.get("price"), condition.get("priceSort"))));
+                if (saleListProduct.getMeter() != null) {
+                    predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("model"), saleListProduct.getMeter()));
                 }
-                if (condition.get("lengthSort") != null) {
-                    predicate.getExpressions().add(cb.and(cb.equal(root.get("length"), condition.get("lengthSort"))));
+                if (saleListProduct.getLength() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("length"), saleListProduct.getLength()));
                 }
-                if (condition.get("realityprice") != null) {
-                    predicate.getExpressions().add(cb.and(cb.equal(root.get("realityprice"), condition.get("realityprice"))));
+                if (saleListProduct.getPrice() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("price"), saleListProduct.getPrice()));
                 }
-                if (condition.get("oneweight") != null) {
-                    predicate.getExpressions().add(cb.and(cb.equal(root.get("oneweight"), condition.get("oneweight"))));
+                if (saleListProduct.getOneweight() != null) {
+                    predicate.getExpressions().add(cb.equal(root.get("oneweight"), saleListProduct.getOneweight()));
                 }
-                if (condition.get("sumwight") != null) {
-                    predicate.getExpressions().add(cb.and(cb.equal(root.get("sumwight"), condition.get("sumwight"))));
-                }
-                if (condition.get("realitymodel") != null) {
-                    predicate.getExpressions()
-                            .add(cb.and(cb.equal(root.get("realitymodel"), condition.get("realitymodel"))));
-                }
-
                 return predicate;
             }
         };
@@ -144,11 +117,10 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Override
     public void saveList(List<SaleListProduct> plgList) {
-        saleListProductRepository.save(plgList);
-//        for (SaleListProduct saleListProduct : plgList) {
-//            saleListProduct.setDaBaoShu(1);
-//            saleListProductRepository.save(saleListProduct);
-//        }
+        for (SaleListProduct saleListProduct : plgList) {
+            saleListProduct.setDaBaoShu(1);
+            saleListProductRepository.save(saleListProduct);
+        }
     }
 
     @Override
@@ -189,7 +161,6 @@ public class SaleListProductServiceImpl implements SaleListProductService {
 
     @Override
     public List<SaleListProduct> selectNoAccomplish(Integer jitaiId) {
-        System.out.println(jitaiId);
         return saleListProductRepository.selectNoAccomplish(jitaiId);
     }
 
@@ -261,17 +232,20 @@ public class SaleListProductServiceImpl implements SaleListProductService {
         });
     }
 
-
     @Override
     public String updateAccomplishNumber(Integer id) {
         SaleListProduct saleListProduct = this.findById(id);
         //完成数+1
 //        Integer count = saleListProduct.getAccomplishNumber() == null ? 0 : saleListProduct.getAccomplishNumber();
         Integer count = storageService.findCountBySaleListProductId(id);
-        if (count == null) {
+        if (count == null){
             count = 0;
         }
         Integer num = saleListProduct.getNum();
+        System.out.println(count);
+        System.out.println(num);
+        System.out.println(num - count);
+//        Integer num = storageService.findCountBySaleListProductId(id);
         Integer daBaoShu = saleListProduct.getDaBaoShu();
         Integer shengyu = num - count;
         Integer countt = count + daBaoShu;
@@ -279,110 +253,60 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
             return "生产已完成";
         }
-        LogUtil.printLog("当前完成数量：" + count);
-        LogUtil.printLog("剩余数量：" + shengyu);
-        LogUtil.printLog("当前设置打包数量：" + daBaoShu);
-        LogUtil.printLog("当前完成数加打包数量：" + countt);
         if (countt > num) {
-            LogUtil.printLog("当前完成数加打包数量大于总数量--生产完成");
             saleListProductRepository.updateAccomplishNumberById(num, saleListProduct.getId());
             saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-            LogUtil.printLog("生产完成---" + "打包数量：" + (num - count) + "机台名称：" + saleListProduct.getJiTai().getName() + "客户名：" + saleListProduct.getClientname() + "长度：" + saleListProduct.getLength() + "幅宽：" + saleListProduct.getModel() + "厚度：" + saleListProduct.getPrice());
             return "生产完成:" + (num - count);
         } else if (countt < num) {
-            LogUtil.printLog("当前完成数加打包数量小于总数量--打包完成");
             saleListProductRepository.updateAccomplishNumberById(countt, saleListProduct.getId());
-            LogUtil.printLog("打包完成---" + "打包数量：" + daBaoShu + "机台名称：" + saleListProduct.getJiTai().getName() + "客户名：" + saleListProduct.getClientname() + "长度：" + saleListProduct.getLength() + "幅宽：" + saleListProduct.getModel() + "厚度：" + saleListProduct.getPrice());
             return "打包完成:" + daBaoShu;
         } else {
-            LogUtil.printLog("当前完成数加打包数量等于总数量--生产完成");
             saleListProductRepository.updateAccomplishNumberById(num, saleListProduct.getId());
             saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), saleListProduct.getId());
-            LogUtil.printLog("生产完成---" + "打包数量：" + daBaoShu + "机台名称：" + saleListProduct.getJiTai().getName() + "客户名：" + saleListProduct.getClientname() + "长度：" + saleListProduct.getLength() + "幅宽：" + saleListProduct.getModel() + "厚度：" + saleListProduct.getPrice());
             return "生产完成:" + daBaoShu;
         }
     }
 
-    /***
-     * 指定件数合并
-     * @param count
-     * @param id
-     */
     @Override
     public void hebingJian(Integer count, Integer id) {
-        LogUtil.printLog("===订单合并===");
         SaleListProduct saleListProduct = saleListProductRepository.findOne(id);
-        //获取合并前的状态，重量长度和数量，并查看是否可以整除
-        String state = saleListProduct.getState();
+        SaleListProduct saleListProduct1 = new SaleListProduct();
+        BeanUtils.copyProperties(saleListProduct, saleListProduct1);
+        saleListProduct1.setId(null);
         Integer num = saleListProduct.getNum();
-//        SaleList saleList = saleListProduct.getSaleList();
-        Integer yushu = num % count;
-        Double length = saleListProduct.getLength();
+        saleListProduct.setNum(num / count);
         Double oneweight = saleListProduct.getOneweight();
-
-        //能被整除的放到一个对象
-        SaleListProduct newSaleListProduct = new SaleListProduct();
-        BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
-
-        //计算能够整数的部分合并后的重量、长度和数量
-        Integer shuliang = num / count;
-        String heBingLength = length + "*" + count;
-        Double changdu = length * count;
-        Double zhongliang = oneweight * count;
-
-        //设置能够整除的部分的信息
-        newSaleListProduct.setNum(shuliang);
-        newSaleListProduct.setId(null);
-        newSaleListProduct.setOneweight(zhongliang);
-        newSaleListProduct.setSumwight(zhongliang * shuliang);
-        newSaleListProduct.setLength(changdu);
-        newSaleListProduct.setHebingLength(heBingLength);
-        newSaleListProduct.setHebingLength(heBingLength);
-        newSaleListProduct.setHeBingId(id.toString());
-        LogUtil.printLog(newSaleListProduct.toString());
-        saleListProduct.setState("合并件");
-        saleListProduct.setHeBingId(id.toString());
-        saleListProductRepository.save(newSaleListProduct);
-        saleListProductRepository.save(saleListProduct);
-        if (yushu != 0) {//无法整除
-            LogUtil.printLog("无法整除");
-            Integer shengyushuliang = num - shuliang * count;
-            System.out.println("剩余数量：" + shengyushuliang);
-            SaleListProduct shengyuSaleListProduct = new SaleListProduct();
-            BeanUtils.copyProperties(saleListProduct, shengyuSaleListProduct);
-            Double shengyuchangdu = shengyushuliang * length;
-            System.out.println("剩余长度：" + shengyuchangdu);
-            Double shengyuzhongliang = shengyushuliang * oneweight;
-            System.out.println("剩余重量：" + shengyuzhongliang);
-            String shengyuhebingchangdu = length + "*" + shengyushuliang;
-            System.out.println("剩余合并长度：" + shengyuhebingchangdu);
-            shengyuSaleListProduct.setId(null);
-            shengyuSaleListProduct.setLength(shengyuchangdu);
-            shengyuSaleListProduct.setOneweight(shengyuzhongliang);
-            shengyuSaleListProduct.setSumwight(shengyuzhongliang);
-            shengyuSaleListProduct.setNum(1);
-            shengyuSaleListProduct.setHebingLength(shengyuhebingchangdu);
-            shengyuSaleListProduct.setHeBingId(id.toString());
-            shengyuSaleListProduct.setState(state);
-            saleListProductRepository.save(shengyuSaleListProduct);
+        Double sumOneWeight = oneweight;
+        double lengthh = saleListProduct.getLength();
+        int length = (int) lengthh;
+        StringBuilder sb = new StringBuilder();
+        sb.append(length + "");
+        Integer countNum = length;
+        for (int i = 0; i < count - 1; i++) {
+            sumOneWeight += oneweight;
+            sb.append("+" + length);
+            countNum += length;
         }
-//        Integer num = saleListProduct.getNum();
-//        Double length = saleListProduct.getLength();
-//        saleListProduct.setNum(num / count);
-//        saleListProduct.setLength(length * num);
-//        Integer newNum = num / count;
-//        saleListProduct.setHebingLength(length + "*" + num);
-//        if (newNum != 0) {
-//            saleListProduct.setHebingLength(length + "*" + newNum);
-//            SaleListProduct newSaleListProduct = new SaleListProduct();
-//            BeanUtils.copyProperties(saleListProduct, newSaleListProduct);
-//            newSaleListProduct.setNum(1);
-//            newSaleListProduct.setLength(length * newNum);
-//            newSaleListProduct.setHebingLength(length + "*" + newNum);
-//            newSaleListProduct.setId(null);
-//            saleListProductRepository.save(newSaleListProduct);
-//        }
-//        saleListProductRepository.save(saleListProduct);
+        saleListProduct.setHebingLength(sb.toString());
+        saleListProduct.setLength(Double.parseDouble(countNum.toString()));
+        saleListProduct.setOneweight(sumOneWeight);
+        saleListProductRepository.save(saleListProduct);
+        if (num % count != 0) {
+            StringBuilder leng = new StringBuilder();
+            leng.append(length + "");
+            Integer countNum2 = length;
+            Double sumOneWeight1 = 0.0;
+            for (int i = 0; i < num % count - 1; i++) {
+                sumOneWeight1 += oneweight;
+                leng.append("+" + leng);
+                countNum2 += num;
+            }
+            saleListProduct1.setHebingLength(leng.toString());
+            saleListProduct1.setNum(1);
+            saleListProduct1.setLength(Double.parseDouble(countNum2.toString()));
+            saleListProduct1.setOneweight(sumOneWeight1);
+            saleListProductRepository.save(saleListProduct1);
+        }
     }
 
     @Override
@@ -460,27 +384,18 @@ public class SaleListProductServiceImpl implements SaleListProductService {
             wc = 0;
         }
         if (wc == num) {
-            saleListProduct.setNum(num);
-            saleListProduct.setState("生产完成：" + saleListProduct.getJiTai().getName());
-//            saleListProductRepository.updateNum(num, id);
-//            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), id);
-            saleListProduct.setSumwight(saleListProduct.getOneweight() * num);
-            saleListProductRepository.save(saleListProduct);
+            saleListProductRepository.updateNum(num, id);
+            saleListProductRepository.updateState("生产完成：" + saleListProduct.getJiTai().getName(), id);
             return "修改成功，数量等于完成数，修改订单状态为完成";
         } else if (wc > num) {
             return "已经完成比该数量多的件数，无法修改";
         } else {
-            saleListProduct.setNum(num);
-            saleListProduct.setSumwight(num * saleListProduct.getOneweight());
-//            saleListProductRepository.updateNum(num, id);
+            saleListProductRepository.updateNum(num, id);
             String state = saleListProductRepository.findOne(id).getState();
-            saleListProductRepository.save(saleListProduct);
             if (state.startsWith("审核成功") || state.startsWith("未审核")) {
                 return "修改成功！";
             }
-            saleListProduct.setState("下发机台：" + saleListProduct.getJiTai().getName());
-//            saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);
-            saleListProductRepository.save(saleListProduct);
+            saleListProductRepository.updateState("下发机台：" + saleListProduct.getJiTai().getName(), id);
             return "修改成功，数量大于完成数，修改订单状态为下发机台";
         }
     }
@@ -505,161 +420,14 @@ public class SaleListProductServiceImpl implements SaleListProductService {
     }
 
     @Override
-    public void updateName(Integer[] ids, String name) {
-        saleListProductRepository.updateName(ids, name);
+    public void addpeifang(Long informNumber, Double peifangnum, Integer id) {
+        saleListProductRepository.addpeifang(informNumber, peifangnum, id);
     }
 
     @Override
-    public void updatLength(Integer[] ids, Double length) {
-        saleListProductRepository.updatLength(ids, length);
-    }
-
-    @Override
-    public void updatemodel(Integer[] ids, Double model) {
-        saleListProductRepository.updatemodel(ids, model);
-    }
-
-    @Override
-    public void updatPrice(Integer[] ids, Double price) {
-        saleListProductRepository.updatPrice(ids, price);
-    }
-
-    @Override
-    public void updatMeter(Integer[] ids, Double meter) {
-        saleListProductRepository.updatMeter(ids, meter);
-    }
-
-    @Override
-    public void updatOneweight(Integer[] ids, Double oneWeight) {
-        for (int i = 0; i < ids.length; i++) {
-            SaleListProduct saleListProduct = saleListProductRepository.findOne(ids[i]);
-            Double sunWeight = saleListProduct.getNum() * oneWeight;
-            saleListProductRepository.updatOneweight(ids[i], oneWeight, sunWeight);
+    public void deleteByIds(Integer[] ids) {
+        for (int i = 0;i<ids.length;i++){
+            saleListProductRepository.delete(ids[i]);
         }
-    }
-
-    @Override
-    public void updatPeasant(Integer[] ids, String peasant) {
-        saleListProductRepository.updatPeasant(ids, peasant);
-    }
-
-    @Override
-    public void updatColor(Integer[] ids, String color) {
-        saleListProductRepository.updatColor(ids, color);
-    }
-
-    @Override
-    public List<SaleListProduct> listBySaleListIdNoHeBing(Integer saleListId) {
-        return saleListProductRepository.listBySaleListIdNoHeBing(saleListId);
-    }
-
-    @Override
-    public List<SaleListProduct> findByDanhao(Long danhao) {
-        return saleListProductRepository.findByDanhao(danhao);
-    }
-
-    @Override
-    public void updatInfo(Integer[] ids, Integer info) {
-        saleListProductRepository.updatInfo(ids, info);
-    }
-
-    @Override
-    public List dingDanZhuiZongg(SaleListProduct saleListProduct) {
-        String sqlStar = "select sale_number," +
-                " clientname, " +
-                "peasant, " +
-                "a.name, " +
-                "code, " +
-                "c.name as jitainame, " +
-                "length, model, " +
-                "a.price, " +
-                "IFNULL(accomplish_number,0) as wanchengshu, " +
-                "num, IFNULL(num - accomplish_number,0) as shengyushu, " +
-                "oneweight, " +
-                "sumwight, " +
-                "IFNULL(accomplish_number * oneweight,0) as wanchengzhongliang, " +
-                "DATE_FORMAT(sale_date,'%Y-%m-%d %H:%i:%s') as sale_date, " +
-                "inform_number, " +
-                "IFNULL(sumwight-accomplish_number * oneweight,sumwight) as shengyuzhongliang, " +
-                "a.state " +
-                "from t_sale_list_product a LEFT JOIN t_sale_list b ON a.sale_list_id = b.id " +
-                "LEFT JOIN t_jitai c ON a.jitai_id = c.id where true";
-
-        String sql = "";
-
-        if (StringUtil.isNotEmpty(saleListProduct.getName())) {
-            sql += " and b.sale_number = '" + saleListProduct.getName() + "'";
-        }
-        if (StringUtil.isNotEmpty(saleListProduct.getClientname())) {
-            sql += " and a.clientname = '" + saleListProduct.getClientname() + "'";
-        }
-        if (StringUtil.isNotEmpty(saleListProduct.getPeasant())) {
-            sql += " and a.peasant = '" + saleListProduct.getPeasant() + "'";
-        }
-        if (saleListProduct.getInformNumber() != null) {
-            sql += " and a.inform_number = '" + saleListProduct.getInformNumber() + "'";
-        }
-        if (saleListProduct.getModel() != null) {
-            sql += " and a.model = " + saleListProduct.getModel();
-        }
-        if (saleListProduct.getLength() != null) {
-            sql += " and a.length = " + saleListProduct.getLength();
-        }
-        if (StringUtil.isNotEmpty(saleListProduct.getPrice())) {
-            sql += " and a.price = " + saleListProduct.getPrice();
-        }
-        if (saleListProduct.getJiTai() != null) {
-            sql += " and c.id = " + saleListProduct.getJiTai().getId();
-        }
-        if (saleListProduct.getOneweight() != null) {
-            sql += " and a.oneweight = " + saleListProduct.getOneweight();
-        }
-
-        LogUtil.printLog("=====销售订单追踪=====");
-        LogUtil.printLog("执行的sql：" + sqlStar + sql);
-
-        List result = GetResultUtils.getResult(sqlStar + sql, entityManager);
-
-        System.out.println(result.size());
-
-        return result;
-    }
-
-    @Override
-    public List<SaleListProduct> dingDanZhuiZong(SaleListProduct saleListProduct) {
-        return saleListProductRepository.findAll(new Specification<SaleListProduct>() {
-            @Override
-            public Predicate toPredicate(Root<SaleListProduct> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate predicate = cb.conjunction();
-                if (StringUtil.isNotEmpty(saleListProduct.getName())) {
-                    predicate.getExpressions().add(cb.equal(root.get("saleList").get("saleNumber"), saleListProduct.getName()));
-                }
-                if (StringUtil.isNotEmpty(saleListProduct.getClientname())) {
-                    predicate.getExpressions().add(cb.equal(root.get("clientname"), saleListProduct.getClientname()));
-                }
-                if (StringUtil.isNotEmpty(saleListProduct.getPeasant())) {
-                    predicate.getExpressions().add(cb.equal(root.get("peasant"), saleListProduct.getPeasant()));
-                }
-                if (saleListProduct.getInformNumber() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("informNumber"), saleListProduct.getInformNumber()));
-                }
-                if (saleListProduct.getModel() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("model"), saleListProduct.getModel()));
-                }
-                if (saleListProduct.getLength() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("length"), saleListProduct.getLength()));
-                }
-                if (StringUtil.isNotEmpty(saleListProduct.getPrice())) {
-                    predicate.getExpressions().add(cb.equal(root.get("price"), saleListProduct.getPrice()));
-                }
-                if (saleListProduct.getJiTai() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("jiTai").get("id"), saleListProduct.getJiTai().getId()));
-                }
-                if (saleListProduct.getOneweight() != null) {
-                    predicate.getExpressions().add(cb.equal(root.get("oneweight"), saleListProduct.getOneweight()));
-                }
-                return predicate;
-            }
-        });
     }
 }

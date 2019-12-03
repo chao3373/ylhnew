@@ -1,8 +1,5 @@
 package com.shenke.controller.admin;
 
-import java.awt.*;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,9 +13,7 @@ import com.shenke.entity.*;
 import com.shenke.repository.SaleListProductRepository;
 import com.shenke.service.*;
 import com.shenke.util.StringUtil;
-import org.omg.CORBA.ObjectHelper;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -55,11 +50,11 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/add")
-    public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu, String type) {
+    public Map<String, Object> add(Storage storage, String clerkName, String groupName, Double changdu) {
         System.out.println(storage);
         System.out.println("员工名称：" + clerkName);
         if (changdu != null) {
-            storageService.add(storage, clerkName, groupName, changdu, type);
+            storageService.add(storage, clerkName, groupName, changdu);
         } else {
             storageService.add(storage, clerkName, groupName);
         }
@@ -106,15 +101,10 @@ public class StorageAdminController {
      */
 
     @RequestMapping("/out")
-    public Map<String, Object> outStorage(String ids) {
+    public Map<String, Object> outStorage(Integer[] ids) {
         Map<String, Object> map = new HashMap<>();
-        String[] idArr = ids.split(",");
-        storageService.outStorage(idArr, new Date());
-//        for (int i = 0; i < idArr.length; i++) {
-//            int id = Integer.parseInt(idArr[i]);
-//            logService.save(new Log(Log.AUDIT_ACTION, "准备出库"));
-//            storageService.outStorage(id, new Date());
-//        }
+        logService.save(new Log(Log.AUDIT_ACTION, "准备出库"));
+        storageService.outStorage(ids, new Date());
         map.put("success", true);
         return map;
     }
@@ -220,15 +210,13 @@ public class StorageAdminController {
      * @Date:
      */
     @RequestMapping("/searchLiftMoney")
-    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String productDatee, String peasant) {
+    public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String peasant) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
-        System.out.println(productDate);
-        System.out.println(productDatee);
+
         map1.put("saleNumber", saleNumber);
         map1.put("peasant", peasant);
         map1.put("productDate", productDate);
-        map1.put("productDatee", productDatee);
         map1.put("realityweight", realityweight);
         map1.put("name", name);
         map1.put("client", client);
@@ -270,9 +258,9 @@ public class StorageAdminController {
      */
     @RequestMapping("/saveAdd")
     public Map<String, Object> saveAdd(Storage storage) {
-        storage.setDabaonum(1);
-        storage.setPeasant("");
-        storageService.save(storage);
+        System.out.println(storage);
+        System.out.println(storage.getNum());
+        storageService.save(storage, storage.getNum());
         Map<String, Object> map = new HashMap<>();
         map.put("success", true);
         return map;
@@ -308,55 +296,38 @@ public class StorageAdminController {
      * @Author: Andy
      * @Date:
      */
-    @RequestMapping("/detail")
-    public Map<String, Object> detail(String date, String client, String peasant, String product, String chukudanhao, String order) throws ParseException {
-        System.out.println("出库单号：" + chukudanhao);
-        System.out.println(date);
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> map1 = new HashMap<>();
-        if (StringUtil.isNotEmpty(date)) {
-            map1.put("date", date);
-        } else {
-            map1.put("date", null);
-        }
-        map1.put("client", client);
-        map1.put("peasant", peasant);
-        map1.put("product", product);
-        map1.put("order", order);
-        map1.put("chukudanhao", chukudanhao);
-        System.out.println(map1.get("chukudanhao"));
+//    @RequestMapping("/detail")
+//    public Map<String, Object> detail(String date, String client, String peasant, String product, String order) throws ParseException {
+//        System.out.println(date);
+//        Map<String, Object> map = new HashMap<>();
+//        Map<String, Object> map1 = new HashMap<>();
+//        if (StringUtil.isNotEmpty(date)) {
+//            map1.put("date", date);
+//        } else {
+//            map1.put("date", null);
+//        }
+//        map1.put("client", client);
+//        map1.put("peasant", peasant);
+//        map1.put("product", product);
+//        map1.put("order", order);
+//        map.put("success", true);
 //        List<Storage> storageList = storageService.detail(map1);
-        Map<String, Object> storageList = storageService.detaill(map1);
-        return storageList;
 //        for (Storage storage : storageList) {
-//            Integer integer = storageService.countByDetail(storage, (String) map1.get("date"));
+//            Integer integer = storageService.countBySaleListProductId(storage.getSaleListProduct().getId(), storage, "%装车%");
 //            System.out.println(integer);
 //            storage.setSum(integer);
-//            Double danjian = storage.getDabaonum() * storage.getRealityweight();
-//            Double danjianpingfang = storage.getDabaonum() * storage.getPingfang();
-//            System.out.println(storage);
-//            Double unitPrice = storage.getUnitPrice();
-//            Double price = storage.getUnitPrice();
-//            if (price == null) {
-//                price = 0.0;
-//            }
-//            storage.setUnitPrice(storage.getDabaonum() * price);
-//            Double totalPrice = storage.getUnitPrice() * storage.getNum();
-//            storage.setDanjianpingfang(danjianpingfang);
+//            Double danjian = storage.getRealityweight() * storage.getDabaonum();
 //            storage.setDanjianzhong(danjian);
 //            Double zongzhong = storage.getSum() * danjian;
-//            Double zongpingfang = storage.getSum() * danjianpingfang;
 //            System.out.println("总数量：" + integer);
 //            System.out.println("打包数：" + storage.getDabaonum());
 //            System.out.println("单件重量：" + danjian);
 //            System.out.println("总重量：" + zongzhong);
-//            storage.setZongpingfang(new BigDecimal(zongpingfang).setScale(2, BigDecimal.ROUND_UP).doubleValue());
-//            storage.setZongzhong((new BigDecimal(zongzhong).setScale(2, BigDecimal.ROUND_UP).doubleValue()));
-//            storage.setTotalPrice(new BigDecimal(totalPrice).setScale(2, BigDecimal.ROUND_UP).doubleValue());
+//            storage.setZongzhong(zongzhong);
 //        }
-//        map.put("success", true);
 //        map.put("rows", storageList);
-    }
+//        return map;
+//    }
 
     /**
      * 根据出库时间获取客户名称
@@ -444,8 +415,8 @@ public class StorageAdminController {
         Map<String, Object> map = new HashMap<>();
         System.out.println(storage.getGroupName());
         if (StringUtil.isNotEmpty(storage.getGroupName()) && storage.getGroupName().equals("夜班")) {
-            String star = dateInProducedd + " 19:00:00";
-            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 06:59:59";
+            String star = dateInProducedd + " 17:00:00";
+            String end = dateInProducedd.split("-")[0] + "-" + dateInProducedd.split("-")[1] + "-" + (Integer.parseInt(dateInProducedd.split("-")[2]) + 1) + " 14:00:00";
             try {
                 java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(star);
                 java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
@@ -456,20 +427,7 @@ public class StorageAdminController {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        } else if (StringUtil.isNotEmpty(storage.getGroupName()) && storage.getGroupName().equals("白班")) {
-            String star = dateInProducedd + " 07:00:00";
-            String end = dateInProducedd +  " 18:59:59";
-            try {
-                java.util.Date stard = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(star);
-                java.util.Date endd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(end);
-                System.out.println("白班");
-                System.out.println(stard);
-                System.out.println(endd);
-                map.put("rows", storageService.JitaiProduct(storage, null, stard, endd));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }else{
+        } else {
             try {
                 java.util.Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateInProducedd + " 00:00:00");
                 String end = dateInProducedd + " 23:59:59";
@@ -494,6 +452,7 @@ public class StorageAdminController {
         map.put("success", true);
         map.put("rows", storageService.KucunSearch(map1));
         return map;
+
     }
 
     /***
@@ -520,17 +479,20 @@ public class StorageAdminController {
      */
     @RequestMapping("/selectEdit")
     public Map<String, Object> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows) {
+        System.out.println(page);
+        System.out.println(rows);
+        System.out.println(storage);
         if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
-//        Map<String, Object> map = new HashMap<>();
-//        List list = storageService.selectEdit(storage, dateInProducedd, page, rows);
-//        Long total = storageService.getCount(storage, dateInProducedd);
-//        map.put("success", true);
-//        map.put("rows", list);
-//        map.put("total", total);
-//        System.out.println(map);
-        return storageService.selectEditt(storage, dateInProducedd, page, rows);
+        Map<String, Object> map = new HashMap<>();
+//        List<Storage> list = storageService.selectEdit(storage, dateInProducedd);
+        List<Storage> list = storageService.selectEdit(storage, dateInProducedd, page, rows);
+        Long total = storageService.getCount(storage, dateInProducedd);
+        map.put("success", true);
+        map.put("rows", list);
+        map.put("total",total);
+        return map;
     }
 
     /***
@@ -538,15 +500,28 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/findKuCun")
-    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows) {
-        System.out.println(storage);
-        System.out.println(rows);
+    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd) {
         if (storage.getGroup() != null) {
             storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
         }
         Map<String, Object> map = new HashMap<>();
-        Map<String, Object> results = storageService.selecttt(storage, dateInProducedd, dateInProduceddd, page, rows);
-        return results;
+        List<Storage> list = storageService.selectt(storage, dateInProducedd);
+        for (Storage st : list) {
+//            Integer integer = storageService.countBySaleListProductId(st.getSaleListProduct().getId(), st, "%生产完成%");
+            Integer integer = storageService.kucunCount(st);
+            System.out.println("完成数：" + integer);
+            st.setSum(integer);
+            System.out.println("打包数：" + st.getDabaonum());
+            Double danjianzhong = st.getDabaonum() * st.getRealityweight();
+            System.out.println("单件重量：" + danjianzhong);
+            st.setDanjianzhong(danjianzhong);
+            Double zongzhong = integer * danjianzhong;
+            selectOutByOutNumber("总重量：" + zongzhong);
+            st.setZongzhong(zongzhong);
+        }
+        map.put("success", true);
+        map.put("rows", list);
+        return map;
     }
 
     /***
@@ -576,12 +551,11 @@ public class StorageAdminController {
      * @return
      */
     @RequestMapping("/updateByIdsAndState")
-    public Map<String, Object> updateByIdAndState(String idArr, String state) {
+    public Map<String, Object> updateByIdAndState(Integer[] idArr, String state) {
+        System.out.println(idArr.length);
+        System.out.println(state);
         Map<String, Object> map = new HashMap<>();
-        String[] split = idArr.split(",");
-        storageService.updateByIdAndState(split, state);
-//        for (int i = 0; i < idArr.split(",").length; i++) {
-//        }
+        storageService.updateStateByIds(idArr, state);
         map.put("success", true);
         return map;
     }
@@ -617,11 +591,10 @@ public class StorageAdminController {
     public Map<String, Object> goBackku(String ids) {
         Map<String, Object> map = new HashMap<>();
         String[] split = ids.split(",");
-        storageService.updateByIdAndState(split, "生产完成");
-//        for (int i = 0; i < split.length; i++) {
-//            Storage storage = storageService.findById(Integer.parseInt(split[i]));
-//
-//        }
+        for (int i = 0; i < split.length; i++) {
+            Storage storage = storageService.findById(Integer.parseInt(split[i]));
+            storageService.updateByIdAndState(Integer.parseInt(split[i]), "生产完成：" + storage.getJiTaiName());
+        }
         map.put("success", true);
         return map;
     }
@@ -748,51 +721,54 @@ public class StorageAdminController {
 
     //根据条件查询提货商品
     @RequestMapping("/selectTihuo")
-    public Map<String,Object> selectTihuo(String pandianji) {
+    public List<Storage> selectTihuo(String pandianji) {
         System.out.println(pandianji);
-        List<Storage> list = storageService.selectTihuo(pandianji);
-
-        Double sumWeight = 0.00;
-        for(Storage storage : list){
-            sumWeight = sumWeight + storage.getRealityweight();
-        }
-        Map<String,Object> map = new HashMap<>();
-        map.put("sumNum",list.size());
-        map.put("sumWeight",sumWeight);
-        map.put("rows",list);
-        return map;
+        return storageService.selectTihuo(pandianji);
     }
 
-    /***
-     * 查询零售库存中是否存在符合条件的商品
-     * @param storage
-     * @return
-     */
-    @RequestMapping("/findLingShou")
-    public List<Storage> findLingShou(Storage storage) {
-        System.out.println(storage);
-        List<Storage> storages = storageService.findLingShou(storage);
-        for (Storage storage1 : storages) {
-            storage1.setWeight(storage1.getRealityweight());
-            storage1.setNum(1);
-        }
-        return storages;
-    }
+//    /***
+//     * 当前库存查询页面查询
+//     * @return
+//     */
+//    @RequestMapping("/findKuCun")
+//    public Map<String, Object> findKuCun(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows) {
+//        System.out.println(page);
+//        System.out.println(rows);
+//        if (storage.getGroup() != null) {
+//            storage.setGroupName(groupService.findById(storage.getGroup().getId()).getName());
+//        }
+//        Map<String, Object> map = new HashMap<>();
+//        Map<String, Object> results = storageService.selecttt(storage, dateInProducedd, dateInProduceddd, page, rows);
+//        return results;
+//    }
 
     /**
-     * 统计查询
+     * 按条件查询出库明细表
+     *
+     * @Description:
+     * @Param:
+     * @return:
+     * @Author: Andy
+     * @Date:
      */
-    @RequestMapping("/tongji")
-    public Map<String, Object> tongji(String stardate, String enddate, String clientname) throws ParseException {
-        List<Map<String, Object>> list = null;
-        if (StringUtil.isNotEmpty(clientname)){
-            list = storageService.tongji(stardate + " 00:00:00", enddate + " 23:59:59", clientname);
-        } else {
-            list = storageService.tongji(stardate + " 00:00:00", enddate + " 23:59:59");
-        }
+    @RequestMapping("/detail")
+    public Map<String, Object> detail(String date, String client, String peasant, String product, String chukudanhao, String order) throws ParseException {
+        System.out.println("出库单号：" + chukudanhao);
+        System.out.println(date);
         Map<String, Object> map = new HashMap<>();
-        map.put("success", true);
-        map.put("rows", list);
-        return map;
+        Map<String, Object> map1 = new HashMap<>();
+        if (StringUtil.isNotEmpty(date)) {
+            map1.put("date", date);
+        } else {
+            map1.put("date", null);
+        }
+        map1.put("client", client);
+        map1.put("peasant", peasant);
+        map1.put("product", product);
+        map1.put("order", order);
+        map1.put("chukudanhao", chukudanhao);
+        System.out.println(map1.get("chukudanhao"));
+        Map<String, Object> storageList = storageService.detaill(map1);
+        return storageList;
     }
 }

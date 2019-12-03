@@ -37,6 +37,4 @@ public interface LogService {
 	 * @return
 	 */
 	public Long getCount(Log log);
-
-    void deleteByUserId(Integer id);
 }

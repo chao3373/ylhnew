@@ -1,6 +1,7 @@
 package com.shenke.service;
 
 import com.shenke.entity.MuLiao;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

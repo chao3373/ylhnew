@@ -516,10 +516,10 @@
 
             var jsonarr = [];
             var rows = $(dg).datagrid("getRows");
-            for (let i = 0; i < rows.length; i++) {
+            for (var i = 0; i < rows.length; i++) {
                 var json = {};
                 console.log(rows[i]);
-                for (let j = 0; j < datagridTitle.length; j++) {
+                for (var j = 0; j < datagridTitle.length; j++) {
                     var st = datagridTitle[j].title;
                     if (datagridTitle[j].formatter) {
                         json[datagridTitle[j].title] =  datagridTitle[j].formatter(rows[datagridTitle[j].field], rows[i]);

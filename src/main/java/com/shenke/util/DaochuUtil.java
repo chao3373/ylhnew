@@ -39,8 +39,10 @@ public class DaochuUtil {
 
 //        FileOutputStream fileOut=new FileOutputStream("d:\\工作簿.xls");
         // 通过工具类创建writer
-        String path = "D:\\下载文件\\出库明细表\\" + new Date().getTime() + ".xls";
+        long name = new Date().getTime();
+        String path = "D:\\下载文件\\出库明细表\\" + name + ".xls";
         System.out.println(path);
+        System.out.println(name);
         ExcelWriter writer = ExcelUtil.getWriter(path);
         // 合并单元格后的标题行，使用默认标题样式
         writer.merge(size - 1, title);

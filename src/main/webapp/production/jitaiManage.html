@@ -76,32 +76,17 @@
                     if (result.jitai.clientName) {
                         $("#printThickness").prop("checked", true);
                     }
+                    if (result.jitai.dateInProduced) {
+                        $("#printDateInProduced").prop("checked", true);
+                    }
                     if (result.jitai.weight) {
                         $("#printWeight").prop("checked", true);
-                    }
-                    if (result.jitai.price) {
-                        $("#price").prop("checked", true);
                     }
                     if (result.jitai.group) {
                         $("#banzu").val(result.jitai.group.name);
                     }
                     if (result.jitai.clerk) {
                         $("#staff").val(result.jitai.clerk.name);
-                    }
-                    if (result.jitai.nonghu) {
-                        $("#printnonghu").prop("checked", true);
-                    }
-                    if (result.jitai.xuhao) {
-                        $("#xuhao").prop("checked", true);
-                    }
-                    if (result.jitai.changshang) {
-                        $("#changshang").prop("checked", true);
-                    }
-                    if (result.jitai.chang) {
-                        $("#chang").val(result.jitai.chang);
-                    }
-                    if (result.jitai.printnum) {
-                        $("#printnum").val(result.jitai.printnum);
                     }
                 }
             });
@@ -133,9 +118,6 @@
 
         var timer;
 
-        var selectRowIndex = undefined;//保存被选中的行的索引
-        var selectRowIndexColor = {};//用来保存行的背景色(因为表格中可能有多个背景色)
-
         //加载数据列
         function loadColum() {
             $("#dg")
@@ -157,33 +139,6 @@
                             title: '通知单号',
                             width: 100,
                             align: 'center'
-                        }, {
-                            field: 'saleList',
-                            title: '订单号',
-                            width: 100,
-                            align: 'center',
-                            formatter: function (value, row) {
-                                if (value != null && value.saleNumber != null) {
-                                    return value.saleNumber;
-                                }
-                                return "";
-                            }
-                        }, {
-                            field: 'storageid',
-                            title: '零售编号',
-                            width: 50,
-                            // hidden: 'true',
-                            align: 'center'
-                        }, {
-                            field: 'code',
-                            title: '序号',
-                            width: 50,
-                            // hidden: 'true',
-                            align: 'center',
-                            sortable: true,
-                            sorter: function (a, b) {
-                                return (a > b ? 1 : -1);
-                            }
                         }, {
                             field: 'clientname',
                             title: '客户',
@@ -215,7 +170,7 @@
                         }, {
                             field: 'model',
                             title: '幅宽',
-                            width: 80,
+                            width: 100,
                             align: 'center',
                             sortable: true,
                             sorter: function (a, b) {
@@ -224,18 +179,21 @@
                         }, {
                             field: 'length',
                             title: '长度',
-                            width: 80,
+                            width: 100,
                             align: 'center',
                             sortable: true,
                             sorter: function (a, b) {
                                 return (a > b ? 1 : -1);
                             }
                         }, {
-                            field: 'dao',
-                            title: '剖刀',
+                            field: 'productLength',
+                            title: '生产长度',
                             width: 100,
-                            align: 'center'
-
+                            align: 'center',
+                            sortable: true,
+                            sorter: function (a, b) {
+                                return (a > b ? 1 : -1);
+                            }
                         }, {
                             field: 'price',
                             title: '厚度',
@@ -245,12 +203,7 @@
                             sorter: function (a, b) {
                                 return (a > b ? 1 : -1);
                             }
-                        }, /*{
-                            field: 'meter',
-                            title: '实际厚度',
-                            width: 100,
-                            align: 'center'
-                        }, */{
+                        }, {
                             field: 'oneweight',
                             title: '重量',
                             width: 100,
@@ -262,7 +215,7 @@
                         }, {
                             field: 'num',
                             title: '件数',
-                            width: 80,
+                            width: 100,
                             align: 'center'
                         }, {
                             field: 'sumwight',
@@ -272,7 +225,7 @@
                         }, {
                             field: 'accomplishNumber',
                             title: '完成数',
-                            width: 80,
+                            width: 100,
                             align: 'center',
                             formatter: function (value, row) {
                                 if (row.accomplishNumber) {
@@ -281,48 +234,14 @@
                                     return 0;
                                 }
                             }
-                        },/* {
-                            field: 'label',
-                            title: '标签名',
-                            width: 100,
-                            align: 'center'
-                        },*/ {
+                        }, {
                             field: 'demand',
                             title: '要求',
                             width: 300,
                             align: 'center'
-                        }, {
-                            field: 'letter',
-                            title: '印字',
-                            width: 500,
-                            align: 'center'
-                        }, {
-                            field: 'brand',
-                            title: '商标',
-                            width: 200,
-                            align: 'center'
                         }]],
                         onSelect: function (rowIndex, rowData) {
-                            if (selectRowIndex != undefined) {
-                                var color = selectRowIndexColor[selectRowIndex];
-                                if (color) {
-                                    //如果设置了自定义背景色,才需要恢复原来的自定义背景色
-                                    $("#datagrid-row-r4-2-" + selectRowIndex).css("background-color", color).css("color", "black");//取消选中恢复颜色
-                                    $("#datagrid-row-r4-2-" + selectRowIndex).css("background-color", color).css("color", "black");//取消选择恢复颜色
-                                }
-                            }
-                            selectRowIndex = rowIndex;
-                            //获取被选中行的背景色(等下取消选择的时候需要还原为这个背景色,所以这里先记录下来)
-                            var color = $("#datagrid-row-r4-2-" + rowIndex).css("background-color");
-                            console.log("#datagrid-row-r4-2-" + rowIndex);
-                            console.log(color);
-                            if (color != 'rgb(255, 0, 0)') {
-                                // "#FFE48D"就是'rgb(255, 228,141)'颜色, 即datagrid默认选中行的背景色
-                                //如果设置了自定义背景色,才需要改变(如果没有设置自定义背景色,datagrid会使用默认的选中行的背景色)
-                                selectRowIndexColor[selectRowIndex] = color;
-                                $("#datagrid-row-r4-2-" + rowIndex).css("background-color", "#ff0000").css("color", "black");//选中改变颜色
-                                $("#datagrid-row-r4-2-" + rowIndex).css("background-color", "#ff0000").css("color", "black");//选中改变颜色
-                            }
+                            console.log(rowData);
                             $("#yaoqiu").show();
                             $("#yaoqiu").text(rowData.demand);
                             $("#dabao").val(rowData.daBaoShu);
@@ -339,8 +258,7 @@
                                 $("#dg2").datagrid("appendRow", $("#dg").datagrid("getSelected"));
                             }
                         },
-                        remoteSort: false,
-                        fitColumns: true
+                        remoteSort: false
                     });
         }
 
@@ -408,11 +326,17 @@
                         }
                     }
                 }, {
-                    field: 'oneweight',
+                    field: 'theoryweight',
                     title: '理论重量',
                     width: 100,
                     align: 'center',
-
+                    formatter: function (value, row, index) {
+                        if (row.saleListProduct) {
+                            return row.saleListProduct.theoryweight;
+                        } else {
+                            return value;
+                        }
+                    }
                 }, {
                     field: 'demand',
                     title: '要求',
@@ -433,6 +357,18 @@
                     formatter: function (value, row, index) {
                         if (row.saleListProduct) {
                             return row.saleListProduct.label;
+                        } else {
+                            return value;
+                        }
+                    }
+                }, {
+                    field: 'weight',
+                    title: '重量',
+                    width: 100,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.saleListProduct) {
+                            return row.saleListProduct.weight;
                         } else {
                             return value;
                         }
@@ -528,12 +464,6 @@
             });
         }
 
-        //重新加载界面底部的通知单号div
-        function reloadInformNumber() {
-            $("#dl").empty();
-            loadInformNumber();
-        }
-
         var dabaoNum;
         var dabaoCount = 0;
 
@@ -550,30 +480,11 @@
                     function (result) {
                         if (result.success) {
                             for (var i = 0; i < result.rows.length; i++) {
-                                if (result.rows[i].level == 0) {
-                                    $("#dl").append(
+                                $("#dl")
+                                    .append(
                                         "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;color:green;border:1px solid #ff0000;'>"
-                                        + result.rows[i].informNumber
+                                        + result.rows[i]
                                         + "</span>");
-                                }
-                                if (result.rows[i].level == 1) {
-                                    $("#dl").append(
-                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:yellow;color:blue;border:1px solid #ff0000;'>"
-                                        + result.rows[i].informNumber
-                                        + "</span>");
-                                }
-                                if (result.rows[i].level == 2) {
-                                    $("#dl").append(
-                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:orange;color:blue;border:1px solid #ff0000;'>"
-                                        + result.rows[i].informNumber
-                                        + "</span>");
-                                }
-                                if (result.rows[i].level == 3) {
-                                    $("#dl").append(
-                                        "<span style='font-size:25px;cursor:pointer;padding:10px 18px;text-decoration:none;background:purple;color:white;border:1px solid #ff0000;'>"
-                                        + result.rows[i].informNumber
-                                        + "</span>");
-                                }
                             }
                             dlClick();
                         }
@@ -612,8 +523,26 @@
                                         {
                                             rows: []
                                         });
+
+
                                 });
                     });
+        }
+
+
+        //计算合计重量 合计数量
+        var rowData;
+
+        function sum() {
+            var sumnum = 0;
+            var sumweight = 0;
+            rowData = $("#dg").datagrid("getRows");
+            for (var i = 0; i < rowData.length; i++) {
+                sumnum += rowData[i].num;
+                sumweight += rowData[i].sumwight;
+            }
+            $("#sumnum").val(sumnum);
+            $("#sumweight").val(sumweight.toFixed(2));
         }
 
         //关闭设置面板
@@ -625,6 +554,16 @@
         function dd2Close() {
             $("#dd2").dialog("close");
         }
+
+        var biaoqian;
+        var changdu;
+        var houdu;
+        var zhongliang;
+        var biaoqianshu;
+        var baozhuangshu;
+        var banzu;
+        var staff;
+        var riqi;
 
         //点击设置按钮
         function printSetClick() {
@@ -638,86 +577,79 @@
             $("#dd").dialog("open");
         }
 
-        // function set() {
-        //     $.post("/admin/print/getPrintSet",
-        //         function (result) {
-        //             if (result.success) {
-        //                 if (result.biaoqian) {
-        //                     $("#printLabel").prop("checked", true);
-        //                 }
-        //                 if (result.changdu) {
-        //                     $("#printLength").prop("checked", true);
-        //                 }
-        //                 if (result.houdu) {
-        //                     $("#printThickness").prop("checked", true);
-        //                 }
-        //                 if (result.zhongliang) {
-        //                     $("#printWeight").prop("checked", true);
-        //                 }
-        //                 if (result.biaoqianshu) {
-        //                     biaoqianshu = $("#labelNumber").val(
-        //                         result.biaoqianshu);
-        //                 }
-        //                 if (result.baozhuangshu) {
-        //                     baozhuangshu = $("#packageNumber").val(
-        //                         result.baozhuangshu);
-        //                 }
-        //                 if (result.banzu) {
-        //                     $("#banzu").combobox("select", result.banzu);
-        //                 }
-        //                 if (result.staff) {
-        //                     $("#staff").combobox("select", result.staff);
-        //                 }
-        //                 // disabledInput();
-        //             }
-        //         });
-        // }
-
-        var yanse;
-        var paodao;
-        var kehu;
-        var nonghu;
-        var zhongliang;
-        var houdu;
-        var xuhao;
-        var changshang;
-        var chang;
-        var printnum;
+        function set() {
+            $.post("/admin/print/getPrintSet",
+                function (result) {
+                    if (result.success) {
+                        if (result.biaoqian) {
+                            $("#printLabel").prop("checked", true);
+                        }
+                        if (result.changdu) {
+                            $("#printLength").prop("checked", true);
+                        }
+                        if (result.houdu) {
+                            $("#printThickness").prop("checked", true);
+                        }
+                        if (result.zhongliang) {
+                            $("#printWeight").prop("checked", true);
+                        }
+                        if (result.riqi) {
+                            $("#printDateInProduced").prop("checked", true);
+                        }
+                        if (result.biaoqianshu) {
+                            biaoqianshu = $("#labelNumber").val(
+                                result.biaoqianshu);
+                        }
+                        if (result.baozhuangshu) {
+                            baozhuangshu = $("#packageNumber").val(
+                                result.baozhuangshu);
+                        }
+                        if (result.banzu) {
+                            $("#banzu").combobox("select", result.banzu);
+                        }
+                        if (result.staff) {
+                            $("#staff").combobox("select", result.staff);
+                        }
+                        disabledInput();
+                    }
+                });
+        }
 
         //为选中的变量赋值
         function printSet() {
-            yanse = $("#printLabel").is(':checked');
-            paodao = $("#printLength").is(':checked');
-            kehu = $("#printThickness").is(':checked');
-            nonghu = $("#printnonghu").is(':checked');
+            biaoqian = $("#printLabel").is(':checked');
+            changdu = $("#printLength").is(':checked');
+            houdu = $("#printThickness").is(':checked');
             zhongliang = $("#printWeight").is(':checked');
-            houdu = $("#price").is(':checked');
-            xuhao = $("#xuhao").is(':checked');
-            changshang = $("#changshang").is(':checked');
-            printnum = $("#printnum").val();
-            chang = $("#chang").val();
+            riqi = $("#printDateInProduced").is(':checked');
+            biaoqianshu = $("#labelNumber").val();
+            baozhuangshu = $("#packageNumber").val();
+            banzu = $("#banzu").combobox("getValue");
+            staff = $("#staff").combobox("getValue");
         }
 
         //确定打印内容
         function printOk() {
             printSet();
             $.post("/admin/print/printSet", {
-                color: yanse,
-                dao: paodao,
-                clientName: kehu,
-                nonghu: nonghu,
-                weight: zhongliang,
-                price: houdu,
-                xuhao: xuhao,
-                changshang: changshang,
-                chang: chang,
-                printnum: printnum,
-                id: $("#selectJitai").combobox("getValue")
+                biaoqian: biaoqian,
+                changdu: changdu,
+                houdu: houdu,
+                biaoqianshu: biaoqianshu,
+                baozhuangshu: baozhuangshu,
+                banzu: banzu,
+                staff: staff,
+                zhongliang: zhongliang
             }, function (result) {
-                if (result.success) {
-                    alert("设置成功！");
-                    ddClose();
-                }
+
+            });
+            disabledInput();
+        }
+
+        //禁用打印设置中的input
+        function disabledInput() {
+            $("#dd").find("input").each(function () {
+                $(this).prop('disabled', true);
             });
         }
 
@@ -730,7 +662,7 @@
             $(("#jitaiName")).prop('disabled', true);
         }
 
-
+        //称重
         function weigh() {
             if (!$("#banzu").val() || !$("#staff").val()) {
                 $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
@@ -776,6 +708,7 @@
                     });
         }
 
+        //快速打码
         function kuaiSu() {
             if (!$("#banzu").val() || !$("#staff").val()) {
                 $.messager.alert("系统提示", "<span style='color: red'>未设置班组和人员信息</span>")
@@ -818,7 +751,6 @@
                 },
                 success: function (result) {
                     if (result.success) {
-                        console.log(result.rows.length);
                         if (result.rows.length != 0) {
                             $("#dg").datagrid('loadData', result.rows);
                             $("#dg").datagrid("selectRow", selectIndex);
@@ -833,10 +765,6 @@
             loadInformNumber();
         }
 
-        //打印测试
-        function printTest() {
-            printt(1);
-        }
 
         //点击打印按钮触发
         var url = "https://cli.im/api/qrcode/code?text=";
@@ -865,12 +793,14 @@
                             type: "POST", async: false, url: "/static/erweima", data: {
                                 url: url
                             }, success: function (result) {
+                                // var url = "<img style='width:auto;height: 100%;' src='/path/new.jpg'/>";
                                 var url = "<img style='width:auto;height: 100%;' src='" + result.url + "'/>";
+                                // url += result.url;
+                                // url += "'/>";
                                 tableString = "";
-                                tableString += "<div id='tab' style='text-align: center;padding-top: 10px;width: 100%;font-size: 55px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
+                                tableString += "<div id='tab' style='text-align: center;width: 100%;font-size: 45px; font-weight: 900;'><table style='width: 100%;text-align: left;'><tr><td rowspan='12' style='text-align: center;'>" + url + "<div style='margin-top: 10px'>编号：" + json.id + "</div>";
                                 "</td>";
                                 tableString += "<td colspan='2'>产品名称：" + row.name + "</td></tr>";
-                                tableString += "<tr><td>颜色：" + row.color + "</td><td>剖刀：" + row.dao + "</td></tr>";
                                 if ($('#printWeight').is(':checked')) {
                                     if (row.dabaonum != 1) {
                                         tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg x " + row.dabaonum + "件</td></tr>";
@@ -878,49 +808,31 @@
                                         tableString += "<tr><td colspan='2'>重量：" + row.realityweight + "kg</td></tr>";
                                     }
                                 }
-                                // if ($('#printLabel').is(':checked')) {
-                                //     tableString += "<tr><td>颜色：" + row.color + "</td><td>剖刀：" + row.dao + "</td></tr>";
-                                // }
-                                // if ($('#printLength').is(':checked')) {
-                                //     tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
-                                // }
-                                // if ($('#printThickness').is(':checked')){
-                                //     tableString += "<tr></tr>";
-                                //     console.log(tableString);
-                                // }
-                                if ($('#printnonghu').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>农户：" + row.peasant + "</td></tr>";
+                                if ($('#printLabel').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>颜色：" + row.color + "</td></tr>";
                                 }
-                                tableString += "<tr></tr>";
-                                if ($('#price').is(':checked')) {
-                                    if (isNaN(row.price)) {
-                                        tableString += "<tr><td colspan='2'>厚度：" + row.price + "</td></tr>";
-                                    } else {
-                                        tableString += "<tr><td colspan='2'>厚度：" + row.price + "mm</td></tr>";
-                                    }
+                                if ($('#printLength').is(':checked')) {
+                                    tableString += "<tr><td colspan='2'>剖刀：" + row.dao + "</td></tr>";
+                                }
+                                if ($('#printThickness').is(':checked')) {
+                                    tableString += "<tr><td>客户：" + row.clientname + "</td>" + "<td>农户：" + row.peasant + "</td></tr>";
+                                } else {
+                                    tableString += "<tr>" + "<td>农户：" + row.peasant + "</td><td></td></tr>";
+                                }
+                                if (isNaN(row.price)) {
+                                    tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "</td></tr>";
+                                } else {
+                                    tableString += "<tr><td>幅宽：" + row.model + "m</td><td>厚度：" + row.price + "mm</td></tr>";
                                 }
                                 if (row.hebingLength != null) {
-                                    tableString += "<tr><td>长度：" + row.hebingLength + "</td><td colspan='2'>幅宽：" + row.model + "</td></tr>";
+                                    tableString += "<tr><td>长度：" + row.hebingLength + "</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                 } else {
                                     if ($("#changdu").val()) {
-                                        tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td colspan='2'>幅宽：" + row.model + "</td></tr>";
+                                        tableString += "<tr><td>长度：" + $('#changdu').val() + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                     } else {
-                                        tableString += "<tr><td>长度：" + row.length + "m</td><td colspan='2'>幅宽：" + row.model + "</td></tr>";
+                                        tableString += "<tr><td>长度：" + row.length + "m</td><td>机台：" + row.jiTai.name + "</td></tr>";
                                     }
                                 }
-                                if ($('#changshang').is(':checked')) {
-                                    var chang;
-                                    if ($("#chang").val()) {
-                                        chang = $("#chang").val();
-                                    } else {
-                                        chang = ""
-                                    }
-                                    tableString += "<tr><td colspan='2'>厂商：" + chang + "</td></tr>";
-                                }
-                                if ($('#xuhao').is(':checked')) {
-                                    tableString += "<tr><td colspan='2'>序号：" + $("#dg").datagrid("getSelected").code + "</td></tr>";
-                                }
-                                tableString += "<tr><td>客户：" + row.clientname + "</td><td>机台：" + row.jiTai.name + "</td></tr>"
                                 tableString += "<tr><td>班组：" + row.jiTai.group.name + "</td><td>质检：" + row.jiTai.clerk.name + "</td></tr>";
                                 Date.prototype.format = function (format) {
                                     var o = {
@@ -943,10 +855,15 @@
                                     }
                                     return format;
                                 }
-                                tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+
+                                if ($('#printDateInProduced').is(':checked')) {
+                                    tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
+                                }
                                 tableString += "</td></tr></table></div>";
-                                tableString += $("#printnum").val();
-                                console.log(tableString);
+                                tableString += row.saleListProduct.labelNumber;
+                                //tableString += "2";
+
+                                console.log(row.saleListProduct.labelNumber);
                                 if (window.showModalDialog) {
                                     window.showModalDialog(
                                         "..\\print.html",
@@ -998,10 +915,10 @@
             //     $.messager.alert("系统提示", "<span style='color: red;'>请先完成当前打包任务</span>");
             //     return;
             // }
-            if (!$("#dabao").val()) {
+            if (!$("#dabao").val()){
                 alert("请输入数量！");
                 return;
-            } else if ($("#dabao").val() == 0) {
+            } else if($("#dabao").val() == 0){
                 alert("打包数不能为0！");
                 return;
             }
@@ -1014,12 +931,9 @@
                     if (result) {
                         alert("修改成功！");
                         $("#dabao").numberbox("disable");
-                        // var index = $("#dg").datagrid("getRowIndex", $("#dg").datagrid("getSelected"));
-                        $("#dl").empty();
                         // reSelect();
                         start();
                         $('#dg2').datagrid('loadData', []);
-                        // $("#dg").datagrid("selectRow", 0);
                     }
                 }
             });
@@ -1089,7 +1003,7 @@
                     tableString += "<td colspan='2'>时间：" + new Date().format("yyyy-MM-dd hh:mm:ss");
                     +"";
                     tableString += "</td></tr></table></div>";
-                    tableString += 2;
+                    tableString += "1";
                     if (window.showModalDialog) {
                         window
                             .showModalDialog(
@@ -1119,7 +1033,6 @@
             $("#dd3").dialog("open");
         }
 
-        //保存不添加完成数
         function feibiaosave() {
             $.ajax({
                 url: "/admin/storage/add",
@@ -1129,8 +1042,7 @@
                     clerkName: $("#staff").val(),
                     realityweight: $("#zhongliang").val(),
                     changdu: $("#changdu").val(),
-                    dabaonum: 1,
-                    type: "保存不添加完成数"
+                    dabaonum: 1
                 },
                 success: function (result) {
                     if (result.success) {
@@ -1143,37 +1055,6 @@
             });
         }
 
-        // function feibiaosaveadd() {
-        //     $.ajax({
-        //         url: "/admin/storage/add",
-        //         data: {
-        //             saleListProduct: $("#dg").datagrid("getSelected").id,
-        //             jiTai: $("#selectJitai").combobox("getValue"),
-        //             clerkName: $("#staff").val(),
-        //             realityweight: $("#zhongliang").val(),
-        //             changdu: $("#changdu").val(),
-        //             dabaonum: 1
-        //         },
-        //         success: function (resul) {
-        //             if (resul.success) {
-        //                 $.ajax({
-        //                     url: "/admin/saleListProduct/updateAccomplishNumber?id=" + $("#dg").datagrid('getSelected').id,
-        //                     success: function (result) {
-        //                         if (result) {
-        //                             feibiaoclose();
-        //                             reloadDg();
-        //                             $("#zhongliang").val("");
-        //                             $("#changdu").val("");
-        //                             printt(resul.id);
-        //                         }
-        //                     }
-        //                 });
-        //             }
-        //         }
-        //     });
-        // }
-
-        //保存并添加完成数
         function feibiaosaveadd() {
             $.ajax({
                 url: "/admin/saleListProduct/updateAccomplishNumber",
@@ -1202,6 +1083,7 @@
                 }
             });
         }
+
 
         //点击要求
         function yaoqiuAlert() {
@@ -1242,19 +1124,11 @@
         }
 
         $(document).ready(function () {
-            setInterval("reloadInformNumber()", 60 * 1000 * 5);
-            $("#printnum").val(1);
             $("#dd3").dialog("close");
             $('#dg').datagrid({
                 rowStyler: function (index, row) {
-                    if (row.level == 1) {
-                        return 'background-color:yellow;color:blue;font-weight:bold;';
-                    }
-                    if (row.level == 2) {
+                    if (row.level || row.level != 0) {
                         return 'background-color:orange;color:blue;font-weight:bold;';
-                    }
-                    if (row.level == 3) {
-                        return 'background-color:purple;color:#ffffff;font-weight:bold;';
                     }
                 }
             });
@@ -1262,7 +1136,8 @@
             loadColum();
             loadDg2Colum();
             ddClose();
-            // set();
+            disabledInput();
+            set();
             $("#yaoqiu").hide();
             $("#dabao").numberbox("disable");
             // dabaoNum = $("#dabao").numberbox("getValue");
@@ -1270,21 +1145,12 @@
             // setDabao();
         });
 
-        //打印合格证按钮
-        function heGeZheng() {
-            if (!$("#shuliang").val()) {
-                alert("请输入打印数量！");
-                return;
-            }
-            ;
 
-            if ($("#shuliang").val() > 100) {
-                alert("数量不可以超过100");
-                return;
-            }
-            ;
+        //打印合格证
+        var tstr;
 
-            printHeGeZheng();
+        function getLocalTime(nS) {
+            return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
         }
 
         function printHeGeZheng() {
@@ -1316,31 +1182,62 @@
                     "location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
             }
         }
+
+        //打印合格证按钮
+        function heGeZheng() {
+            if (!$("#shuliang").val()) {
+                alert("请输入打印数量！");
+                return;
+            }
+            ;
+
+            if ($("#shuliang").val() > 100) {
+                alert("数量不可以超过100");
+                return;
+            }
+            ;
+
+            printHeGeZheng();
+        }
+
+        function selectSum() {
+            sum();
+        }
     </script>
 </head>
 <body class="easyui-layout" style="margin: 1px;">
-<div region="north" style="height: 350px;">
-    <table id="dg" class="easyui-datagrid" title="机台生产加工单"
+<div region="north" style="height: 250px;">
+    <table id="dg" class="easyui-datagrid"
            fitColumns="false" rownumbers="true" singleSelect="true" fit="true"
            toolbar="#tb" split="true"></table>
 
-    <div id="tb" style="padding: 20px;">
-        <table id="tbTab" style="display: inline-block;">
+    <div id="tb" style="padding: 0px;">
+        <table id="tbTab" style="display: inline-block; ">
             <tr>
-                <td>选择机台：<input id="selectJitai" class="easyui-combobox" size="10" url="/admin/jitai/findAll"
-                                name="selectJitai" valueField="id" panelHeight="auto" textField="name"
+                <td>选择机台：<input id="selectJitai" class="easyui-combobox"
+                                size="10" url="/admin/jitai/findAll" name="selectJitai"
+                                valueField="id" panelHeight="auto" textField="name"
                                 style="width: 98px" onSelect="selectJitai(data)"/></td>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="start"
-                                                     class="easyui-linkbutton" iconCls="icon-ok"
-                                                     href="javascript:start()">开始</a></td>
-                <td>&nbsp;&nbsp;<a id="end" class="easyui-linkbutton"
-                                   iconCls="icon-no" href="javascript:end()">停止</a></td>
-                <td>&nbsp;&nbsp;<a id="showAll" class="easyui-linkbutton"
-                                   iconCls="icon-no" href="javascript:showAll()">显示全部</a></td>
-                <td>&nbsp;&nbsp;<a id="" class="easyui-linkbutton"
-                                   iconCls="icon-help" href="javascript:printSetClick()">设置</a></td>
-                <td>&nbsp;&nbsp;<a id="select" class="easyui-linkbutton"
-                                   iconCls="icon-search" href="javascript:select()">查询</a></td>
+                <td><a id="start"
+                       class="easyui-linkbutton" iconCls="icon-ok"
+                       href="javascript:start()">开始</a></td>
+                <td><a id="end" class="easyui-linkbutton"
+                       iconCls="icon-no" href="javascript:end()">停止</a></td>
+                <td><a id="showAll" class="easyui-linkbutton"
+                       iconCls="icon-no" href="javascript:showAll()">显示全部</a></td>
+                <td><a id="" class="easyui-linkbutton"
+                       iconCls="icon-help" href="javascript:printSetClick()">设置</a></td>
+                <td><a id="select" class="easyui-linkbutton"
+                       iconCls="icon-search" href="javascript:select()">查询</a></td>
+                <td>
+                    <a id="selectSum" class="easyui-linkbutton"
+                       href="javascript:selectSum()">显示合计</a>
+                <td>
+                    总数:<input id="sumnum" name="sumnum" style="width: 40px" readonly/>
+                </td>
+                <td>
+                    总量:<input id="sumweight" name="sumweight" style="width: 70px" readonly/>
+                </td>
             </tr>
         </table>
         <span id="yaoqiufu" style="display: inline-block; width: 500px; overflow: hidden;"><span id="yaoqiu"
@@ -1357,22 +1254,22 @@
 </div>
 
 <div id="tb2">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:weigh()"
-                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:kuaiSu()"
-                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">快速打码</a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:feibiao()"
-                                     class="easyui-linkbutton" iconCls="icon-ok" plain="true">吨包/非标入库</a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:rePrint()"
-                                     class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:printTest()" class="easyui-linkbutton" iconCls="icon-reload"
-                                     plain="true">打印测试</a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设置打包数量：<input class="easyui-numberbox" id="dabao" size="5"/><a
+    &nbsp;<a href="javascript:weigh()"
+             class="easyui-linkbutton" iconCls="icon-ok" plain="true">称重</a>
+    &nbsp;<a href="javascript:kuaiSu()"
+             class="easyui-linkbutton" iconCls="icon-ok" plain="true">快速打码</a>
+    &nbsp;<a href="javascript:feibiao()"
+             class="easyui-linkbutton" iconCls="icon-ok" plain="true">吨包/非标入库</a>
+    &nbsp;<a href="javascript:rePrint()"
+             class="easyui-linkbutton" iconCls="icon-reload" plain="true">重新打印</a>
+    &nbsp;<a href="javascript:printTest()" class="easyui-linkbutton" iconCls="icon-reload"
+             plain="true">打印测试</a>
+    &nbsp;设置打包数量：<input class="easyui-numberbox" id="dabao" size="3 "/><a
         href="javascript:setDabao()"
         class="easyui-linkbutton" iconCls="icon-ok" plain="true">确定</a><a href="javascript:editDabao()"
                                                                           class="easyui-linkbutton" iconCls="icon-edit"
                                                                           plain="true">修改</a>
-    &nbsp;打印合格证：<input class="easyui-numberbox" id="shuliang" size="3"/>
+    &nbsp;地膜合格证：<input class="easyui-numberbox" id="shuliang" size="3"/>
     <a href="javascript:heGeZheng()"
        class="easyui-linkbutton" iconCls="icon-ok" plain="true">打印</a>
 </div>
@@ -1382,22 +1279,17 @@
 </div>
 
 <div id="dd" class="easyui-dialog" title="生产加工单设置"
-     style="width: 1010px; height: 235px; padding: 15px;"
+     style="width: 700px; height: 235px; padding: 15px;"
      data-options="resizable:true,modal:true, buttons:'#bb'" id="printTb">
     <fieldset style="border-color: #e7f0ff;">
         <legend>打印设置</legend>
         <table>
             <tr>
-                <td><input id="printLabel" type="checkbox"/>颜色&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="printLength" type="checkbox"/>剖刀&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="printThickness" type="checkbox"/>客户&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="printnonghu" type="checkbox"/>农户&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="printWeight" type="checkbox"/>重量&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="price" type="checkbox"/>厚度&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="xuhao" type="checkbox"/>序号&nbsp;&nbsp;&nbsp;</td>
-                <td><input id="changshang" type="checkbox"/>厂商&nbsp;&nbsp;&nbsp;</td>
-                <td>厂商名称：<input type="text" id="chang" style="width: 100px;"></td>
-                <td>标签数量：<input id="printnum" type="text" style="width: 50px;"/>&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printLabel" type="checkbox"/>打印颜色&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printLength" type="checkbox"/>打印剖刀&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printThickness" type="checkbox"/>打印客户&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printWeight" type="checkbox"/>打印重量&nbsp;&nbsp;&nbsp;</td>
+                <td><input id="printDateInProduced" type="checkbox"/>打印生产日期</td>
                 <!--<td>标签数：<input id="labelNumber" type="text"
                                style="width: 50px;"/>&nbsp;&nbsp;&nbsp;
                 </td>
@@ -1427,10 +1319,8 @@
     </fieldset>
 </div>
 <div id="bb">
-    <!--<a class="easyui-linkbutton" iconCls="icon-print" id="printButton"-->
-    <!--href="javascript:print()">打印</a>-->
-    <a class="easyui-linkbutton"
-       iconCls="icon-ok" href="javascript:printOk()">确定</a>
+    <a class="easyui-linkbutton" iconCls="icon-print" id="printButton"
+       href="javascript:print()">打印</a>
     <a class="easyui-linkbutton"
        iconCls="icon-cancel" href="javascript:ddClose()">关闭</a>
 </div>

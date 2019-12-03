@@ -1,6 +1,5 @@
 package com.shenke.service;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,7 @@ public interface StorageService {
      *
      */
     public void add(Storage storage, String clerkName, String groupName);
-    public void add(Storage storage, String clerkName, String groupName, Double changdu, String type);
+    public void add(Storage storage, String clerkName, String groupName, Double changdu);
 
     /**
      * 非标入库单
@@ -46,7 +45,7 @@ public interface StorageService {
     /**
      * 改为已出库
      */
-    public void outStorage(String[] id, Date date);
+    public void outStorage(Integer[] id, Date date);
 
     /**
      * 查询未出库的信息
@@ -70,6 +69,8 @@ public interface StorageService {
     * @Date:
     */
     public void updateStateById(String state, String[] id, Date date, String ck);
+
+//    public void updateStateById(String state, Integer id, Date date, String ck);
 
     /**
      * 根据客户查询并按照产品名称排序
@@ -128,7 +129,7 @@ public interface StorageService {
 
     public List<Count> FindBySaleListId();
 
-    Integer countBySaleListProductId(Integer id, Storage storage, String state, String dateInProducedd, String dateInProduceddd);
+    Integer countBySaleListProductId(Integer id, Storage storage, String state);
 
 
     public List<Storage> findSaleListNumber();
@@ -144,9 +145,9 @@ public interface StorageService {
 
     List<Storage> select(Storage storage, String dateInProducedd);
 
-    List<Storage> selectt(Storage storage, String dateInProducedd, String dateInProduceddd);
+    List<Storage> selectt(Storage storage, String dateInProducedd);
 
-    void updateByIdAndState(String[] parseInt, String state);
+    void updateByIdAndState(int parseInt, String state);
 
     List<Storage> selectByState(String state);
 
@@ -178,9 +179,9 @@ public interface StorageService {
 
     Integer findCountBySaleListProductId(Integer id);
 
-    List<Storage> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows);
+    List<Storage> selectEdit(Storage storage, String dateInProducedd);
 
-    Map<String, Object> selectEditt(Storage storage, String dateInProducedd, Integer page, Integer rows);
+    List<Storage> selectEdit(Storage storage, String dateInProducedd, Integer page, Integer rows);
 
     /***
      * 根据订单商品id查询商品
@@ -191,31 +192,16 @@ public interface StorageService {
 
     void updateshijian(Integer id, Date parse);
 
-    Integer countBySaleListProductIdDetail(Integer id, Storage storage, String s, String date);
-
+    /***
+     * 查询总数量
+     * @param storage
+     * @return
+     */
     Long getCount(Storage storage, String dateInProducedd);
 
-    Integer kucunCount(Storage st, String dateInProducedd, String dateInProduceddd);
+    Integer kucunCount(Storage st);
 
-    Integer countByDetail(Storage storage, String dateInProducedd);
-
-    List<Storage> findLingShou(Storage storage);
-
-    void save(List<Storage> storages);
-
-    void updateState(String state, Integer key);
-
-    boolean findBySaleListId(Integer id);
-
-    List<Storage> findBySaleListProductIds(String... ids);
-
-    Map<String, Object> selecttt(Storage storage, String dateInProducedd, String dateInProduceddd, Integer page, Integer rows);
-
-    Long getKuCunCount(Storage storage, String dateInProducedd, String dateInProduceddd);
+    void updateStateByIds(Integer[] idArr, String state);
 
     Map<String, Object> detaill(Map<String, Object> map1);
-
-    List<Map<String, Object>> tongji(String stardate, String enddate, String clientname) throws ParseException;
-
-    List<Map<String, Object>> tongji(String stardate, String enddate) throws ParseException;
 }

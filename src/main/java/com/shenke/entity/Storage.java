@@ -64,6 +64,9 @@ public class Storage{
     @Column(nullable = true)
     private Double realityweight;// 实际重量
 
+    @Column(nullable = true)
+    private Double realitylength;//实际长度
+
     private Integer num;// 数量
 
     @Column(nullable = true)
@@ -112,7 +115,7 @@ public class Storage{
     private Integer sumwight;// 总重量
 
     @Column(nullable = true)
-    private Double meter;// 实际厚度
+    private Double meter;//
 
     @Column(length = 50)
     private String peasant;// 农户名称
@@ -170,34 +173,19 @@ public class Storage{
 
     private Integer dabaonum;//打包数量
 
-    private Boolean lingshou;//零售
+    public Integer getDabaonum() {
+        return dabaonum;
+    }
 
-    @Column(nullable = true, precision = 2)
-    private Double unitPrice;//单价
-
-    //总价格
-    @Transient
-    private Double totalPrice;//总价格
+    public void setDabaonum(Integer dabaonum) {
+        this.dabaonum = dabaonum;
+    }
 
     @Transient
     private Double danjianzhong;
 
     @Transient
     private Double zongzhong;
-
-    private Double pingfang;
-
-    @Transient
-    private Double danjianpingfang;
-
-    @Transient
-    private Double zongpingfang;
-
-    @Column(precision = 6, scale = 2)
-    private Double shengyulength;
-
-    private String code; //下单时候的序号
-
 
     @Override
     public String toString() {
@@ -217,6 +205,7 @@ public class Storage{
                 ", realitymodel=" + realitymodel +
                 ", realityprice=" + realityprice +
                 ", realityweight=" + realityweight +
+                ", realitylength=" + realitylength +
                 ", num=" + num +
                 ", theoryweight=" + theoryweight +
                 ", oneweight=" + oneweight +
@@ -255,25 +244,17 @@ public class Storage{
                 ", clerkName='" + clerkName + '\'' +
                 ", groupName='" + groupName + '\'' +
                 ", dabaonum=" + dabaonum +
-                ", lingshou=" + lingshou +
-                ", unitPrice=" + unitPrice +
-                ", totalPrice=" + totalPrice +
                 ", danjianzhong=" + danjianzhong +
                 ", zongzhong=" + zongzhong +
-                ", pingfang=" + pingfang +
-                ", danjianpingfang=" + danjianpingfang +
-                ", zongpingfang=" + zongpingfang +
-                ", shengyulength=" + shengyulength +
-                ", code='" + code + '\'' +
                 '}';
     }
 
-    public String getCode() {
-        return code;
+    public Double getRealitylength() {
+        return realitylength;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setRealitylength(Double realitylength) {
+        this.realitylength = realitylength;
     }
 
     public Integer getId() {
@@ -692,38 +673,6 @@ public class Storage{
         this.groupName = groupName;
     }
 
-    public Integer getDabaonum() {
-        return dabaonum;
-    }
-
-    public void setDabaonum(Integer dabaonum) {
-        this.dabaonum = dabaonum;
-    }
-
-    public Boolean getLingshou() {
-        return lingshou;
-    }
-
-    public void setLingshou(Boolean lingshou) {
-        this.lingshou = lingshou;
-    }
-
-    public Double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public Double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
     public Double getDanjianzhong() {
         return danjianzhong;
     }
@@ -738,37 +687,5 @@ public class Storage{
 
     public void setZongzhong(Double zongzhong) {
         this.zongzhong = zongzhong;
-    }
-
-    public Double getPingfang() {
-        return pingfang;
-    }
-
-    public void setPingfang(Double pingfang) {
-        this.pingfang = pingfang;
-    }
-
-    public Double getDanjianpingfang() {
-        return danjianpingfang;
-    }
-
-    public void setDanjianpingfang(Double danjianpingfang) {
-        this.danjianpingfang = danjianpingfang;
-    }
-
-    public Double getZongpingfang() {
-        return zongpingfang;
-    }
-
-    public void setZongpingfang(Double zongpingfang) {
-        this.zongpingfang = zongpingfang;
-    }
-
-    public Double getShengyulength() {
-        return shengyulength;
-    }
-
-    public void setShengyulength(Double shengyulength) {
-        this.shengyulength = shengyulength;
     }
 }

@@ -55,7 +55,7 @@ public class ClientAdminController {
 	}
 
 	/**
-	 * 添加或者修改客户信息
+	 * 添加或者修改产品及原料信息
 	 * 
 	 * @param
 	 * @return
@@ -67,17 +67,10 @@ public class ClientAdminController {
 		Map<String, Object> resultMap = new HashMap<>();
 		if (Client.getId() != null) {
 			logService.save(new Log(Log.UPDATE_ACTION, "更新产品及原料信息" + Client));
-			clientService.save(Client);
 		} else {
 			logService.save(new Log(Log.ADD_ACTION, "添加产品及原料信息" + Client));
-			com.shenke.entity.Client byName = this.findByName(Client.getName());
-			if (byName!=null){
-				resultMap.put("success",false);
-				resultMap.put("errorInfo", "该用户已存在");
-				return resultMap;
-			}
-			clientService.save(Client);
 		}
+		clientService.save(Client);
 		resultMap.put("success", true);
 		return resultMap;
 	}

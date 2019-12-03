@@ -33,7 +33,7 @@ public class WightAdmniController {
 	/**
 	 * 分页查询重量信息
 	 * 
-	 * @param role
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return
