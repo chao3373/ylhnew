@@ -752,14 +752,12 @@ public class StorageAdminController {
         System.out.println(pandianji);
         List<Storage> list = storageService.selectTihuo(pandianji);
 
-        Integer sumNum = 0;
         Double sumWeight = 0.00;
         for(Storage storage : list){
-            sumNum = sumNum + storage.getNum();
             sumWeight = sumWeight + storage.getRealityweight();
         }
         Map<String,Object> map = new HashMap<>();
-        map.put("sumNum",sumNum);
+        map.put("sumNum",list.size());
         map.put("sumWeight",sumWeight);
         map.put("rows",list);
         return map;
