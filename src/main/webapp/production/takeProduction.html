@@ -391,8 +391,8 @@
             if ($("#name").val()) {
                 json.name = $("#name").val();
             }
-            if (client) {
-                json.client = client;
+            if ($("#clientId").combobox("getText")) {
+                json.client = $("#clientId").combobox("getText");
             }
             if ($("#productDate").datebox("getText")) {
                 json.productDate = $("#productDate").datebox("getText");

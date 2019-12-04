@@ -146,7 +146,7 @@ public class SaleListProductServiceImpl implements SaleListProductService {
                 }
                 return predicate;
             }
-        }, new Sort(Sort.Direction.DESC, "level"));
+        }, new Sort(Sort.Direction.ASC, "model", "length"));
     }
 
     @Override

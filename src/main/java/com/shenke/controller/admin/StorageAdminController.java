@@ -213,6 +213,7 @@ public class StorageAdminController {
     public Map<String, Object> searchLiftMoney(String saleNumber, String name, String client, String mode, String price, String realityweight, String productDate, String peasant) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> map1 = new HashMap<>();
+        System.out.println(client);
 
         map1.put("saleNumber", saleNumber);
         map1.put("peasant", peasant);
